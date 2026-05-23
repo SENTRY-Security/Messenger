@@ -37,7 +37,7 @@ SENTRY Messenger 是一個純 Web 應用程式。不需要安裝任何東西。
 
 **端對端加密即時通訊系統** — 基於 Signal Protocol (X3DH + Double Ratchet)，部署於 Cloudflare Workers 全 Serverless 架構。
 
-> 官網：https://sentry.red ・ 版本：0.1.9 ・ 授權：AGPL-3.0-only
+> 官網：https://sentry.red ・ 版本：0.2.0 ・ 授權：AGPL-3.0-only
 
 ### 為什麼開源？
 
