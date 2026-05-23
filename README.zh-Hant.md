@@ -1,5 +1,7 @@
 # SENTRY Messenger
 
+**繁體中文** | [English](README.md)
+
 感應即開、離開即消。不留痕跡的安全通訊。
 
 ## 為什麼不是 App？

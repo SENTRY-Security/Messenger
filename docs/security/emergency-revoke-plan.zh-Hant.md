@@ -1,3 +1,5 @@
+**繁體中文** | [English](emergency-revoke-plan.md)
+
 # Emergency Revoke & Compromised Deploy Plan
 
 ## Scope

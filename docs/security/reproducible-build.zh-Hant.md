@@ -1,3 +1,5 @@
+**繁體中文** | [English](reproducible-build.md)
+
 # Reproducible Build
 
 ## Overview

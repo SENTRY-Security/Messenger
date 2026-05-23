@@ -1,3 +1,5 @@
+**繁體中文** | [English](canary-policy.md)
+
 # Canary Deployment Policy
 
 ## Policy Statement
@@ -38,7 +40,8 @@ curl -s https://message.sentry.red/.well-known/sentry-build.json | jq .hashes.ag
 
 # Rebuild from source and compare
 git checkout <commit> && cd web && npm ci && npm run build
-cat dist/build-manifest.json | jq '.files | map(.path + ":" + .sha256) | join("\n")' | sha256sum
+cat dist/build-manifest.json | jq '.files | map(.path + ":" + .sha256) | join("
+")' | sha256sum
 ```
 
 ## Exceptions

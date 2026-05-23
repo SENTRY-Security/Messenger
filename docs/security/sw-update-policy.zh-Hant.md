@@ -1,3 +1,5 @@
+**繁體中文** | [English](sw-update-policy.md)
+
 # Service Worker Update Policy
 
 ## Current Strategy: Immediate (`skipWaiting` + `clients.claim`)
