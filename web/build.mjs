@@ -370,8 +370,18 @@ for (const f of manifestFiles) {
   fileHashes[f.path] = f.sha256;
 }
 
-// Compute a single aggregate hash over all file hashes (sorted paths)
-const aggregateInput = manifestFiles.map(f => `${f.path}:${f.sha256}`).join('\n');
+// Files excluded from aggregate hash: these contain build-time injected
+// commit SHA (APP_BUILD_COMMIT) that differs between builds at different
+// commits, making byte-identical comparison impossible.
+const commitInjectedFiles = new Set([
+  '/pages/app.html',
+  '/pages/login.html',
+  '/pages/ephemeral.html'
+]);
+
+// Compute a single aggregate hash over deterministic files only
+const deterministicFiles = manifestFiles.filter(f => !commitInjectedFiles.has(f.path));
+const aggregateInput = deterministicFiles.map(f => `${f.path}:${f.sha256}`).join('\n');
 const aggregateHash = createHash('sha256').update(aggregateInput).digest('hex');
 
 const sentryBuild = {
@@ -390,7 +400,10 @@ const sentryBuild = {
   hashes: {
     algorithm: 'sha256',
     aggregate: aggregateHash,
+    aggregate_excludes: Array.from(commitInjectedFiles),
+    aggregate_excludes_reason: 'These HTML files contain build-time injected APP_BUILD_COMMIT which differs per build. All other files (JS, CSS, assets) are deterministic.',
     file_count: manifestFiles.length,
+    deterministic_file_count: deterministicFiles.length,
     files: fileHashes
   },
   sri: bundledSRI,
