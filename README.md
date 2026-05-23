@@ -4,6 +4,10 @@
 
 Tap to open. Leave to vanish. Communication that leaves no trace.
 
+<p align="center">
+  <img src="https://sentry.red/assets/images/424tag.png" alt="SENTRY Messenger" width="600" />
+</p>
+
 ## Why Not an App?
 
 Traditional messaging apps require installation — leaving icons, notification logs, and entries in app lists permanently on the device. Even after deletion, residual data may be recoverable by forensic tools.

@@ -4,6 +4,10 @@
 
 感應即開、離開即消。不留痕跡的安全通訊。
 
+<p align="center">
+  <img src="https://sentry.red/assets/images/424tag.png" alt="SENTRY Messenger" width="600" />
+</p>
+
 ## 為什麼不是 App？
 
 傳統通訊軟體需要安裝 App — 裝置上永遠留著圖示、通知紀錄、應用程式列表中的痕跡。即使刪除 App，仍可能被資料復原工具找回殘留資料。
