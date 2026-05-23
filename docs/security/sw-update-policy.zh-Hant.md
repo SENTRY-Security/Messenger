@@ -1,4 +1,4 @@
-[繁體中文](sw-update-policy.zh-Hant.md) | **English**
+**繁體中文** | [English](sw-update-policy.md)
 
 # Service Worker Update Policy
 

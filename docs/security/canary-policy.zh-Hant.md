@@ -1,4 +1,4 @@
-[繁體中文](canary-policy.zh-Hant.md) | **English**
+**繁體中文** | [English](canary-policy.md)
 
 # Canary Deployment Policy
 

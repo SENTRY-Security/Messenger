@@ -1,4 +1,4 @@
-[繁體中文](reproducible-build.zh-Hant.md) | **English**
+**繁體中文** | [English](reproducible-build.md)
 
 # Reproducible Build
 

@@ -1,4 +1,4 @@
-[繁體中文](emergency-revoke-plan.zh-Hant.md) | **English**
+**繁體中文** | [English](emergency-revoke-plan.md)
 
 # Emergency Revoke & Compromised Deploy Plan
 
