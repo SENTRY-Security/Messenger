@@ -302,6 +302,8 @@ set_worker_secret() {
 # worker.js 使用 env.HMAC_SECRET 和 env.ACCOUNT_HMAC_KEY
 set_worker_secret "HMAC_SECRET"       "$DATA_API_HMAC"
 set_worker_secret "ACCOUNT_HMAC_KEY"  "$ACCOUNT_HMAC_KEY"
+# Voucher 簽章驗證公鑰（Portal 以對應私鑰簽發儲值憑證 JWT）
+set_worker_secret "PRIVATE_KEY_PUBLIC_PEM" "$PRIVATE_KEY_PUBLIC_PEM"
 
 echo ""
 echo "✅ Worker secrets complete"
@@ -327,6 +329,8 @@ set_prod_worker_secret() {
 
 set_prod_worker_secret "HMAC_SECRET"       "$DATA_API_HMAC"
 set_prod_worker_secret "ACCOUNT_HMAC_KEY"  "$ACCOUNT_HMAC_KEY"
+# Voucher 簽章驗證公鑰（Portal 以對應私鑰簽發儲值憑證 JWT）
+set_prod_worker_secret "PRIVATE_KEY_PUBLIC_PEM" "$PRIVATE_KEY_PUBLIC_PEM"
 
 echo ""
 echo "✅ Production Worker secrets complete"

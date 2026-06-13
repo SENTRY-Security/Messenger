@@ -2315,6 +2315,7 @@ wrangler secret put PORTAL_HMAC_SECRET
 wrangler secret put S3_ACCESS_KEY
 wrangler secret put S3_SECRET_KEY
 wrangler secret put WS_TOKEN_SECRET
+wrangler secret put PRIVATE_KEY_PUBLIC_PEM
 ```
 
 ### Pages 部署
@@ -2412,6 +2413,7 @@ cd web && npm run verify:cdn     # CDN 完整性驗證（含 verbose）
 | `S3_ACCESS_KEY` | R2/S3 存取金鑰 |
 | `S3_SECRET_KEY` | R2/S3 秘密金鑰 |
 | `WS_TOKEN_SECRET` | WebSocket JWT 簽章金鑰 (>= 32 字元) |
+| `PRIVATE_KEY_PUBLIC_PEM` | 驗證儲值憑證 JWT 的 RS256 公鑰（對應 Portal 的 `PRIVATE_KEY_PEM`） |
 
 ### D1 Database Binding
 
