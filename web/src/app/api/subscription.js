@@ -28,22 +28,6 @@ export async function redeemSubscription({ token, dryRun = false } = {}) {
   return { r, data };
 }
 
-export async function uploadSubscriptionQr({ file } = {}) {
-  if (!file) throw new Error('file required');
-  const payload = buildAccountPayload();
-  const headers = buildHeaders();
-  const form = new FormData();
-  form.append('file', file);
-  const r = await fetchWithTimeout('/api/v1/subscription/scan-upload', {
-    method: 'POST',
-    headers,
-    body: form
-  }, 20000);
-  const txt = await r.text();
-  let data; try { data = JSON.parse(txt); } catch { data = txt; }
-  return { r, data };
-}
-
 export async function subscriptionStatus() {
   const headers = buildHeaders();
   const payload = buildAccountPayload();

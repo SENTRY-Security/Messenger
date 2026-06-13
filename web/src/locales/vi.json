@@ -606,6 +606,7 @@
     "centerQrVoucher": "Căn giữa phiếu QR trong khung",
     "uploadQrImage": "Tải lên hình ảnh QRCode",
     "parseFailed": "Phân tích thất bại: {error}",
+    "qrNotRecognized": "Không nhận dạng được phiếu QR trong ảnh, vui lòng dùng ảnh rõ hơn hoặc quét trực tiếp",
     "cameraFailed": "Khởi động camera thất bại: {error}",
     "topUpAgain": "Nạp tiền lại",
     "viewSubscriptionStatus": "Xem trạng thái đăng ký",

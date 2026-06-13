@@ -606,6 +606,7 @@
     "centerQrVoucher": "프레임 안에 QR 바우처를 맞춰 주세요",
     "uploadQrImage": "QR코드 이미지 업로드",
     "parseFailed": "분석 실패: {error}",
+    "qrNotRecognized": "이미지에서 QR 바우처를 인식하지 못했습니다. 더 선명한 이미지를 사용하거나 직접 스캔하세요",
     "cameraFailed": "카메라 시작 실패: {error}",
     "topUpAgain": "다시 충전",
     "viewSubscriptionStatus": "구독 상태 보기",

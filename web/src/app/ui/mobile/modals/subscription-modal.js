@@ -8,7 +8,7 @@ import { t } from '/locales/index.js';
 
 export function createSubscriptionModule({ deps }) {
   const { showToast, log, sessionStore, openModal, closeModal, resetModalVariants,
-    subscriptionStatus, redeemSubscription, uploadSubscriptionQr, QrScanner,
+    subscriptionStatus, redeemSubscription, QrScanner,
     userAvatarWrap, userMenuBadge, userMenuSubscriptionBadge } = deps;
 
   let countdownTimer = null;
@@ -161,12 +161,24 @@ export function createSubscriptionModule({ deps }) {
     if (!file) return { ok: false, error: new Error('file missing') };
     try {
       hooks.onStart?.();
-      const { r, data } = await uploadSubscriptionQr({ file });
-      if (!r.ok || !data?.ok) {
-        const msg = typeof data === 'object' && data?.message ? data.message : t('subscription.extensionFailed');
-        throw new Error(msg);
+      // Decode the uploaded QR image locally, then redeem through the same
+      // route as the live camera scan. There is no server-side upload endpoint;
+      // decoding client-side keeps a single redeem path and avoids 404s.
+      let token = '';
+      try {
+        const res = await QrScanner.scanImage(file, { returnDetailedScanResult: true });
+        token = (typeof res === 'string' ? res : res?.data || '').trim();
+      } catch {
+        token = '';
       }
-      return { ok: true, data };
+      if (!token) throw new Error(t('subscription.qrNotRecognized'));
+      const redeemRes = await handleRedeem(token);
+      if (!redeemRes?.ok) {
+        throw redeemRes?.error instanceof Error
+          ? redeemRes.error
+          : new Error(redeemRes?.error?.message || t('subscription.extensionFailed'));
+      }
+      return { ok: true, data: redeemRes.data };
     } catch (err) {
       if (hooks?.onError) hooks.onError(err);
       else showToast?.(t('subscription.fileParseError', { error: err?.message || err }), { variant: 'error' });

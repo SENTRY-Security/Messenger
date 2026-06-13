@@ -606,6 +606,7 @@
     "centerQrVoucher": "QRバウチャーをフレーム内に合わせてください",
     "uploadQrImage": "QRコード画像をアップロード",
     "parseFailed": "解析に失敗しました: {error}",
+    "qrNotRecognized": "画像から QR 証票を認識できませんでした。より鮮明な画像を使うか、直接スキャンしてください",
     "cameraFailed": "カメラの起動に失敗しました: {error}",
     "topUpAgain": "再度チャージ",
     "viewSubscriptionStatus": "サブスクリプション状況を表示",

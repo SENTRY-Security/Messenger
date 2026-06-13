@@ -621,6 +621,7 @@
     "centerQrVoucher": "Center QR voucher in frame",
     "uploadQrImage": "Upload QRCode image",
     "parseFailed": "Parse failed: {error}",
+    "qrNotRecognized": "Could not detect a QR voucher in the image, please use a clearer image or scan directly",
     "cameraFailed": "Camera failed to start: {error}",
     "topUpAgain": "Top up again",
     "viewSubscriptionStatus": "View subscription status",

@@ -606,6 +606,7 @@
     "centerQrVoucher": "จัดบัตรกำนัล QR ให้อยู่ตรงกลางกรอบ",
     "uploadQrImage": "อัปโหลดรูปภาพ QRCode",
     "parseFailed": "แยกวิเคราะห์ไม่สำเร็จ: {error}",
+    "qrNotRecognized": "ไม่พบ QR ใบรับรองในรูปภาพ โปรดใช้รูปที่ชัดเจนขึ้นหรือสแกนโดยตรง",
     "cameraFailed": "เปิดกล้องไม่สำเร็จ: {error}",
     "topUpAgain": "เติมเงินอีกครั้ง",
     "viewSubscriptionStatus": "ดูสถานะการสมัครสมาชิก",

@@ -1807,7 +1807,6 @@ media_objects         # Media object tracking
 | `/subscription/validate` | POST | Validate subscription |
 | `/subscription/status` | GET | Get subscription status |
 | `/subscription/token-status` | GET | Get token status |
-| `/subscription/scan-upload` | POST | Upload scan file (multipart, max 8MB) |
 
 ### Admin (`/api/v1/admin/`)
 
