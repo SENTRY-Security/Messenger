@@ -1805,7 +1805,6 @@ media_objects         # 媒體物件追蹤
 | `/subscription/validate` | POST | 驗證訂閱 |
 | `/subscription/status` | GET | 取得訂閱狀態 |
 | `/subscription/token-status` | GET | 取得 Token 狀態 |
-| `/subscription/scan-upload` | POST | 上傳掃描檔案（multipart, max 8MB） |
 
 ### 管理員 (`/api/v1/admin/`)
 

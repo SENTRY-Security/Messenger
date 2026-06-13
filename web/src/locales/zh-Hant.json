@@ -621,6 +621,7 @@
     "centerQrVoucher": "將憑證 QR 對準框線",
     "uploadQrImage": "上傳 QRCode 圖片",
     "parseFailed": "解析失敗：{error}",
+    "qrNotRecognized": "無法辨識圖片中的 QR 憑證，請改用更清晰的圖片或直接掃描",
     "cameraFailed": "相機啟動失敗：{error}",
     "topUpAgain": "再次儲值",
     "viewSubscriptionStatus": "查看訂閱狀態",

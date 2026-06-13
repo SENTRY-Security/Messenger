@@ -130,7 +130,7 @@ import { hydrateBizConvFromBackup, triggerBizConvBackupIfDirty, clearBizConvOnLo
 import { replayAllBizConvMessages } from '../features/biz-conv-replay.js';
 import { createBizConvCreateModal } from './mobile/modals/biz-conv-create-modal.js';
 import { createBizConvInfoModal } from './mobile/modals/biz-conv-info-modal.js';
-import { subscriptionStatus, redeemSubscription, uploadSubscriptionQr } from '../api/subscription.js';
+import { subscriptionStatus, redeemSubscription } from '../api/subscription.js';
 import { showVersionModal } from './version-info.js';
 import QrScanner from '../lib/vendor/qr-scanner.min.js';
 import { disableZoom } from './mobile/zoom-disabler.js';
@@ -1892,7 +1892,7 @@ const openSystemSettingsModal = () => settingsMod.open();
 const subscriptionMod = createSubscriptionModule({
   deps: {
     showToast, log, sessionStore, openModal, closeModal, resetModalVariants,
-    subscriptionStatus, redeemSubscription, uploadSubscriptionQr, QrScanner,
+    subscriptionStatus, redeemSubscription, QrScanner,
     userAvatarWrap, userMenuBadge, userMenuSubscriptionBadge
   }
 });

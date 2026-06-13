@@ -608,6 +608,7 @@
     "centerQrVoucher": "将凭证 QR 对准框线",
     "uploadQrImage": "上传 QRCode 图片",
     "parseFailed": "解析失败：{error}",
+    "qrNotRecognized": "无法识别图片中的 QR 凭证，请改用更清晰的图片或直接扫描",
     "cameraFailed": "相机启动失败：{error}",
     "topUpAgain": "再次充值",
     "viewSubscriptionStatus": "查看订阅状态",
