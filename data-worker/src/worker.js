@@ -7212,7 +7212,9 @@ let _cachedRS256Pem = null;
 
 async function getRS256PublicKey(publicKeyPem) {
   if (!publicKeyPem) {
-    const err = new Error('PUBLIC KEY missing');
+    // Voucher signing public key (PRIVATE_KEY_PUBLIC_PEM) not configured on the
+    // Worker. Set it via CI secret injection or `wrangler secret put`.
+    const err = new Error('voucher public key not configured (PRIVATE_KEY_PUBLIC_PEM)');
     err.status = 500;
     throw err;
   }

@@ -2317,6 +2317,7 @@ wrangler secret put PORTAL_HMAC_SECRET
 wrangler secret put S3_ACCESS_KEY
 wrangler secret put S3_SECRET_KEY
 wrangler secret put WS_TOKEN_SECRET
+wrangler secret put PRIVATE_KEY_PUBLIC_PEM
 ```
 
 ### Pages Deployment
@@ -2414,6 +2415,7 @@ cd web && npm run verify:cdn     # CDN integrity verification (verbose)
 | `S3_ACCESS_KEY` | R2/S3 access key |
 | `S3_SECRET_KEY` | R2/S3 secret key |
 | `WS_TOKEN_SECRET` | WebSocket JWT signing key (>= 32 characters) |
+| `PRIVATE_KEY_PUBLIC_PEM` | RS256 public key for verifying top-up voucher JWTs (matches Portal `PRIVATE_KEY_PEM`) |
 
 ### D1 Database Binding
 
