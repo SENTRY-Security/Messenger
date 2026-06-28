@@ -20,6 +20,9 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         NotificationCenter.default.addObserver(
             self, selector: #selector(handlePushToken(_:)),
             name: .sentryPushToken, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(handleOpenURL(_:)),
+            name: .sentryOpenURL, object: nil)
     }
 
     deinit { NotificationCenter.default.removeObserver(self) }
@@ -90,6 +93,17 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     @objc private func handlePushToken(_ note: Notification) {
         guard let token = note.object as? String else { return }
         sendPushToken(token)
+    }
+
+    /// Navigate the existing web view to a notification's deep link, in place,
+    /// so the web session/state is preserved.
+    @objc private func handleOpenURL(_ note: Notification) {
+        guard let url = note.object as? URL,
+              let host = url.host,
+              AppConfig.allowedNavigationHosts.contains(host) else { return }
+        DispatchQueue.main.async { [weak self] in
+            self?.webView?.load(URLRequest(url: url))
+        }
     }
 
     // MARK: helpers
