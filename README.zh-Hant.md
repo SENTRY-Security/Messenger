@@ -106,6 +106,7 @@ SENTRY Messenger 是一個純 Web 應用程式。不需要安裝任何東西。
 
 1. **Frontend (`web/`)** — 純靜態 SPA，部署至 Cloudflare Pages，所有加密/解密在客戶端完成
 2. **Cloudflare Workers (`data-worker/`)** — 統一後端，處理所有 REST API、WebSocket 即時通訊（Durable Objects）、OPAQUE 認證、SDM 驗證、金鑰管理，直接存取 D1/R2/KV
+3. **iOS 原生外殼 (`ios/`)** — 以 `WKWebView` 包裝 web messenger，提供 NTAG424 卡片感應登入與 App Clip 入口；XcodeGen 專案，詳見 `ios/README.md`
 
 > **v0.1.9 架構遷移：** 原有的 Node.js Express + WebSocket 中繼層（`src/`）已完全移除。所有 API 端點與 WebSocket 連線管理已遷移至 Cloudflare Workers + Durable Objects，實現完全 Serverless 架構。不再需要 VPS、PM2 或任何伺服器維運。
 

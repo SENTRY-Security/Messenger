@@ -106,6 +106,7 @@ This project is open-sourced under AGPL-3.0, driven by two core principles:
 
 1. **Frontend (`web/`)** — Pure static SPA deployed to Cloudflare Pages; all encryption/decryption is performed client-side
 2. **Cloudflare Workers (`data-worker/`)** — Unified backend handling all REST APIs, WebSocket real-time communication (Durable Objects), OPAQUE authentication, SDM verification, key management, with direct access to D1/R2/KV
+3. **iOS native shell (`ios/`)** — Wraps the web messenger in a `WKWebView`, adding NTAG424 tap-to-login and an App Clip entry point; XcodeGen project, see `ios/README.md`
 
 > **v0.1.9 Architecture Migration:** The original Node.js Express + WebSocket relay layer (`src/`) has been completely removed. All API endpoints and WebSocket connection management have been migrated to Cloudflare Workers + Durable Objects, achieving a fully serverless architecture. No more VPS, PM2, or any server operations required.
 

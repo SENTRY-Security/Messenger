@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Links this clip to its parent full app. AppIdentifierPrefix is the Team ID. -->
+	<key>com.apple.developer.parent-application-identifiers</key>
+	<array>
+		<string>$(AppIdentifierPrefix)red.sentry.messenger</string>
+	</array>
+
+	<!-- App Clip invocation domain (NTAG424 / universal link). -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>appclips:app.message.sentry.red</string>
+	</array>
+
+	<!-- Core NFC: read NDEF (the NTAG424 SDM URL). -->
+	<key>com.apple.developer.nfc.readersession.formats</key>
+	<array>
+		<string>NDEF</string>
+	</array>
+</dict>
+</plist>

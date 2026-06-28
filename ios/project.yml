@@ -1,0 +1,58 @@
+name: SentryMessenger
+options:
+  bundleIdPrefix: red.sentry
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: ""        # Fill with your Apple Developer Team ID
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  # ── Full app ──────────────────────────────────────────────────────
+  SentryMessenger:
+    type: application
+    platform: iOS
+    sources:
+      - path: SentryMessenger
+    dependencies:
+      - target: SentryMessengerClip
+        embed: true             # "Embed App Clips" copy phase
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.messenger
+        PRODUCT_NAME: SentryMessenger
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: SentryMessenger/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: SentryMessenger/Resources/SentryMessenger.entitlements
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+    scheme: {}
+
+  # ── App Clip (entry point #2, partial) ────────────────────────────
+  SentryMessengerClip:
+    type: application.on-demand-install-capable
+    platform: iOS
+    sources:
+      - path: SentryMessengerClip
+      - path: SentryMessenger/Shared    # reuse WebView / NFC / bridge / login
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.messenger.Clip
+        PRODUCT_NAME: SentryMessengerClip
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: SentryMessengerClip/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: SentryMessengerClip/Resources/SentryMessengerClip.entitlements
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+    scheme: {}
