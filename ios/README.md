@@ -60,6 +60,18 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `nfcError`  | `{ message }`                 |
 | `pushToken` | `{ token, platform: 'ios' }`  |
 
+## 外殼行為（WebView）
+
+- **導航白名單**：僅 `AppConfig.allowedNavigationHosts`（messenger 網域）的主框架
+  導航留在 App 內；其他外部連結以 `SFSafariViewController` 開啟，`tel:`/`mailto:`
+  等系統 scheme 交給 OS。子資源/iframe（媒體、TURN）一律允許。
+- **WebRTC 權限**：第一方網域的相機/麥克風請求（`requestMediaCapturePermissionFor`）
+  自動授權，避免雙重權限詢問。
+- **檔案上傳**：`<input type=file>` 由 WKWebView 原生支援（相機/相簿需 Info.plist
+  權限字串，已具備）。
+- **其他**：pull-to-refresh、載入錯誤重試、`target=_blank` 依白名單內外分流、
+  鍵盤互動式收起。
+
 ## 需在 Apple Developer 啟用的能力（Capabilities）
 
 - **Near Field Communication Tag Reading**（NFC，NDEF）

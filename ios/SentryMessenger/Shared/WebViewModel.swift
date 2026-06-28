@@ -31,6 +31,7 @@ final class WebViewModel: NSObject, ObservableObject {
         webView.uiDelegate = self
         webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.contentInsetAdjustmentBehavior = .never
+        webView.scrollView.keyboardDismissMode = .interactive
         webView.isOpaque = false
         webView.backgroundColor = .black
         if #available(iOS 16.4, *) {
@@ -80,6 +81,37 @@ extension WebViewModel: WKNavigationDelegate {
         loadError = nil
     }
 
+    /// Keep first-party navigations in-app; send everything else to an external
+    /// browser. Sub-resource / iframe loads (third-party media, TURN, etc.) are
+    /// always allowed.
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
+        guard let url = navigationAction.request.url else { decisionHandler(.allow); return }
+        let scheme = url.scheme?.lowercased() ?? ""
+
+        // Web-internal schemes handled by WebKit itself.
+        if ["blob", "data", "about", "javascript"].contains(scheme) {
+            decisionHandler(.allow); return
+        }
+        // Non-web schemes (tel/mailto/sms/maps…) → hand to the OS.
+        if scheme != "http" && scheme != "https" {
+            decisionHandler(.cancel)
+            ExternalLink.open(url)
+            return
+        }
+        // Gate main-frame navigations (treat target=_blank / nil frame as main).
+        let isMainFrame = navigationAction.targetFrame?.isMainFrame ?? true
+        if isMainFrame, let host = url.host, !AppConfig.allowedNavigationHosts.contains(host) {
+            decisionHandler(.cancel)
+            ExternalLink.open(url)
+            return
+        }
+        decisionHandler(.allow)
+    }
+
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         isLoading = false
         webView.scrollView.refreshControl?.endRefreshing()
@@ -103,11 +135,26 @@ extension WebViewModel: WKUIDelegate {
         for navigationAction: WKNavigationAction,
         windowFeatures: WKWindowFeatures
     ) -> WKWebView? {
-        // Links opened with target=_blank have no target frame; load them in
-        // the same web view instead of silently dropping them.
-        if navigationAction.targetFrame == nil, let url = navigationAction.request.url {
+        // Links opened with target=_blank have no target frame. Load first-party
+        // URLs in the same web view; send external ones to the browser.
+        guard let url = navigationAction.request.url else { return nil }
+        if let host = url.host, AppConfig.allowedNavigationHosts.contains(host) {
             webView.load(URLRequest(url: url))
+        } else {
+            ExternalLink.open(url)
         }
         return nil
+    }
+
+    /// Grant camera/microphone to first-party origins so WebRTC voice/video
+    /// calls work without a second (web-level) permission dance.
+    func webView(
+        _ webView: WKWebView,
+        requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+        initiatedByFrame frame: WKFrameInfo,
+        type: WKMediaCaptureType,
+        decisionHandler: @escaping (WKPermissionDecision) -> Void
+    ) {
+        decisionHandler(AppConfig.allowedNavigationHosts.contains(origin.host) ? .grant : .prompt)
     }
 }

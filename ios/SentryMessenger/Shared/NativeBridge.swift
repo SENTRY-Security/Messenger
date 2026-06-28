@@ -102,18 +102,7 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         var items: [Any] = [text]
         if let urlString, let url = URL(string: urlString) { items.append(url) }
         let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        topViewController()?.present(vc, animated: true)
-    }
-
-    private func topViewController() -> UIViewController? {
-        let root = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap { $0.windows }
-            .first { $0.isKeyWindow }?
-            .rootViewController
-        var top = root
-        while let presented = top?.presentedViewController { top = presented }
-        return top
+        UIApplication.shared.topViewController?.present(vc, animated: true)
     }
 }
 
