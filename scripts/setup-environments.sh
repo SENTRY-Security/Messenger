@@ -192,6 +192,10 @@ set_secret "CLOUDFLARE_SFU_TOKEN_KEY"   "$CLOUDFLARE_SFU_TOKEN_KEY"
 # Auth Keys (multiline)
 set_secret "PRIVATE_KEY_PUBLIC_PEM"     "$PRIVATE_KEY_PUBLIC_PEM"
 
+# APNs (native iOS push)
+set_secret "APNS_KEY_P8"                "$APNS_KEY_P8"
+set_secret "APNS_KEY_ID"                "$APNS_KEY_ID"
+
 echo ""
 echo "✅ Production secrets complete"
 
@@ -276,6 +280,10 @@ set_secret "UAT_CLOUDFLARE_SFU_TOKEN_KEY"   "$CLOUDFLARE_SFU_TOKEN_KEY"
 # UAT Auth Keys
 set_secret "UAT_PRIVATE_KEY_PUBLIC_PEM"     "$PRIVATE_KEY_PUBLIC_PEM"
 
+# UAT APNs (native iOS push — same key, sandbox gateway)
+set_secret "UAT_APNS_KEY_P8"                "$APNS_KEY_P8"
+set_secret "UAT_APNS_KEY_ID"                "$APNS_KEY_ID"
+
 echo ""
 echo "✅ UAT secrets complete"
 
@@ -304,6 +312,9 @@ set_worker_secret "HMAC_SECRET"       "$DATA_API_HMAC"
 set_worker_secret "ACCOUNT_HMAC_KEY"  "$ACCOUNT_HMAC_KEY"
 # Voucher 簽章驗證公鑰（Portal 以對應私鑰簽發儲值憑證 JWT）
 set_worker_secret "PRIVATE_KEY_PUBLIC_PEM" "$PRIVATE_KEY_PUBLIC_PEM"
+# APNs（原生 iOS 推播）
+set_worker_secret "APNS_KEY_P8" "$APNS_KEY_P8"
+set_worker_secret "APNS_KEY_ID" "$APNS_KEY_ID"
 
 echo ""
 echo "✅ Worker secrets complete"
@@ -331,6 +342,9 @@ set_prod_worker_secret "HMAC_SECRET"       "$DATA_API_HMAC"
 set_prod_worker_secret "ACCOUNT_HMAC_KEY"  "$ACCOUNT_HMAC_KEY"
 # Voucher 簽章驗證公鑰（Portal 以對應私鑰簽發儲值憑證 JWT）
 set_prod_worker_secret "PRIVATE_KEY_PUBLIC_PEM" "$PRIVATE_KEY_PUBLIC_PEM"
+# APNs（原生 iOS 推播）
+set_prod_worker_secret "APNS_KEY_P8" "$APNS_KEY_P8"
+set_prod_worker_secret "APNS_KEY_ID" "$APNS_KEY_ID"
 
 echo ""
 echo "✅ Production Worker secrets complete"

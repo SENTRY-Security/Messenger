@@ -131,6 +131,7 @@ import { replayAllBizConvMessages } from '../features/biz-conv-replay.js';
 import { createBizConvCreateModal } from './mobile/modals/biz-conv-create-modal.js';
 import { createBizConvInfoModal } from './mobile/modals/biz-conv-info-modal.js';
 import { subscriptionStatus, redeemSubscription } from '../api/subscription.js';
+import '../features/native-bridge.js';   // installs window.SentryNative (iOS shell ↔ APNs)
 import { showVersionModal } from './version-info.js';
 import QrScanner from '../lib/vendor/qr-scanner.min.js';
 import { disableZoom } from './mobile/zoom-disabler.js';
