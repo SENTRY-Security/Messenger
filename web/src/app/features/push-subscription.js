@@ -2,6 +2,7 @@
 // Handles subscribe/unsubscribe and communicates with the backend.
 
 import { getAccountDigest, ensureDeviceId } from '../core/store.js';
+import { isNativeApp, requestNativePush } from './native-bridge.js';
 
 // VAPID public key — must match the server's VAPID_PUBLIC_KEY.
 // This is a URL-safe base64 encoded P-256 public key.
@@ -48,6 +49,9 @@ function parseUA(ua) {
 }
 
 export function isPushSupported() {
+  // The native iOS shell supports push via APNs even though WKWebView lacks the
+  // Web Push API.
+  if (isNativeApp()) return true;
   return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 }
 
@@ -68,6 +72,10 @@ export async function getPushSubscription() {
 }
 
 export async function subscribePush() {
+  // In the native iOS app, delegate to APNs via the bridge (the token comes back
+  // asynchronously through window.SentryNative.onEvent('pushToken')).
+  if (isNativeApp()) { requestNativePush(); return null; }
+
   if (!isPushSupported()) throw new Error('Push not supported');
 
   const permission = await Notification.requestPermission();

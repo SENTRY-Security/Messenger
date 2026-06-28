@@ -151,6 +151,8 @@ jobs:
           printf '%s' "$SECRET_S3_SECRET_KEY"        | npx wrangler@4 secret put S3_SECRET_KEY --env uat 2>&1 || true
           printf '%s' "$SECRET_WS_TOKEN_SECRET"      | npx wrangler@4 secret put WS_TOKEN_SECRET --env uat 2>&1 || true
           printf '%s' "$SECRET_PRIVATE_KEY_PUBLIC_PEM" | npx wrangler@4 secret put PRIVATE_KEY_PUBLIC_PEM --env uat 2>&1 || true
+          printf '%s' "$SECRET_APNS_KEY_P8" | npx wrangler@4 secret put APNS_KEY_P8 --env uat 2>&1 || true
+          printf '%s' "$SECRET_APNS_KEY_ID" | npx wrangler@4 secret put APNS_KEY_ID --env uat 2>&1 || true
           echo "Worker secrets set."
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.UAT_CLOUDFLARE_API_TOKEN }}
@@ -167,6 +169,8 @@ jobs:
           SECRET_S3_SECRET_KEY: ${{ secrets.UAT_S3_SECRET_KEY }}
           SECRET_WS_TOKEN_SECRET: ${{ secrets.UAT_WS_TOKEN_SECRET }}
           SECRET_PRIVATE_KEY_PUBLIC_PEM: ${{ secrets.UAT_PRIVATE_KEY_PUBLIC_PEM }}
+          SECRET_APNS_KEY_P8: ${{ secrets.UAT_APNS_KEY_P8 }}
+          SECRET_APNS_KEY_ID: ${{ secrets.UAT_APNS_KEY_ID }}
           CI: true
 
   # ── Web (Cloudflare Pages — UAT Preview) ───────────────────────────

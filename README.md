@@ -2019,7 +2019,10 @@ Locale resolution logic is consistent with the main app's `locales/index.js` (BC
 | Preview public key query | `POST /d1/push/preview-keys` | Get preview encryption public keys for all receiver devices (used by sender) |
 | PIN generation | `POST /d1/push/pin/generate` | Generate 6-digit PIN code (for iOS PWA subscription) |
 | PIN verification | `POST /d1/push/pin/verify` | Verify PIN and complete subscription (iOS PWA) |
-| Auto-cleanup | — | Automatically deletes invalid subscriptions upon receiving 404/410 response during push |
+| Register APNs token | `POST /d1/push/apns/subscribe` | Store native iOS APNs device token in `apns_tokens` |
+| Unregister APNs token | `POST /d1/push/apns/unsubscribe` | Remove an APNs device token |
+| Unified fan-out (HMAC) | `POST /d1/push/send` | Send a background push to an account across Web Push + APNs |
+| Auto-cleanup | — | Automatically deletes invalid subscriptions/tokens upon receiving 404/410 (or BadDeviceToken/Unregistered) during push |
 
 ### Platform Compatibility
 
@@ -2319,6 +2322,8 @@ wrangler secret put S3_ACCESS_KEY
 wrangler secret put S3_SECRET_KEY
 wrangler secret put WS_TOKEN_SECRET
 wrangler secret put PRIVATE_KEY_PUBLIC_PEM
+wrangler secret put APNS_KEY_P8     # contents of AuthKey_XXXX.p8 (native iOS push)
+wrangler secret put APNS_KEY_ID
 ```
 
 ### Pages Deployment
@@ -2417,6 +2422,8 @@ cd web && npm run verify:cdn     # CDN integrity verification (verbose)
 | `S3_SECRET_KEY` | R2/S3 secret key |
 | `WS_TOKEN_SECRET` | WebSocket JWT signing key (>= 32 characters) |
 | `PRIVATE_KEY_PUBLIC_PEM` | RS256 public key for verifying top-up voucher JWTs (matches Portal `PRIVATE_KEY_PEM`) |
+| `APNS_KEY_P8` | APNs auth key (.p8 contents) for native iOS push |
+| `APNS_KEY_ID` | APNs key ID (10-char) for the .p8 |
 
 ### D1 Database Binding
 

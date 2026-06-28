@@ -23,6 +23,12 @@ SIGNED_GET_TTL = "900"
 VAPID_PUBLIC_KEY = "BGNlllC_H-lqHnnKrxT2IhF_5_xei3is_loJHesBmzjhfgmGMwq_nwlVVaKkrOhTnCO9_DeFtlotIl3Oug3eI2k"
 VAPID_SUBJECT = "mailto:admin@sentry.red"
 # VAPID_PRIVATE_KEY → set via: wrangler secret put VAPID_PRIVATE_KEY
+# APNs (native iOS app). Non-secret config; the .p8 key + key id are secrets.
+APNS_TEAM_ID = "DYAAM5G8JF"
+APNS_TOPIC = "red.sentry.app.SENTRY-Messenger"
+APNS_ENV = "production"
+# APNS_KEY_P8  → set via: wrangler secret put APNS_KEY_P8   (contents of AuthKey_XXXX.p8)
+# APNS_KEY_ID  → set via: wrangler secret put APNS_KEY_ID
 # Comma-separated origins allowed for CORS (M-11 fix)
 CORS_ORIGINS = "https://message.sentry.red"
 # Genymotion Cloud — App-as-a-Service
@@ -90,6 +96,11 @@ SIGNED_GET_TTL = "900"
 VAPID_PUBLIC_KEY = "BGNlllC_H-lqHnnKrxT2IhF_5_xei3is_loJHesBmzjhfgmGMwq_nwlVVaKkrOhTnCO9_DeFtlotIl3Oug3eI2k"
 VAPID_SUBJECT = "mailto:admin@sentry.red"
 # VAPID_PRIVATE_KEY → set via: wrangler secret put VAPID_PRIVATE_KEY --env uat
+# APNs — UAT uses the sandbox gateway (development device tokens).
+APNS_TEAM_ID = "DYAAM5G8JF"
+APNS_TOPIC = "red.sentry.app.SENTRY-Messenger"
+APNS_ENV = "sandbox"
+# APNS_KEY_P8 / APNS_KEY_ID → wrangler secret put … --env uat
 [[env.uat.d1_databases]]
 binding = "DB"
 database_name = "message_db_uat"

@@ -3,6 +3,7 @@ import { toU8Strict } from './u8-strict.js';
 import { createJwt, verifyJwt } from './jwt.js';
 import { jwtVerify, importSPKI, errors as joseErrors } from 'jose';
 import { createWebPush } from './web-push.js';
+import { createAPNs } from './apns.js';
 import {
   listRecipes, startInstance, getInstance,
   listInstances, stopInstance, saveInstance, waitForInstance,
@@ -9730,6 +9731,82 @@ async function handlePublicRoutes(req, env) {
 
 // ── Push subscription routes ────────────────────────────────────
 
+function apnsFromEnv(env) {
+  return createAPNs({
+    teamId: env.APNS_TEAM_ID,
+    keyId: env.APNS_KEY_ID,
+    p8: env.APNS_KEY_P8,
+    topic: env.APNS_TOPIC,
+    environment: env.APNS_ENV,
+  });
+}
+
+/**
+ * Fan out a background push to every transport registered for an account:
+ * Web Push (push_subscriptions) and APNs (apns_tokens). Best-effort; prunes
+ * dead endpoints/tokens. Returns a per-transport summary. This is the single
+ * orchestration entry an offline/message trigger should call.
+ */
+async function sendBackgroundPush(env, accountDigest, notification = {}) {
+  const digest = normalizeAccountDigest(accountDigest);
+  const summary = { web: { sent: 0, gone: 0, failed: 0 }, apns: { sent: 0, gone: 0, failed: 0 } };
+  if (!digest) return summary;
+
+  // ── Web Push (browser / home-screen PWA) ──
+  if (env.VAPID_PRIVATE_KEY && env.VAPID_PUBLIC_KEY) {
+    try {
+      const rows = await env.DB.prepare(
+        `SELECT endpoint, keys_p256dh, keys_auth FROM push_subscriptions WHERE account_digest = ?1`
+      ).bind(digest).all();
+      const subs = rows?.results || [];
+      if (subs.length) {
+        const { sendPushNotification } = createWebPush({
+          vapidPublicKey: env.VAPID_PUBLIC_KEY,
+          vapidPrivateKey: env.VAPID_PRIVATE_KEY,
+          vapidSubject: env.VAPID_SUBJECT || 'mailto:admin@sentry.red',
+        });
+        const payload = JSON.stringify({
+          title: notification.title || 'SENTRY MESSENGER',
+          ...(notification.type ? { type: notification.type } : {}),
+          ...(notification.encrypted_preview ? { encrypted_preview: notification.encrypted_preview } : {}),
+          ...(notification.url ? { url: notification.url } : {}),
+        });
+        for (const s of subs) {
+          try {
+            const r = await sendPushNotification(
+              { endpoint: s.endpoint, keys: { p256dh: s.keys_p256dh, auth: s.keys_auth } },
+              payload
+            );
+            if (r.gone) { summary.web.gone++; await env.DB.prepare(`DELETE FROM push_subscriptions WHERE endpoint = ?1`).bind(s.endpoint).run(); }
+            else if (r.ok) summary.web.sent++;
+            else summary.web.failed++;
+          } catch { summary.web.failed++; }
+        }
+      }
+    } catch (err) { console.warn('background_push_web_failed', err?.message || err); }
+  }
+
+  // ── APNs (native iOS app / App Clip) ──
+  const apns = apnsFromEnv(env);
+  if (apns.enabled) {
+    try {
+      const rows = await env.DB.prepare(
+        `SELECT token, topic FROM apns_tokens WHERE account_digest = ?1`
+      ).bind(digest).all();
+      for (const t of (rows?.results || [])) {
+        try {
+          const r = await apns.send(t.token, notification, { topic: t.topic || env.APNS_TOPIC });
+          if (r.gone) { summary.apns.gone++; await env.DB.prepare(`DELETE FROM apns_tokens WHERE token = ?1`).bind(t.token).run(); }
+          else if (r.ok) summary.apns.sent++;
+          else summary.apns.failed++;
+        } catch { summary.apns.failed++; }
+      }
+    } catch (err) { console.warn('background_push_apns_failed', err?.message || err); }
+  }
+
+  return summary;
+}
+
 async function handlePushRoutes(req, env) {
   const url = new URL(req.url);
 
@@ -9982,6 +10059,104 @@ async function handlePushRoutes(req, env) {
       console.error('push_test_failed', err?.message || err);
       return json({ error: 'PushTestFailed', message: err?.message || 'test failed' }, { status: 500 });
     }
+  }
+
+  // POST /d1/push/apns/subscribe — register a native APNs device token
+  if (req.method === 'POST' && url.pathname === '/d1/push/apns/subscribe') {
+    let body;
+    try { body = await req.json(); } catch {
+      return json({ error: 'BadRequest', message: 'invalid json' }, { status: 400 });
+    }
+    const accountDigest = normalizeAccountDigest(body?.accountDigest || body?.account_digest);
+    const deviceId = normalizeDeviceId(body?.deviceId || body?.device_id);
+    const token = String(body?.token || '').trim();
+    const environment = body?.environment === 'sandbox' ? 'sandbox' : 'production';
+    if (!accountDigest || !token) {
+      return json({ error: 'BadRequest', message: 'accountDigest and token required' }, { status: 400 });
+    }
+    try {
+      await env.DB.prepare(
+        `INSERT INTO apns_tokens (account_digest, device_id, token, topic, environment, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, strftime('%s','now'), strftime('%s','now'))
+         ON CONFLICT(token) DO UPDATE SET
+           account_digest=excluded.account_digest,
+           device_id=excluded.device_id,
+           topic=excluded.topic,
+           environment=excluded.environment,
+           updated_at=strftime('%s','now')`
+      ).bind(accountDigest, deviceId || null, token, env.APNS_TOPIC || null, environment).run();
+      return json({ ok: true });
+    } catch (err) {
+      console.error('apns_subscribe_failed', err?.message || err);
+      return json({ error: 'ApnsSubscribeFailed', message: err?.message || 'subscribe failed' }, { status: 500 });
+    }
+  }
+
+  // POST /d1/push/apns/unsubscribe — remove an APNs device token
+  if (req.method === 'POST' && url.pathname === '/d1/push/apns/unsubscribe') {
+    let body;
+    try { body = await req.json(); } catch {
+      return json({ error: 'BadRequest', message: 'invalid json' }, { status: 400 });
+    }
+    const token = String(body?.token || '').trim();
+    if (!token) return json({ error: 'BadRequest', message: 'token required' }, { status: 400 });
+    try {
+      await env.DB.prepare(`DELETE FROM apns_tokens WHERE token = ?1`).bind(token).run();
+      return json({ ok: true });
+    } catch (err) {
+      console.error('apns_unsubscribe_failed', err?.message || err);
+      return json({ error: 'ApnsUnsubscribeFailed', message: err?.message || 'unsubscribe failed' }, { status: 500 });
+    }
+  }
+
+  // POST /d1/push/apns/test — send a test APNs push to an account's tokens (HMAC)
+  if (req.method === 'POST' && url.pathname === '/d1/push/apns/test') {
+    if (!await verifyHMAC(req, env)) return json({ error: 'Unauthorized' }, { status: 401 });
+    let body;
+    try { body = await req.json(); } catch {
+      return json({ error: 'BadRequest', message: 'invalid json' }, { status: 400 });
+    }
+    const accountDigest = normalizeAccountDigest(body?.accountDigest || body?.account_digest);
+    if (!accountDigest) return json({ error: 'BadRequest', message: 'accountDigest required' }, { status: 400 });
+    const apns = apnsFromEnv(env);
+    if (!apns.enabled) return json({ ok: false, message: 'apns_disabled (APNS_KEY_P8/KEY_ID/TEAM_ID not set)' }, { status: 503 });
+    try {
+      const rows = await env.DB.prepare(
+        `SELECT token, topic FROM apns_tokens WHERE account_digest = ?1`
+      ).bind(accountDigest).all();
+      const tokens = rows?.results || [];
+      let sent = 0, gone = 0, failed = 0;
+      for (const t of tokens) {
+        const r = await apns.send(t.token, { type: body?.type || 'message-new', body: body?.body }, { topic: t.topic || env.APNS_TOPIC });
+        if (r.gone) { gone++; await env.DB.prepare(`DELETE FROM apns_tokens WHERE token = ?1`).bind(t.token).run(); }
+        else if (r.ok) sent++; else failed++;
+      }
+      return json({ ok: true, tokens: tokens.length, sent, gone, failed });
+    } catch (err) {
+      console.error('apns_test_failed', err?.message || err);
+      return json({ error: 'ApnsTestFailed', message: err?.message || 'test failed' }, { status: 500 });
+    }
+  }
+
+  // POST /d1/push/send — unified background push fan-out (Web Push + APNs, HMAC)
+  if (req.method === 'POST' && url.pathname === '/d1/push/send') {
+    if (!await verifyHMAC(req, env)) return json({ error: 'Unauthorized' }, { status: 401 });
+    let body;
+    try { body = await req.json(); } catch {
+      return json({ error: 'BadRequest', message: 'invalid json' }, { status: 400 });
+    }
+    const accountDigest = normalizeAccountDigest(body?.accountDigest || body?.account_digest);
+    if (!accountDigest) return json({ error: 'BadRequest', message: 'accountDigest required' }, { status: 400 });
+    const notification = {
+      type: body?.type,
+      title: body?.title,
+      body: body?.body,
+      url: body?.url,
+      badge: body?.badge,
+      encrypted_preview: body?.encrypted_preview,
+    };
+    const summary = await sendBackgroundPush(env, accountDigest, notification);
+    return json({ ok: true, ...summary });
   }
 
   return null;
