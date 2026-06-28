@@ -21,6 +21,13 @@ targets:
     platform: iOS
     sources:
       - path: SentryMessenger
+      # Embedded web bundle (folder reference preserves nested structure).
+      # Populated by scripts/bundle-web.sh; optional so an empty/absent folder
+      # doesn't fail generation when building in remote (non-bundled) mode.
+      - path: WebApp
+        type: folder
+        buildPhase: resources
+        optional: true
     dependencies:
       - target: SentryMessengerClip
         embed: true             # "Embed App Clips" copy phase

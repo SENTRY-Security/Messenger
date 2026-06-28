@@ -51,6 +51,14 @@
 	<key>WebBaseURL</key>
 	<string>https://message.sentry.red</string>
 
+	<!-- Embedded web bundle. Set UseBundledWeb=true to serve the UI from the
+	     app's WebApp/ folder over sentry-app://; ApiOrigin is the absolute
+	     backend the bundled web calls. Default off (loads WebBaseURL remotely). -->
+	<key>UseBundledWeb</key>
+	<string>false</string>
+	<key>ApiOrigin</key>
+	<string>https://message.sentry.red</string>
+
 	<!-- Permission usage strings -->
 	<key>NFCReaderUsageDescription</key>
 	<string>感應您的 NTAG424 安全卡片以登入。</string>
