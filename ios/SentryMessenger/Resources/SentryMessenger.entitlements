@@ -20,5 +20,11 @@
 		<string>appclips:app.message.sentry.red</string>
 		<string>applinks:app.message.sentry.red</string>
 	</array>
+
+	<!-- Shared container for App Clip ↔ full app hand-off (non-sensitive flags). -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.red.sentry.app.SENTRY-Messenger</string>
+	</array>
 </dict>
 </plist>

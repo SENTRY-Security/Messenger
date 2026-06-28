@@ -11,7 +11,7 @@ settings:
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
-    DEVELOPMENT_TEAM: ""        # Fill with your Apple Developer Team ID
+    DEVELOPMENT_TEAM: DYAAM5G8JF   # Matches the appID in the hosted AASA
     CODE_SIGN_STYLE: Automatic
 
 targets:
@@ -26,7 +26,7 @@ targets:
         embed: true             # "Embed App Clips" copy phase
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.messenger
+        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.app.SENTRY-Messenger
         PRODUCT_NAME: SentryMessenger
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: SentryMessenger/Resources/Info.plist
@@ -46,7 +46,7 @@ targets:
       - path: SentryMessenger/Shared    # reuse WebView / NFC / bridge / login
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.messenger.Clip
+        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.app.SENTRY-Messenger.Clip
         PRODUCT_NAME: SentryMessengerClip
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: SentryMessengerClip/Resources/Info.plist

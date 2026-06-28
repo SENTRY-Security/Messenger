@@ -5,13 +5,19 @@
 	<!-- Links this clip to its parent full app. AppIdentifierPrefix is the Team ID. -->
 	<key>com.apple.developer.parent-application-identifiers</key>
 	<array>
-		<string>$(AppIdentifierPrefix)red.sentry.messenger</string>
+		<string>$(AppIdentifierPrefix)red.sentry.app.SENTRY-Messenger</string>
 	</array>
 
 	<!-- App Clip invocation domain (NTAG424 / universal link). -->
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>appclips:app.message.sentry.red</string>
+	</array>
+
+	<!-- Shared container for App Clip ↔ full app hand-off (non-sensitive flags). -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.red.sentry.app.SENTRY-Messenger</string>
 	</array>
 
 	<!-- Core NFC: read NDEF (the NTAG424 SDM URL). -->
