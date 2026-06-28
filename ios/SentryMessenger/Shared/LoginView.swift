@@ -68,8 +68,11 @@ struct LoginView: View {
             DispatchQueue.main.async {
                 scanning = false
                 switch result {
-                case .success(let url): onScanned(url)
-                case .failure(let error): errorText = error.localizedDescription
+                case .success(let url):
+                    onScanned(url)
+                case .failure(let error):
+                    // Don't show a scary error when the user simply dismissed the sheet.
+                    errorText = NFCLoginService.isCancellation(error) ? nil : error.localizedDescription
                 }
             }
         }
