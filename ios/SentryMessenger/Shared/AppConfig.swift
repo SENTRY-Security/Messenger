@@ -17,11 +17,19 @@ enum AppConfig {
     /// `window.webkit.messageHandlers.sentryNative.postMessage(...)`
     static let bridgeName = "sentryNative"
 
-    /// Hosts accepted from a scanned NTAG424 tag. Prevents a rogue tag from
-    /// redirecting login into an attacker-controlled origin.
-    static let allowedTagHosts: Set<String> = [
+    /// First-party messenger hosts. Single source of truth for both the NFC tag
+    /// host whitelist and in-app navigation gating.
+    static let messengerHosts: Set<String> = [
+        "message.sentry.red",
         "app.message.sentry.red",
         "uat.message.sentry.red",
-        "message.sentry.red",
     ]
+
+    /// Hosts accepted from a scanned NTAG424 tag. Prevents a rogue tag from
+    /// redirecting login into an attacker-controlled origin.
+    static var allowedTagHosts: Set<String> { messengerHosts }
+
+    /// Main-frame navigations to hosts outside this set open in an external
+    /// browser (SFSafariViewController) instead of inside the app shell.
+    static var allowedNavigationHosts: Set<String> { messengerHosts }
 }
