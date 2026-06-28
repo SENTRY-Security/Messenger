@@ -21,6 +21,14 @@ final class WebViewModel: NSObject, ObservableObject {
         let controller = WKUserContentController()
         config.userContentController = controller
 
+        // Embedded web bundle: serve the UI from the app over a custom scheme and
+        // tell the web layer which absolute backend origin to call.
+        if AppConfig.useBundledWeb, let root = BundledWebSchemeHandler.rootURL {
+            config.setURLSchemeHandler(BundledWebSchemeHandler(rootDirectory: root), forURLScheme: AppConfig.bundleScheme)
+            let js = "window.API_ORIGIN = '\(AppConfig.apiOrigin)';"
+            controller.addUserScript(WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        }
+
         webView = WKWebView(frame: .zero, configuration: config)
         super.init()
 
@@ -42,7 +50,7 @@ final class WebViewModel: NSObject, ObservableObject {
         refresh.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         webView.scrollView.refreshControl = refresh
 
-        load(url)
+        load(AppConfig.resolveLoadURL(url))
     }
 
     func load(_ url: URL) {
@@ -53,7 +61,7 @@ final class WebViewModel: NSObject, ObservableObject {
     func reload() {
         loadError = nil
         if webView.url == nil {
-            load(AppConfig.startURL)
+            load(AppConfig.useBundledWeb ? AppConfig.bundledStartURL : AppConfig.startURL)
         } else {
             webView.reload()
         }

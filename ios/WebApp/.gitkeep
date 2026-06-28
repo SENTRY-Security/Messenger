@@ -1,0 +1,3 @@
+# Populated at build time by scripts/bundle-web.sh (web/dist → here).
+# Bundled into the full app as a folder reference when UseBundledWeb=true.
+# Not committed beyond this placeholder.

@@ -150,7 +150,7 @@ export function createWsIntegration({ deps }) {
       }
     }
     if (!wsUrl) {
-      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      let proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
       let baseHost = connectionIndicatorEl?.dataset?.wsHost || '';
       let path = connectionIndicatorEl?.dataset?.wsPath || '/api/ws';
       const apiOriginRaw = typeof globalThis !== 'undefined' && typeof globalThis.API_ORIGIN === 'string'
@@ -160,6 +160,10 @@ export function createWsIntegration({ deps }) {
         try {
           const originUrl = new URL(apiOriginRaw);
           baseHost = originUrl.host || baseHost;
+          // Derive ws/wss from the API origin (not location.protocol): when the
+          // page is served from a custom scheme (native bundled app) we still
+          // want wss for an https backend.
+          proto = originUrl.protocol === 'https:' ? 'wss:' : 'ws:';
           const prefix = originUrl.pathname && originUrl.pathname !== '/' ? originUrl.pathname.replace(/\/$/, '') : '';
           if (prefix) {
             path = path.startsWith('/') ? `${prefix}${path}` : `${prefix}/${path}`;

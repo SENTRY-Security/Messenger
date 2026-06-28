@@ -30,7 +30,7 @@ APNS_ENV = "production"
 # APNS_KEY_P8  → set via: wrangler secret put APNS_KEY_P8   (contents of AuthKey_XXXX.p8)
 # APNS_KEY_ID  → set via: wrangler secret put APNS_KEY_ID
 # Comma-separated origins allowed for CORS (M-11 fix)
-CORS_ORIGINS = "https://message.sentry.red"
+CORS_ORIGINS = "https://message.sentry.red,sentry-app://app"
 # Genymotion Cloud — App-as-a-Service
 # GENYMOTION_API_KEY → set via: wrangler secret put GENYMOTION_API_KEY
 # Recipe UUID for the golden Android image with pre-installed apps
@@ -81,7 +81,7 @@ name = "message-data-uat"
 [env.uat.vars]
 OPAQUE_SERVER_ID = "uat-api.message.sentry.red"
 ENABLE_DEBUG_ENDPOINTS = "true"
-CORS_ORIGINS = "https://uat-message.sentry.red"
+CORS_ORIGINS = "https://uat-message.sentry.red,sentry-app://app"
 # GENYMOTION_API_KEY → set via: wrangler secret put GENYMOTION_API_KEY --env uat
 GENYMOTION_RECIPE_UUID = "5cd0ab93-5425-4e44-a962-0ab8c3360a97"
 NTAG424_KDF = "HKDF"

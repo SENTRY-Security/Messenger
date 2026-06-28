@@ -32,4 +32,50 @@ enum AppConfig {
     /// Main-frame navigations to hosts outside this set open in an external
     /// browser (SFSafariViewController) instead of inside the app shell.
     static var allowedNavigationHosts: Set<String> { messengerHosts }
+
+    // ── Embedded web bundle (offline-capable shell) ──────────────────────
+    //
+    // When enabled, the FULL app serves the web UI from the embedded `WebApp/`
+    // bundle through a custom scheme and talks to the backend at `apiOrigin`.
+    // The App Clip always loads remotely (size limit). Toggle via Info.plist
+    // `UseBundledWeb` = "true"; default off until the bundled build is
+    // device-verified.
+
+    static var useBundledWeb: Bool {
+        (Bundle.main.object(forInfoDictionaryKey: "UseBundledWeb") as? String)?.lowercased() == "true"
+    }
+
+    static let bundleScheme = "sentry-app"
+    static let bundleHost = "app"
+    /// Entry HTML inside `WebApp/` (relative path).
+    static let bundledEntryPath = "pages/app.html"
+
+    /// Absolute backend origin the bundled web calls (injected as
+    /// `window.API_ORIGIN`). Override via Info.plist `ApiOrigin`.
+    static var apiOrigin: String {
+        if let raw = Bundle.main.object(forInfoDictionaryKey: "ApiOrigin") as? String, !raw.isEmpty {
+            return raw.trimmingCharacters(in: .whitespaces)
+        }
+        return "https://message.sentry.red"
+    }
+
+    static var bundledStartURL: URL {
+        URL(string: "\(bundleScheme)://\(bundleHost)/\(bundledEntryPath)")!
+    }
+
+    /// Resolve which URL the web view should actually load. In bundled mode a
+    /// first-party https URL (e.g. the NTAG424 SDM link) is mapped onto the
+    /// embedded scheme, preserving path + query so the bundled web performs
+    /// login against `apiOrigin`.
+    static func resolveLoadURL(_ url: URL) -> URL {
+        guard useBundledWeb else { return url }
+        var comps = URLComponents()
+        comps.scheme = bundleScheme
+        comps.host = bundleHost
+        let path = (url.path.isEmpty || url.path == "/") ? "/\(bundledEntryPath)" : url.path
+        comps.path = path
+        comps.query = url.query
+        return comps.url ?? bundledStartURL
+    }
 }
+
