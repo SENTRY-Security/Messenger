@@ -49,6 +49,11 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     ) {
         print("[Push] registration failed: \(error.localizedDescription)")
     }
+
+    /// Clear the app badge whenever the app becomes active.
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        UNUserNotificationCenter.current().setBadgeCount(0)
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -58,5 +63,17 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
         [.banner, .badge, .sound]
+    }
+
+    /// Notification tapped → if it carries a first-party `url`, ask the web
+    /// bridge to navigate there (e.g. deep-link to a conversation).
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse
+    ) async {
+        let info = response.notification.request.content.userInfo
+        if let raw = info["url"] as? String, let url = URL(string: raw) {
+            NotificationCenter.default.post(name: .sentryOpenURL, object: url)
+        }
     }
 }

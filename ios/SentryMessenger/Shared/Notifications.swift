@@ -8,4 +8,9 @@ extension Notification.Name {
     /// Posted by the host app once an APNs device token is available.
     /// `object` is the hex token `String`.
     static let sentryPushToken = Notification.Name("red.sentry.messenger.pushToken")
+
+    /// Posted when a notification is tapped and carries a first-party URL to
+    /// open. `object` is the `URL`. The web bridge navigates the existing web
+    /// view in place (no shell reset).
+    static let sentryOpenURL = Notification.Name("red.sentry.messenger.openURL")
 }

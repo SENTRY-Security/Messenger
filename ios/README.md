@@ -76,6 +76,22 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 - **其他**：pull-to-refresh、載入錯誤重試、`target=_blank` 依白名單內外分流、
   鍵盤互動式收起。
 
+## 推播（APNs）
+
+iOS 的 WKWebView **不支援 Web Push**，因此原生 App 走 **APNs**：
+
+1. web 呼叫 bridge `registerPush` → 原生顯示權限詢問並向 APNs 註冊。
+2. 取得 device token 後，原生以 `pushToken` 事件回拋給 web（`{ token, platform: 'ios' }`）。
+3. web/後端需把此 APNs token 與帳號 `digest` 綁定儲存。
+4. 點擊通知：payload 的 `aps` 之外可帶第一方 `url`，原生會就地導航既有 web view
+   到該 URL（深連結到對話），不重置 shell。
+
+⚠️ **後端缺口（需 data-worker 配合，非 iOS 範圍）**：目前 `push_subscriptions`
+為 Web Push（VAPID）。原生 APNs 需要新增 APNs sender（APNs key/p8、topic =
+bundle id）與 token 儲存/發送路徑。iOS 端已備妥註冊與 token 上拋，待後端對接。
+
+> entitlement `aps-environment` 上架/TestFlight 請改為 `production`。
+
 ## 需在 Apple Developer 啟用的能力（Capabilities）
 
 - **Near Field Communication Tag Reading**（NFC，NDEF）
