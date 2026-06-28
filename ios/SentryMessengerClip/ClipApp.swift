@@ -25,6 +25,13 @@ struct SentryMessengerClipApp: App {
                     if let url = activity.webpageURL { router.open(url) }
                 }
                 .onOpenURL { router.open($0) }
+                .onAppear {
+                    SharedStore.lastClipLaunch = Date()
+                    // Invite installing the full app shortly after launch.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        ClipInstallPrompt.present()
+                    }
+                }
         }
     }
 }
