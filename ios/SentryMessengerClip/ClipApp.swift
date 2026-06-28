@@ -4,34 +4,27 @@ import SwiftUI
 ///
 /// An NTAG424 tap can launch this lightweight clip on devices without the full
 /// app installed. The tag URL arrives as a `NSUserActivityTypeBrowsingWeb`
-/// invocation; we load it directly. If launched without a URL (e.g. from the
-/// App Clip card), we fall back to the native NFC login screen.
+/// invocation and is routed into the web shell via `SessionRouter`. If launched
+/// without a URL (e.g. from the App Clip card) the native NFC login is shown.
 ///
 /// TODO (to discuss later):
 ///   - Configure the App Clip's Advanced/Default Experience + invocation URL in
-///     App Store Connect, and the `appclips:` associated domain.
-///   - Decide which features the clip exposes vs. prompting full-app install
-///     (SKOverlay / "Open in App").
-///   - Ephemeral notification permission, account hand-off to the full app.
+///     App Store Connect, and the `appclips:` associated domain (AASA).
+///   - SKOverlay / "Open in App" prompt to install the full app.
+///   - Account hand-off to the full app (shared App Group / Keychain).
+///   - Ephemeral notification permission.
 @main
 struct SentryMessengerClipApp: App {
-    @State private var invocationURL: URL?
+    @StateObject private var router = SessionRouter()
 
     var body: some Scene {
         WindowGroup {
-            Group {
-                if let invocationURL {
-                    WebContainerView(url: invocationURL)
-                } else {
-                    LoginView { invocationURL = $0 }
+            RootView(router: router)
+                .preferredColorScheme(.dark)
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                    if let url = activity.webpageURL { router.open(url) }
                 }
-            }
-            .preferredColorScheme(.dark)
-            .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
-                if let url = activity.webpageURL, url.host.map(AppConfig.allowedTagHosts.contains) == true {
-                    invocationURL = url
-                }
-            }
+                .onOpenURL { router.open($0) }
         }
     }
 }

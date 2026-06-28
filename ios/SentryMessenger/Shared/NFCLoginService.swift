@@ -21,6 +21,28 @@ final class NFCLoginService: NSObject {
             case .invalidHost: return "卡片連結網域不被信任"
             }
         }
+
+        /// Stable code surfaced to the web layer via the `nfcError` bridge event.
+        var code: String {
+            switch self {
+            case .unavailable: return "unavailable"
+            case .noURLFound:  return "no_url"
+            case .invalidHost: return "invalid_host"
+            }
+        }
+    }
+
+    /// True when the user dismissed the NFC sheet (not a real failure).
+    static func isCancellation(_ error: Error) -> Bool {
+        guard let readerError = error as? NFCReaderError else { return false }
+        return readerError.code == .readerSessionInvalidationErrorUserCanceled
+    }
+
+    /// Stable error code for any error produced by this service.
+    static func code(for error: Error) -> String {
+        if let nfc = error as? NFCError { return nfc.code }
+        if isCancellation(error) { return "cancelled" }
+        return "system"
     }
 
     private var session: NFCNDEFReaderSession?

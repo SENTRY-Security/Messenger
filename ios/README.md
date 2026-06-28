@@ -34,6 +34,10 @@ open SentryMessenger.xcodeproj
   成功後原生會把 web view 導向動態 URL，並回呼
   `window.SentryNative.onEvent('nfcResult', { url })`。
 
+> **冷啟動直接登入**：若在 App 外點到 NTAG424 的 universal link（https），系統會
+> 以 `NSUserActivityTypeBrowsingWeb` 喚起 App，`SessionRouter` 驗證網域後直接載入
+> 該動態 URL，跳過原生登入畫面。需設定 `applinks:` associated domain 與 AASA。
+
 ### 2) App Clip（部分實作，稍後討論）
 - `SentryMessengerClip` target。NTAG424 感應可在「未安裝完整 App」的裝置上
   喚起 App Clip，URL 以 `NSUserActivityTypeBrowsingWeb` 進入後直接載入。
@@ -57,7 +61,7 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | event       | data                          |
 |-------------|-------------------------------|
 | `nfcResult` | `{ url }`                     |
-| `nfcError`  | `{ message }`                 |
+| `nfcError`  | `{ message, code }` — code: `unavailable` / `no_url` / `invalid_host` / `cancelled` / `system` |
 | `pushToken` | `{ token, platform: 'ios' }`  |
 
 ## 外殼行為（WebView）

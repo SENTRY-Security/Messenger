@@ -64,7 +64,10 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
                     self?.webView?.load(URLRequest(url: url))
                     self?.sendEvent("nfcResult", data: ["url": url.absoluteString])
                 case .failure(let error):
-                    self?.sendEvent("nfcError", data: ["message": error.localizedDescription])
+                    self?.sendEvent("nfcError", data: [
+                        "message": error.localizedDescription,
+                        "code": NFCLoginService.code(for: error),
+                    ])
                 }
             }
         }
