@@ -1,0 +1,62 @@
+import UIKit
+import UserNotifications
+
+/// Hosts UIKit-only lifecycle hooks that SwiftUI's App protocol does not expose,
+/// chiefly Apple Push Notification (APNs) registration.
+///
+/// Decoupled from the web layer via `NotificationCenter`: the web bridge posts
+/// `.sentryRegisterPush`, and we publish the resulting token back via
+/// `.sentryPushToken`. This keeps `NativeBridge` shareable with the App Clip,
+/// which has no AppDelegate.
+///
+/// NOTE: Push requires enabling the "Push Notifications" capability and a paid
+/// Apple Developer account. The code compiles and runs without it.
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        UNUserNotificationCenter.current().delegate = self
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(registerForPushNotifications),
+            name: .sentryRegisterPush, object: nil)
+        return true
+    }
+
+    /// Prompt for notification permission, then register with APNs. Triggered by
+    /// the web app (`registerPush` bridge action) so the prompt appears in a
+    /// meaningful context rather than on cold launch.
+    @objc func registerForPushNotifications() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, _ in
+            guard granted else { return }
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+    }
+
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        let token = deviceToken.map { String(format: "%02x", $0) }.joined()
+        NotificationCenter.default.post(name: .sentryPushToken, object: token)
+    }
+
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("[Push] registration failed: \(error.localizedDescription)")
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    /// Show notifications even while the app is foregrounded.
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        [.banner, .badge, .sound]
+    }
+}
