@@ -33,7 +33,7 @@ targets:
         embed: true             # "Embed App Clips" copy phase
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.app.SENTRY-Messenger
+        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.messenger
         PRODUCT_NAME: SentryMessenger
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: SentryMessenger/Resources/Info.plist
@@ -53,7 +53,7 @@ targets:
       - path: SentryMessenger/Shared    # reuse WebView / NFC / bridge / login
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.app.SENTRY-Messenger.Clip
+        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.messenger.Clip
         PRODUCT_NAME: SentryMessengerClip
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: SentryMessengerClip/Resources/Info.plist

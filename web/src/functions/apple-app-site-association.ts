@@ -6,7 +6,7 @@ export const onRequest: PagesFunction = async () => {
       apps: [],
       details: [
         {
-          appID: 'HW8N8C46HG.red.sentry.app.SENTRY-Messenger',
+          appID: 'HW8N8C46HG.red.sentry.messenger',
           paths: ['*']
         }
       ]

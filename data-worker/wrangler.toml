@@ -25,7 +25,7 @@ VAPID_SUBJECT = "mailto:admin@sentry.red"
 # VAPID_PRIVATE_KEY → set via: wrangler secret put VAPID_PRIVATE_KEY
 # APNs (native iOS app). Non-secret config; the .p8 key + key id are secrets.
 APNS_TEAM_ID = "HW8N8C46HG"
-APNS_TOPIC = "red.sentry.app.SENTRY-Messenger"
+APNS_TOPIC = "red.sentry.messenger"
 APNS_ENV = "production"
 # APNS_KEY_P8  → set via: wrangler secret put APNS_KEY_P8   (contents of AuthKey_XXXX.p8)
 # APNS_KEY_ID  → set via: wrangler secret put APNS_KEY_ID
@@ -98,7 +98,7 @@ VAPID_SUBJECT = "mailto:admin@sentry.red"
 # VAPID_PRIVATE_KEY → set via: wrangler secret put VAPID_PRIVATE_KEY --env uat
 # APNs — UAT uses the sandbox gateway (development device tokens).
 APNS_TEAM_ID = "HW8N8C46HG"
-APNS_TOPIC = "red.sentry.app.SENTRY-Messenger"
+APNS_TOPIC = "red.sentry.messenger"
 APNS_ENV = "sandbox"
 # APNS_KEY_P8 / APNS_KEY_ID → wrangler secret put … --env uat
 [[env.uat.d1_databases]]
