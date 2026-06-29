@@ -132,6 +132,7 @@ import { createBizConvCreateModal } from './mobile/modals/biz-conv-create-modal.
 import { createBizConvInfoModal } from './mobile/modals/biz-conv-info-modal.js';
 import { subscriptionStatus, redeemSubscription } from '../api/subscription.js';
 import { isNativeApp } from '../features/native-bridge.js';   // installs window.SentryNative (iOS shell ↔ APNs)
+import '../features/native-secure-session.js';                // installs iOS lock-gate / secure-session glue (no-op on web)
 import { showVersionModal } from './version-info.js';
 import QrScanner from '../lib/vendor/qr-scanner.min.js';
 import { disableZoom } from './mobile/zoom-disabler.js';
@@ -2738,6 +2739,14 @@ profileInitPromise
 
 
 function handleBackgroundAutoLogout(reason = t('auth.backgroundAutoLogout'), { skipVisibilityCheck = false } = {}) {
+  // iOS native app: background-timer auto-logout is disabled — the session stays
+  // alive across backgrounding (secure storage + FaceID protect it instead).
+  // NOTE: this does NOT affect the "logged in elsewhere" force-logout, which the
+  // WebSocket layer drives via secureLogout directly (single-device kick stays).
+  if (isNativeApp()) {
+    log({ autoLogoutSkip: 'native-app' });
+    return;
+  }
   if (logoutInProgress || _autoLoggedOut) {
     log({ autoLogoutSkip: 'logout-in-progress', logoutInProgress, _autoLoggedOut });
     return;

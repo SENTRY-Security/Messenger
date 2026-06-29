@@ -69,6 +69,13 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `callConnected`| 通話接通（payload: callId）          |
 | `callStateChanged`| 狀態變更（payload: callId, muted） |
 | `callEnded`   | 通話結束（payload: callId, reason）    |
+| `secureStore` | 存入 Keychain（payload: kek, account_token, account_digest） |
+| `secureLoad`  | 解鎖後讀出 session（回 `secureSessionLoaded`） |
+| `clearSecureSession`| 清除 Keychain session（登出/被踢） |
+| `getLockMode` / `setLockMode` | 取得/設定鎖定模式（none/faceid/nfc，回 `lockMode`） |
+| `openLockSettings` | 開啟原生鎖定設定面 |
+| `lockNow`     | 立即上鎖                              |
+| `nfcUnlockResult` | NFC 解鎖驗證結果（payload: ok）      |
 
 原生 → JS：呼叫 `window.SentryNative.onEvent(name, data)`
 
@@ -82,6 +89,9 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `callEndedByUser` | `{ callId }` — 使用者於系統 UI 按結束/拒接 |
 | `callMuteToggled` | `{ callId, muted }` — 系統 UI 靜音切換   |
 | `audioReady`      | `{ callId }` — CallKit 啟用音訊 session |
+| `secureSessionLoaded` | `{ hasSession, account_token?, account_digest?, kek? }` — 解鎖後送出 |
+| `lockMode`        | `{ mode }` — 目前鎖定模式 |
+| `nfcUnlockScanned`| `{ url }` — NFC 解鎖感應到卡片，web 驗證後回 `nfcUnlockResult` |
 
 ## 外殼行為（WebView）
 

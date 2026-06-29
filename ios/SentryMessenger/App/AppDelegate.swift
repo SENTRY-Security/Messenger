@@ -25,6 +25,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
             self, selector: #selector(registerForPushNotifications),
             name: .sentryRegisterPush, object: nil)
         voipPush.start()  // register for VoIP pushes (PushKit)
+        // Inject the full-app secure-session / app-lock handler into the bridge.
+        NativeBridge.secureSession = SecureSessionController.shared
         return true
     }
 
