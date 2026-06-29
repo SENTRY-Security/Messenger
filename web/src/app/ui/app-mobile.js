@@ -2738,6 +2738,14 @@ profileInitPromise
 
 
 function handleBackgroundAutoLogout(reason = t('auth.backgroundAutoLogout'), { skipVisibilityCheck = false } = {}) {
+  // iOS native app: background-timer auto-logout is disabled — the session stays
+  // alive across backgrounding (secure storage + FaceID protect it instead).
+  // NOTE: this does NOT affect the "logged in elsewhere" force-logout, which the
+  // WebSocket layer drives via secureLogout directly (single-device kick stays).
+  if (isNativeApp()) {
+    log({ autoLogoutSkip: 'native-app' });
+    return;
+  }
   if (logoutInProgress || _autoLoggedOut) {
     log({ autoLogoutSkip: 'logout-in-progress', logoutInProgress, _autoLoggedOut });
     return;

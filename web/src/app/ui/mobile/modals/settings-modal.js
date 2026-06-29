@@ -2,6 +2,7 @@
 
 import { escapeHtml } from '../ui-utils.js';
 import { t, getCurrentLang, setLang, applyDOMTranslations } from '/locales/index.js';
+import { isNativeApp } from '../../../features/native-bridge.js';
 
 const SUPPORTED_LANGUAGES = [
   { code: 'zh-Hant', label: '🇹🇼 繁體中文' },
@@ -239,6 +240,7 @@ export function createSettingsModule({ deps }) {
     const autoLogoutDetailsVisible = !!current.autoLogoutOnBackground;
     body.innerHTML = `
       <div id="systemSettings" class="settings-form">
+        <div id="settingsAutoLogoutSection"${isNativeApp() ? ' style="display:none"' : ''}>
         <div class="settings-item">
           <div class="settings-text">
             <strong>${escapeHtml(t('settings.autoLogoutOnBackground'))}</strong>
@@ -265,6 +267,7 @@ export function createSettingsModule({ deps }) {
             <div class="custom-summary" id="settingsLogoutSummary">${escapeHtml(customSummaryValue)}</div>
             <button type="button" class="settings-link subtle" id="settingsLogoutManage">${escapeHtml(t('settings.setUrl'))}</button>
           </div>
+        </div>
         </div>
         </div>
         <div class="settings-item">

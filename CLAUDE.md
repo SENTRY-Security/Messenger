@@ -24,3 +24,13 @@
 - **敏感資料加密上傳**：所有敏感資料（訊息、金鑰、聯絡人等）加密後上傳至後端（D1 / R2）。
 - **登出清除**：使用者登出時清除所有本地資料（IndexedDB、LocalStorage、記憶體狀態）。
 - **登入注水還原**：重新登入時從後端拉取加密資料，解密後注水（hydrate）還原至本地狀態。
+
+## iOS App 模式例外（僅原生 App，web 版不適用）
+
+> 以下僅適用於 iOS 原生 App（以 `isNativeApp()` / bundle 守衛），純 web 版維持上述「本地零持久化／背景登出」原則不變。詳見 `ios/docs/app-secure-session-plan.md`。
+
+- **保持登入**：iOS App **不做背景計時自動登出**，使用者切背景/鎖屏後仍保持登入。
+- **他處登入仍踢線**：單裝置原則不變——他處登入仍會 force-logout 踢掉本機（不在此例外範圍）。
+- **金鑰不落地、每次重取**：MK 僅存記憶體；每次開啟以 `account_token` 向 `POST /api/v1/mk/fetch` 重新拉取 `wrapped_mk`（密文），於記憶體解封，不持久化明文金鑰。
+- **iOS 安全儲存**：解封用 KEK 與 `account_token` 存於 **Keychain**（`biometryCurrentSet` + `whenUnlockedThisDeviceOnly`，FaceID/Secure Enclave 綁定）；拉取資料以密文落地（Data Protection `.completeFileProtection`）。
+- **FaceID 解鎖**：使用者可於設定啟用；啟用後冷啟動與回前景需 FaceID，失敗則鎖定可重試、不登出。
