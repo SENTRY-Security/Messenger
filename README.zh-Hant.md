@@ -1926,6 +1926,19 @@ Client                          Worker                         Durable Object
 
 推播通知預覽內容（發送者名稱、訊息摘要、訊息類型）採用**端對端加密**：發送端以接收者裝置的 ECDH P-256 公鑰加密預覽內容（AES-256-GCM），伺服器僅中繼密文，Service Worker 使用裝置私鑰在本地解密後顯示通知。
 
+### 投遞觸發 — 離線才推、Web Push + APNs
+
+背景推播是**離線**投遞機制。在接收者的 `AccountWebSocket` Durable Object 內，`/notify` 會先把訊息廣播給所有活躍的 WebSocket 連線；推播 fan-out **只在沒有任何活躍連線收到訊息時（`sent === 0`）才執行**——接收者在線時活躍連線已即時送達，因此不會重複推播。這個單一收斂點同時涵蓋兩條投遞路徑：HTTP 路徑（`notifyAccountDO → /notify`）與即時 WebSocket 中繼路徑（發送端 DO `_relayToTarget → /notify`），所以每則訊息至多觸發一次 fan-out。
+
+接收者離線時，Durable Object 會**並行**走兩種傳輸：
+
+| 傳輸 | 來源資料表 | 對象 |
+|------|-----------|------|
+| Web Push（VAPID / RFC 8291） | `push_subscriptions` | 瀏覽器／加到主畫面的 PWA |
+| APNs（token-based ES256） | `apns_tokens` | 原生 iOS App／App Clip（WKWebView 無法收 Web Push） |
+
+兩種傳輸共用相同的第一／第二層類型過濾與逐裝置加密預覽（`encrypted_previews[device_id]`），並都會在收到 404/410（或 `BadDeviceToken`/`Unregistered`）時自動清除失效的 endpoint／token。
+
 ### E2E 推播預覽加密
 
 ```

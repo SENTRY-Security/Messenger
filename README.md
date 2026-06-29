@@ -1928,6 +1928,19 @@ Push notifications are based on the W3C Push API standard, using VAPID authentic
 
 Push notification preview content (sender name, message summary, message type) is **end-to-end encrypted**: the sender encrypts preview content using the receiver's device ECDH P-256 public key (AES-256-GCM), the server only relays ciphertext, and the Service Worker decrypts locally using the device private key before displaying the notification.
 
+### Delivery Trigger — Offline-Gated, Web Push + APNs
+
+Background push is an **offline** delivery mechanism. Inside the recipient's `AccountWebSocket` Durable Object, `/notify` first broadcasts the message to any live WebSocket connections. Push fan-out runs **only when no active connection received the message** (`sent === 0`); when the recipient is online the live socket already delivered it, so no duplicate push is sent. This single chokepoint covers both delivery paths — the HTTP path (`notifyAccountDO → /notify`) and the real-time WebSocket relay path (sender DO `_relayToTarget → /notify`) — so each message triggers at most one fan-out.
+
+When the recipient is offline, the Durable Object fans out over **both transports in parallel**:
+
+| Transport | Source table | Audience |
+|-----------|--------------|----------|
+| Web Push (VAPID / RFC 8291) | `push_subscriptions` | Browser / home-screen PWA |
+| APNs (token-based ES256) | `apns_tokens` | Native iOS app / App Clip (WKWebView cannot receive Web Push) |
+
+Both transports share the same Layer-1/Layer-2 type filtering and per-device encrypted preview (`encrypted_previews[device_id]`), and both auto-prune invalid endpoints/tokens on 404/410 (or `BadDeviceToken`/`Unregistered`).
+
 ### E2E Push Preview Encryption
 
 ```
