@@ -2563,8 +2563,16 @@ const profileInitPromise = loadProfile().catch((err) => {
   throw err;
 });
 
-// Security panel — device security assessment below profile card
-initSecurityPanel(document.getElementById('securityPanel'));
+// Security panel — device security assessment below profile card.
+// Hidden in the iOS native shell (app store policy / redundant in native context).
+{
+  const securityPanelEl = document.getElementById('securityPanel');
+  if (isNativeApp()) {
+    if (securityPanelEl) securityPanelEl.style.display = 'none';
+  } else {
+    initSecurityPanel(securityPanelEl);
+  }
+}
 
 shareController = setupShareController({
   dom: {
