@@ -4,7 +4,7 @@ export const onRequest: PagesFunction = async () => {
       apps: [],
       details: [
         {
-          appID: 'DYAAM5G8JF.red.sentry.app.SENTRY-Messenger',
+          appID: 'HW8N8C46HG.red.sentry.app.SENTRY-Messenger',
           // 使用通配符允許所有路徑，以涵蓋實際 NDEF URL。
           paths: ['*']
         }
@@ -12,7 +12,7 @@ export const onRequest: PagesFunction = async () => {
     },
     // App Clip 預設體驗：NTAG424 連結可喚起 App Clip（未安裝完整 App 時）。
     appclips: {
-      apps: ['DYAAM5G8JF.red.sentry.app.SENTRY-Messenger.Clip']
+      apps: ['HW8N8C46HG.red.sentry.app.SENTRY-Messenger.Clip']
     }
   };
 
