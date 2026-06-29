@@ -6,14 +6,35 @@ import UIKit
 ///
 /// JS → native:
 ///   `window.webkit.messageHandlers.sentryNative.postMessage({ action, payload })`
-///   Supported actions: `ready`, `haptic`, `registerPush`, `scanNFC`, `share`.
+///   Supported actions: `ready`, `haptic`, `registerPush`, `scanNFC`, `share`,
+///   and call lifecycle: `callIncoming`, `callStarted`, `callConnected`,
+///   `callStateChanged`, `callEnded`.
 ///
 /// native → JS:
 ///   `window.SentryNative.onEvent(name, data)` is invoked (the web app should
-///   define it). Emitted events: `nfcResult`, `nfcError`, `pushToken`.
+///   define it). Emitted events: `nfcResult`, `nfcError`, `pushToken`, and from
+///   CallKit: `callAnswered`, `callEndedByUser`, `callMuteToggled`, `audioReady`.
 final class NativeBridge: NSObject, WKScriptMessageHandler {
     weak var webView: WKWebView?
     private let nfc = NFCLoginService()
+    /// CallKit bridge (P1). Lazily created; its action callbacks emit JS events
+    /// back to the web call layer (answer / end / mute / audio-ready).
+    private lazy var callKit: CallKitController = {
+        let c = CallKitController()
+        c.onAnswer = { [weak self] callId in
+            self?.sendEvent("callAnswered", data: ["callId": callId])
+        }
+        c.onEnd = { [weak self] callId in
+            self?.sendEvent("callEndedByUser", data: ["callId": callId])
+        }
+        c.onMute = { [weak self] callId, muted in
+            self?.sendEvent("callMuteToggled", data: ["callId": callId, "muted": muted])
+        }
+        c.onAudioReady = { [weak self] callId in
+            self?.sendEvent("audioReady", data: ["callId": callId])
+        }
+        return c
+    }()
 
     override init() {
         super.init()
@@ -49,8 +70,40 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             if let text = payload["text"] as? String {
                 presentShare(text: text, urlString: payload["url"] as? String)
             }
+        case "callIncoming", "callStarted", "callConnected", "callStateChanged", "callEnded":
+            handleCallAction(action, payload: payload)
         default:
             print("[NativeBridge] unhandled action: \(action)")
+        }
+    }
+
+    // MARK: Calls (CallKit bridge, P1)
+
+    /// JS → native call lifecycle. The web call layer emits these as the call
+    /// state machine advances; we mirror them into CallKit.
+    private func handleCallAction(_ action: String, payload: [String: Any]) {
+        let callId = payload["callId"] as? String ?? ""
+        guard !callId.isEmpty else { return }
+        let peerName = payload["peerName"] as? String ?? ""
+        let hasVideo = (payload["kind"] as? String) == "video" || (payload["video"] as? Bool == true)
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            switch action {
+            case "callIncoming":
+                self.callKit.reportIncoming(callId: callId, peerName: peerName, hasVideo: hasVideo)
+            case "callStarted":
+                self.callKit.reportOutgoing(callId: callId, peerName: peerName, hasVideo: hasVideo)
+            case "callConnected":
+                self.callKit.reportConnected(callId: callId)
+            case "callStateChanged":
+                if let muted = payload["muted"] as? Bool {
+                    self.callKit.reportMuted(callId: callId, muted: muted)
+                }
+            case "callEnded":
+                self.callKit.reportEnded(callId: callId, reason: payload["reason"] as? String ?? "ended")
+            default:
+                break
+            }
         }
     }
 

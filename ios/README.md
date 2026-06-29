@@ -64,6 +64,11 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `registerPush`| 要求註冊 APNs 推播（顯示權限詢問）     |
 | `haptic`      | 觸覺回饋（payload.style: light…rigid） |
 | `share`       | 系統分享（payload.text / payload.url） |
+| `callIncoming`| 來電 → CallKit 顯示系統來電 UI（payload: callId, kind, peerName） |
+| `callStarted` | 撥出 → CallKit 登錄通話（payload: callId, kind, peerName） |
+| `callConnected`| 通話接通（payload: callId）          |
+| `callStateChanged`| 狀態變更（payload: callId, muted） |
+| `callEnded`   | 通話結束（payload: callId, reason）    |
 
 原生 → JS：呼叫 `window.SentryNative.onEvent(name, data)`
 
@@ -72,6 +77,10 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `nfcResult` | `{ url }`                     |
 | `nfcError`  | `{ message, code }` — code: `unavailable` / `no_url` / `invalid_host` / `cancelled` / `system` |
 | `pushToken` | `{ token, platform: 'ios' }`  |
+| `callAnswered`    | `{ callId }` — 使用者於系統來電 UI 按接聽 |
+| `callEndedByUser` | `{ callId }` — 使用者於系統 UI 按結束/拒接 |
+| `callMuteToggled` | `{ callId, muted }` — 系統 UI 靜音切換   |
+| `audioReady`      | `{ callId }` — CallKit 啟用音訊 session |
 
 ## 外殼行為（WebView）
 
@@ -80,6 +89,17 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
   等系統 scheme 交給 OS。子資源/iframe（媒體、TURN）一律允許。
 - **WebRTC 權限**：第一方網域的相機/麥克風請求（`requestMediaCapturePermissionFor`）
   自動授權，避免雙重權限詢問。
+- **通話原生整合（CallKit，P1）**：通話/視訊媒體仍在 WKWebView 內以 WebRTC 執行，
+  原生層以 `CallKitController`（`CXProvider`/`CXCallController`）鏡射通話狀態到系統：
+  撥出/來電顯示系統通話 UI、鎖屏接聽、靜音同步。web 端 `native-call-bridge.js` 於通話
+  生命週期透過 bridge 通知原生（`callIncoming`/`callStarted`/…），並監聽 CallKit 動作
+  （`callAnswered`/`callEndedByUser`/`callMuteToggled`）回灌既有 accept/hangup/mute 流程。
+- **背景續通（P0）**：`UIBackgroundModes` 加入 `audio`，`AudioSessionManager` 將
+  `AVAudioSession` 設為 `playAndRecord` + `voiceChat`/`videoChat`，使通話切背景/鎖屏
+  不中斷。
+  > **待實機驗證（PoC）**：WKWebView 內 WebRTC 音訊與 CallKit 主導的 `AVAudioSession`
+  > 之協調需在實機確認，詳見 `docs/native-calls-plan.md`。
+  > **後續**：PushKit（`voip` 背景模式）與後端 VoIP push 屬 P2/P3，尚未實作。
 - **檔案上傳**：`<input type=file>` 由 WKWebView 原生支援（相機/相簿需 Info.plist
   權限字串，已具備）。
 - **其他**：pull-to-refresh、載入錯誤重試、`target=_blank` 依白名單內外分流、

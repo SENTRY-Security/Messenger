@@ -45,6 +45,11 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<!-- Keep voice/video call audio alive when backgrounded or screen-locked (P0). -->
+		<string>audio</string>
+		<!-- NOTE: 'voip' (PushKit wake-on-incoming) is added in P2 together with
+		     PKPushRegistry; omitted here to avoid App Review questions about an
+		     unused VoIP background mode. -->
 	</array>
 
 	<!-- Base URL of the hosted web messenger (override per scheme/UAT). -->
