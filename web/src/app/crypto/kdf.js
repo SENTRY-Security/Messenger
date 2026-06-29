@@ -50,7 +50,42 @@ export async function deriveKEKFromPassword(pwd, saltU8, params = { m: 64, t: 3,
     false,
     ['encrypt', 'decrypt']
   );
-  return { kek, params: { m, t, p } };
+  // `kekRaw` is returned so the iOS App can persist the KEK in the Keychain and
+  // unwrap the MK on cold launch without the password (see unwrapMKWithKEKRaw).
+  return { kek, kekRaw, params: { m, t, p } };
+}
+
+/**
+ * Unwrap an MK blob using a raw KEK (32 bytes) instead of the password.
+ * Used by the iOS App cold-launch restore: the KEK lives in the Keychain and the
+ * wrapped MK is re-fetched from the server each launch. Returns Uint8Array(32)
+ * or null on failure.
+ */
+export async function unwrapMKWithKEKRaw(kekRawU8, blob) {
+  try {
+    if (!blob || !kekRawU8) return null;
+    const iv = b64u8(blob.iv_b64);
+    const ct = b64u8(blob.ct_b64);
+    const kek = await crypto.subtle.importKey(
+      'raw',
+      toU8Strict(kekRawU8, 'web/src/app/crypto/kdf.js:unwrapMKWithKEKRaw'),
+      { name: 'AES-GCM' }, false, ['decrypt']
+    );
+    const useAad = (blob.v ?? 1) >= 2;
+    const params = { name: 'AES-GCM', iv };
+    if (useAad) params.additionalData = KDF_AAD;
+    try {
+      const mkBuf = await crypto.subtle.decrypt(params, kek, ct);
+      return new Uint8Array(mkBuf);
+    } catch {
+      const fb = { name: 'AES-GCM', iv };
+      if (!useAad) fb.additionalData = KDF_AAD;
+      const mkBuf = await crypto.subtle.decrypt(fb, kek, ct);
+      return new Uint8Array(mkBuf);
+    }
+  } catch {
+    return null;
+  }
 }
 
 const KDF_AAD = new TextEncoder().encode('sentry/mk-wrap');
@@ -97,6 +132,37 @@ export async function unwrapMKWithPasswordArgon2id(pwd, blob) {
     }
   } catch {
     return null;
+  }
+}
+
+/**
+ * Like `unwrapMKWithPasswordArgon2id` but also returns the raw KEK, so the iOS
+ * App can persist it (Keychain) for password-less cold-launch restore. Returns
+ * `{ mk: Uint8Array|null, kekRaw: Uint8Array|null }`.
+ */
+export async function unwrapMKWithPasswordArgon2idEx(pwd, blob) {
+  try {
+    if (!blob || blob.kdf !== 'argon2id') return { mk: null, kekRaw: null };
+    const salt = b64u8(blob.salt_b64);
+    const iv = b64u8(blob.iv_b64);
+    const ct = b64u8(blob.ct_b64);
+    const { kek, kekRaw } = await deriveKEKFromPassword(pwd, salt, {
+      m: blob.m ?? 64, t: blob.t ?? 3, p: blob.p ?? 1
+    });
+    const useAad = (blob.v ?? 1) >= 2;
+    const params = { name: 'AES-GCM', iv };
+    if (useAad) params.additionalData = KDF_AAD;
+    try {
+      const mkBuf = await crypto.subtle.decrypt(params, kek, ct);
+      return { mk: new Uint8Array(mkBuf), kekRaw };
+    } catch {
+      const fb = { name: 'AES-GCM', iv };
+      if (!useAad) fb.additionalData = KDF_AAD;
+      const mkBuf = await crypto.subtle.decrypt(fb, kek, ct);
+      return { mk: new Uint8Array(mkBuf), kekRaw };
+    }
+  } catch {
+    return { mk: null, kekRaw: null };
   }
 }
 

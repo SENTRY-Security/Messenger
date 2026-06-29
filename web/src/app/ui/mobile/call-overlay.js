@@ -39,6 +39,7 @@ import { createCallAudioManager } from './call-audio.js';
 import { getCallAudioConstraints } from './browser-detection.js';
 import { showCallInfoOverlay } from '../../features/calls/call-info-overlay.js';
 import { initNativeCallBridge, setNativeCallActionHandlers } from '../../features/native-call-bridge.js';
+import { isNativeApp } from '../../features/native-bridge.js';
 import { t } from '/locales/index.js';
 
 function getStatusLabel() {
@@ -1260,6 +1261,16 @@ export function initCallOverlay({ showToast }) {
   }
 
   function render(session = getCallSessionSnapshot()) {
+    // iOS App: CallKit shows the system incoming-call UI (and plays its own
+    // ringtone), so suppress the web floating accept/reject overlay for incoming
+    // calls to avoid a duplicate UI. Once answered (CONNECTING/IN_CALL) the web
+    // in-call controls render normally.
+    if (session && isNativeApp() && session.status === CALL_SESSION_STATUS.INCOMING) {
+      setVisibility(false);
+      updateBubbleDetails(null);
+      state.actionBusy = false;
+      return;
+    }
     ensureToneContext(session);
     syncAudio(session);
     if (!session || !shouldDisplay(session.status)) {
