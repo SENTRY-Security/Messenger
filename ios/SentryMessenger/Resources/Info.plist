@@ -47,9 +47,9 @@
 		<string>remote-notification</string>
 		<!-- Keep voice/video call audio alive when backgrounded or screen-locked (P0). -->
 		<string>audio</string>
-		<!-- NOTE: 'voip' (PushKit wake-on-incoming) is added in P2 together with
-		     PKPushRegistry; omitted here to avoid App Review questions about an
-		     unused VoIP background mode. -->
+		<!-- PushKit wake-on-incoming for VoIP calls (P2). Paired with PKPushRegistry
+		     in VoipPushService, which reports the call to CallKit on each push. -->
+		<string>voip</string>
 	</array>
 
 	<!-- Base URL of the hosted web messenger (override per scheme/UAT). -->

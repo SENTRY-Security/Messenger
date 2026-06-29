@@ -77,6 +77,7 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `nfcResult` | `{ url }`                     |
 | `nfcError`  | `{ message, code }` — code: `unavailable` / `no_url` / `invalid_host` / `cancelled` / `system` |
 | `pushToken` | `{ token, platform: 'ios' }`  |
+| `voipToken` | `{ token, platform: 'ios' }` — PushKit VoIP token，web 上報 `/d1/push/voip/subscribe` |
 | `callAnswered`    | `{ callId }` — 使用者於系統來電 UI 按接聽 |
 | `callEndedByUser` | `{ callId }` — 使用者於系統 UI 按結束/拒接 |
 | `callMuteToggled` | `{ callId, muted }` — 系統 UI 靜音切換   |
@@ -97,9 +98,16 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 - **背景續通（P0）**：`UIBackgroundModes` 加入 `audio`，`AudioSessionManager` 將
   `AVAudioSession` 設為 `playAndRecord` + `voiceChat`/`videoChat`，使通話切背景/鎖屏
   不中斷。
+- **PushKit 喚醒（P2）**：`UIBackgroundModes` 加入 `voip`；`VoipPushService`
+  （`PKPushRegistry`，僅完整 App，App Clip 不支援）註冊 VoIP token 並在收到 push 時
+  **同步**以 `CallKitController.shared` 報來電。後端在被叫離線時，於 `call-invite`
+  改發 VoIP push（`apns.js sendVoip` → `voip_tokens` → topic `<bundleId>.voip`）。
+  冷啟動接聽會在 web 就緒後重放（`pendingAnsweredCallId`）。
   > **待實機驗證（PoC）**：WKWebView 內 WebRTC 音訊與 CallKit 主導的 `AVAudioSession`
-  > 之協調需在實機確認，詳見 `docs/native-calls-plan.md`。
-  > **後續**：PushKit（`voip` 背景模式）與後端 VoIP push 屬 P2/P3，尚未實作。
+  > 之協調需在實機確認；冷啟動「VoIP push → 接聽 → web 連線完成媒體」端到端時序亦需
+  > 實機驗證。詳見 `docs/native-calls-plan.md`。
+  > **需求**：Apple 付費帳號、Push Notifications 能力（含 VoIP）、`<bundleId>.voip`
+  > APNs topic，以及後端 `APNS_*` 環境變數。
 - **檔案上傳**：`<input type=file>` 由 WKWebView 原生支援（相機/相簿需 Info.plist
   權限字串，已具備）。
 - **其他**：pull-to-refresh、載入錯誤重試、`target=_blank` 依白名單內外分流、

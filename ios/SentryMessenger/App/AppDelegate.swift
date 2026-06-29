@@ -12,6 +12,10 @@ import UserNotifications
 /// NOTE: Push requires enabling the "Push Notifications" capability and a paid
 /// Apple Developer account. The code compiles and runs without it.
 final class AppDelegate: NSObject, UIApplicationDelegate {
+    /// PushKit VoIP registry (P2). Retained for the app lifetime so VoIP pushes
+    /// keep waking the app. Created at launch so the token is available early.
+    private let voipPush = VoipPushService()
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -20,6 +24,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         NotificationCenter.default.addObserver(
             self, selector: #selector(registerForPushNotifications),
             name: .sentryRegisterPush, object: nil)
+        voipPush.start()  // register for VoIP pushes (PushKit)
         return true
     }
 

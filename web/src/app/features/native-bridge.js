@@ -64,6 +64,36 @@ async function registerApnsToken(token) {
   } catch { /* best-effort */ }
 }
 
+// The PushKit VoIP token arrives at app launch — before login — so the account
+// digest may not be known yet. Cache it and retry until login completes.
+let pendingVoipToken = null;
+let voipRetryTimer = null;
+
+async function registerVoipToken(token) {
+  if (token) pendingVoipToken = token;
+  if (!pendingVoipToken) return;
+  const accountDigest = getAccountDigest();
+  if (!accountDigest) {
+    // Not logged in yet — retry shortly (bounded by the interval lifetime).
+    if (!voipRetryTimer) {
+      voipRetryTimer = setInterval(() => {
+        if (getAccountDigest()) { clearInterval(voipRetryTimer); voipRetryTimer = null; registerVoipToken(); }
+      }, 3000);
+    }
+    return;
+  }
+  if (voipRetryTimer) { clearInterval(voipRetryTimer); voipRetryTimer = null; }
+  let deviceId;
+  try { deviceId = await ensureDeviceId(); } catch { /* optional */ }
+  try {
+    await fetch('/d1/push/voip/subscribe', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ accountDigest, deviceId, token: pendingVoipToken }),
+    });
+  } catch { /* best-effort */ }
+}
+
 /** Install the receiver the native shell calls into. Idempotent. */
 export function initNativeBridge() {
   if (typeof window === 'undefined') return;
@@ -73,6 +103,7 @@ export function initNativeBridge() {
     onEvent(name, data) {
       try {
         if (name === 'pushToken' && data && data.token) registerApnsToken(data.token);
+        if (name === 'voipToken' && data && data.token) registerVoipToken(data.token);
       } catch { /* ignore */ }
       // Fan out to feature listeners (calls, …).
       dispatchNativeEvent(name, data);

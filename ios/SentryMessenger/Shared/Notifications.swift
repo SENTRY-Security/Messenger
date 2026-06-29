@@ -13,4 +13,8 @@ extension Notification.Name {
     /// open. `object` is the `URL`. The web bridge navigates the existing web
     /// view in place (no shell reset).
     static let sentryOpenURL = Notification.Name("red.sentry.messenger.openURL")
+
+    /// Posted by `VoipPushService` once a PushKit VoIP token is available.
+    /// `object` is the hex token `String`. Forwarded to web as `voipToken`.
+    static let sentryVoipToken = Notification.Name("red.sentry.messenger.voipToken")
 }

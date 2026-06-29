@@ -17,24 +17,8 @@ import UIKit
 final class NativeBridge: NSObject, WKScriptMessageHandler {
     weak var webView: WKWebView?
     private let nfc = NFCLoginService()
-    /// CallKit bridge (P1). Lazily created; its action callbacks emit JS events
-    /// back to the web call layer (answer / end / mute / audio-ready).
-    private lazy var callKit: CallKitController = {
-        let c = CallKitController()
-        c.onAnswer = { [weak self] callId in
-            self?.sendEvent("callAnswered", data: ["callId": callId])
-        }
-        c.onEnd = { [weak self] callId in
-            self?.sendEvent("callEndedByUser", data: ["callId": callId])
-        }
-        c.onMute = { [weak self] callId, muted in
-            self?.sendEvent("callMuteToggled", data: ["callId": callId, "muted": muted])
-        }
-        c.onAudioReady = { [weak self] callId in
-            self?.sendEvent("audioReady", data: ["callId": callId])
-        }
-        return c
-    }()
+    /// App Clips cannot use CallKit/PushKit; calls only run in the full app.
+    private let isAppClip = (Bundle.main.bundleIdentifier ?? "").hasSuffix(".Clip")
 
     override init() {
         super.init()
@@ -42,8 +26,33 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             self, selector: #selector(handlePushToken(_:)),
             name: .sentryPushToken, object: nil)
         NotificationCenter.default.addObserver(
+            self, selector: #selector(handleVoipToken(_:)),
+            name: .sentryVoipToken, object: nil)
+        NotificationCenter.default.addObserver(
             self, selector: #selector(handleOpenURL(_:)),
             name: .sentryOpenURL, object: nil)
+        wireCallKit()
+    }
+
+    /// Attach this bridge's webview-relaying callbacks to the shared CallKit
+    /// controller. Replays any answer that arrived before attach (cold launch).
+    /// No-op in the App Clip (CallKit unavailable there).
+    private func wireCallKit() {
+        guard !isAppClip else { return }
+        let callKit = CallKitController.shared
+        callKit.onEnd = { [weak self] callId in
+            self?.sendEvent("callEndedByUser", data: ["callId": callId])
+        }
+        callKit.onMute = { [weak self] callId, muted in
+            self?.sendEvent("callMuteToggled", data: ["callId": callId, "muted": muted])
+        }
+        callKit.onAudioReady = { [weak self] callId in
+            self?.sendEvent("audioReady", data: ["callId": callId])
+        }
+        // Assign onAnswer last: its didSet replays a queued cold-launch answer.
+        callKit.onAnswer = { [weak self] callId in
+            self?.sendEvent("callAnswered", data: ["callId": callId])
+        }
     }
 
     deinit { NotificationCenter.default.removeObserver(self) }
@@ -77,30 +86,31 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         }
     }
 
-    // MARK: Calls (CallKit bridge, P1)
+    // MARK: Calls (CallKit bridge, P1/P2)
 
     /// JS → native call lifecycle. The web call layer emits these as the call
-    /// state machine advances; we mirror them into CallKit.
+    /// state machine advances; we mirror them into CallKit. No-op in the App Clip.
     private func handleCallAction(_ action: String, payload: [String: Any]) {
+        guard !isAppClip else { return }
         let callId = payload["callId"] as? String ?? ""
         guard !callId.isEmpty else { return }
         let peerName = payload["peerName"] as? String ?? ""
         let hasVideo = (payload["kind"] as? String) == "video" || (payload["video"] as? Bool == true)
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
+        DispatchQueue.main.async {
+            let callKit = CallKitController.shared
             switch action {
             case "callIncoming":
-                self.callKit.reportIncoming(callId: callId, peerName: peerName, hasVideo: hasVideo)
+                callKit.reportIncoming(callId: callId, peerName: peerName, hasVideo: hasVideo)
             case "callStarted":
-                self.callKit.reportOutgoing(callId: callId, peerName: peerName, hasVideo: hasVideo)
+                callKit.reportOutgoing(callId: callId, peerName: peerName, hasVideo: hasVideo)
             case "callConnected":
-                self.callKit.reportConnected(callId: callId)
+                callKit.reportConnected(callId: callId)
             case "callStateChanged":
                 if let muted = payload["muted"] as? Bool {
-                    self.callKit.reportMuted(callId: callId, muted: muted)
+                    callKit.reportMuted(callId: callId, muted: muted)
                 }
             case "callEnded":
-                self.callKit.reportEnded(callId: callId, reason: payload["reason"] as? String ?? "ended")
+                callKit.reportEnded(callId: callId, reason: payload["reason"] as? String ?? "ended")
             default:
                 break
             }
@@ -146,6 +156,13 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     @objc private func handlePushToken(_ note: Notification) {
         guard let token = note.object as? String else { return }
         sendPushToken(token)
+    }
+
+    /// Forward the PushKit VoIP token to the web layer, which uploads it to the
+    /// backend (`/d1/push/voip/subscribe`) keyed by the account digest.
+    @objc private func handleVoipToken(_ note: Notification) {
+        guard let token = note.object as? String else { return }
+        sendEvent("voipToken", data: ["token": token, "platform": "ios"])
     }
 
     /// Navigate the existing web view to a notification's deep link, in place,

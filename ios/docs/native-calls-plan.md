@@ -1,6 +1,6 @@
 # iOS 原生通話/視訊處置規劃（CallKit + PushKit）
 
-> 狀態：規劃草案（尚未實作）
+> 狀態：P0–P3 已實作（待實機驗證）；P4 收尾與 PoC 驗證進行中
 > 對象：iOS 原生殼層 `SentryMessenger`（WKWebView 包裝 web messenger）
 > 目標：讓語音/視訊通話在 iOS 上具備「通訊軟體等級」的原生體驗——鎖屏來電、背景續通、被關閉時喚醒接聽、納入系統通話記錄。
 
@@ -136,15 +136,26 @@ JS → 原生（`postMessage({action,payload})`）：
 
 ## 5. 分階段實作建議
 
-| 階段 | 內容 | 產出 / 驗收 |
-|------|------|-------------|
-| **P0 背景續通（低風險先行）** | 加 `voip`+`audio` 背景模式、設定 `AVAudioSession`；確保「通話中切背景/鎖屏」音訊不中斷 | 實機：通話中按 Home / 鎖屏，語音持續 |
-| **P1 CallKit 前景整合** | `CallKitController` + bridge（撥出/接通/掛斷/靜音）；App 執行中走原生通話 UI 與系統記錄 | 撥出與接聽顯示原生 UI；通話進系統記錄；靜音/喇叭同步 |
-| **P2 PushKit 喚醒** | `VoipPushService`；收 VoIP push → 同步報 CallKit 來電 | App 被關閉時，對方來電仍跳鎖屏來電並可接聽 |
-| **P3 後端 VoIP push** | `apns.js sendVoip` + VoIP token 儲存（migration）+ `account-ws` 觸發 | 端到端：離線被叫收到鎖屏來電 |
-| **P4 收尾** | 通話記錄 UI 對齊、邊界情境（多來電、未接、忙線）、文件 | 各情境穩定；README 同步 |
+| 階段 | 內容 | 狀態 | 產出 / 驗收 |
+|------|------|------|-------------|
+| **P0 背景續通** | 加 `audio` 背景模式、`AudioSessionManager` 設定 `AVAudioSession` | ✅ 已實作 | 實機：通話中按 Home / 鎖屏，語音持續 |
+| **P1 CallKit 前景整合** | `CallKitController` + bridge（撥出/接通/掛斷/靜音） | ✅ 已實作 | 撥出與接聽顯示原生 UI；通話進系統記錄；靜音同步 |
+| **P2 PushKit 喚醒** | `voip` 背景模式 + `VoipPushService`；收 VoIP push → 同步報 CallKit | ✅ 已實作 | App 被關閉時，對方來電仍跳鎖屏來電並可接聽 |
+| **P3 後端 VoIP push** | `apns.js sendVoip` + `voip_tokens`（migration 0022）+ `account-ws` 於 call-invite 離線觸發 + worker 端點 | ✅ 已實作 | 端到端：離線被叫收到鎖屏來電 |
+| **P4 收尾／驗證** | 通話記錄 UI、邊界情境（多來電、未接、忙線）、實機 PoC | ⏳ 進行中 | 各情境穩定；音訊 PoC 通過 |
 
-建議順序 P0 → P1 → P2 → P3 → P4。P0/P1 不需後端與憑證即可先交付明顯體驗提升；P2/P3 需 Apple Push 憑證與後端配合。
+實作落點：
+- iOS：`AudioSessionManager.swift`、`CallKitController.swift`（singleton + 冷啟動接聽重放）、
+  `App/VoipPushService.swift`（僅完整 App）、`NativeBridge.swift`（通話 action/event、轉發 voipToken）、
+  `Info.plist`（`audio`+`voip` 背景模式）。
+- 後端：`apns.js`（`sendVoip`）、`migrations/0022_add_voip_tokens.sql`、`worker.js`
+  （`/d1/push/voip/{subscribe,unsubscribe}`）、`account-ws.js`（`_sendVoipNotifications` +
+  call-invite 離線觸發）。
+- Web：`native-bridge.js`（voipToken → `/d1/push/voip/subscribe`，登入前快取重試）、
+  `native-call-bridge.js`、`call-overlay.js`。
+
+**尚待（P4 / 實機）**：WKWebView WebRTC × CallKit 音訊 PoC、冷啟動端到端時序、忙線/多來電/未接
+邊界、App Store 憑證與 VoIP topic 設定。
 
 ---
 

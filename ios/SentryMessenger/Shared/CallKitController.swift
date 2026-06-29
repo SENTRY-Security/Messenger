@@ -17,9 +17,25 @@ import AVFoundation
 /// actions here, and provides the `on*` callbacks that emit events back to JS.
 final class CallKitController: NSObject {
 
+    /// Shared instance so both the WebView bridge (`NativeBridge`) and the VoIP
+    /// push path (`VoipPushService`) report into the same provider. The push
+    /// path may run before any WebView exists (cold launch), so this must be a
+    /// process-wide singleton.
+    static let shared = CallKitController()
+
     /// Emitted when the user answers via the system UI. Web should run its
     /// "accept" path (send call-accept + acceptIncomingCallMedia).
-    var onAnswer: ((_ callId: String) -> Void)?
+    /// If a call is answered before the web layer has attached this callback
+    /// (cold launch from a VoIP push), the callId is queued and replayed once
+    /// the callback is set.
+    var onAnswer: ((_ callId: String) -> Void)? {
+        didSet {
+            guard onAnswer != nil, let pending = pendingAnsweredCallId else { return }
+            pendingAnsweredCallId = nil
+            onAnswer?(pending)
+        }
+    }
+    private var pendingAnsweredCallId: String?
     /// Emitted when the user ends/declines via the system UI. Web should run its
     /// reject (if ringing) or hangup (if connected) path.
     var onEnd: ((_ callId: String) -> Void)?
@@ -36,6 +52,9 @@ final class CallKitController: NSObject {
     private var uuidToId: [UUID: String] = [:]
     /// Tracks whether each active call is video, for audio-session config.
     private var videoFlags: [UUID: Bool] = [:]
+    /// Calls already presented as incoming, so a VoIP-push report and a later
+    /// web-side `callIncoming` for the same callId don't double-report.
+    private var reportedIncoming: Set<UUID> = []
 
     override init() {
         let config = CXProviderConfiguration()
@@ -64,6 +83,7 @@ final class CallKitController: NSObject {
 
     private func forget(_ uuid: UUID) {
         videoFlags[uuid] = nil
+        reportedIncoming.remove(uuid)
         if let callId = uuidToId[uuid] {
             idToUUID[callId] = nil
         }
@@ -76,6 +96,9 @@ final class CallKitController: NSObject {
     func reportIncoming(callId: String, peerName: String, hasVideo: Bool) {
         guard let id = uuid(for: callId) else { return }
         videoFlags[id] = hasVideo
+        // Idempotent: if already presented (e.g. via VoIP push), don't re-report.
+        guard !reportedIncoming.contains(id) else { return }
+        reportedIncoming.insert(id)
         let update = CXCallUpdate()
         update.remoteHandle = CXHandle(type: .generic, value: peerName.isEmpty ? "SENTRY" : peerName)
         update.hasVideo = hasVideo
@@ -150,7 +173,7 @@ extension CallKitController: CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
         guard let callId = uuidToId[action.callUUID] else { action.fail(); return }
-        onAnswer?(callId)
+        if let onAnswer { onAnswer(callId) } else { pendingAnsweredCallId = callId }
         action.fulfill()
     }
 
