@@ -6,14 +6,14 @@ export const onRequest: PagesFunction = async () => {
       apps: [],
       details: [
         {
-          appID: 'HW8N8C46HG.red.sentry.app.SENTRY-Messenger',
+          appID: 'HW8N8C46HG.red.sentry.messenger',
           paths: ['*']
         }
       ]
     },
     // App Clip 預設體驗：NTAG424 連結可喚起 App Clip（未安裝完整 App 時）。
     appclips: {
-      apps: ['HW8N8C46HG.red.sentry.app.SENTRY-Messenger.Clip']
+      apps: ['HW8N8C46HG.red.sentry.messenger.Clip']
     }
   };
 

@@ -4,7 +4,7 @@
 > 多數無法由 CI 代勞（需簽章憑證與 App Store Connect 設定）。
 
 ## 1. Apple Developer Portal
-- App ID：`red.sentry.app.SENTRY-Messenger`、App Clip ID：`…​.Clip`（Team `HW8N8C46HG`）。
+- App ID：`red.sentry.messenger`、App Clip ID：`…​.Clip`（Team `HW8N8C46HG`）。
 - 啟用 Capabilities：
   - Near Field Communication Tag Reading（NDEF）
   - Push Notifications

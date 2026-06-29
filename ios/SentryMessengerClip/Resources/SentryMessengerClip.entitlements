@@ -5,7 +5,7 @@
 	<!-- Links this clip to its parent full app. AppIdentifierPrefix is the Team ID. -->
 	<key>com.apple.developer.parent-application-identifiers</key>
 	<array>
-		<string>$(AppIdentifierPrefix)red.sentry.app.SENTRY-Messenger</string>
+		<string>$(AppIdentifierPrefix)red.sentry.messenger</string>
 	</array>
 
 	<!-- App Clip invocation domain (NTAG424 / universal link). -->

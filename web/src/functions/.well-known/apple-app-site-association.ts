@@ -4,7 +4,7 @@ export const onRequest: PagesFunction = async () => {
       apps: [],
       details: [
         {
-          appID: 'HW8N8C46HG.red.sentry.app.SENTRY-Messenger',
+          appID: 'HW8N8C46HG.red.sentry.messenger',
           // 使用通配符允許所有路徑，以涵蓋實際 NDEF URL。
           paths: ['*']
         }
