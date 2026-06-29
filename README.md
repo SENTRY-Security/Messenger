@@ -1704,6 +1704,7 @@ media_objects         # Media object tracking
 
 | Endpoint | Method | Description | State Storage |
 |----------|--------|-------------|---------------|
+| `/auth/sdm/verify` | POST | Validate an NTAG424 SDM URL's CMAC **without** consuming it (native pre-checks a tag-wake URL before loading web) | — |
 | `/auth/sdm/exchange` | POST | NFC tag SDM authentication → account token | KV session (TTL 300s) |
 | `/auth/sdm/debug-kit` | POST | Generate test SDM credentials | KV counter (TTL 24h) |
 | `/auth/brand` | GET | Brand query (for splash) | — |
