@@ -329,6 +329,18 @@ export class AccountWebSocket {
       console.warn('[ws-do] offline push skipped: neither Web Push (VAPID) nor APNs configured');
     }
 
+    // Incoming call to an offline/backgrounded device → PushKit VoIP push so iOS
+    // wakes the app and reports the call to CallKit. This is the call-specific
+    // transport; we do NOT also send a regular alert push for call-invite.
+    if (payload.type === 'call-invite' && apns.enabled) {
+      try {
+        await this._sendVoipNotifications(payload, apns);
+      } catch (voipErr) {
+        console.warn('[ws-do] voip notification failed', voipErr?.message || voipErr);
+      }
+      return Response.json({ ok: true, sent });
+    }
+
     // Web Push (browser / home-screen PWA)
     if (hasVapid) {
       try {
@@ -1330,6 +1342,44 @@ export class AccountWebSocket {
       } catch {}
     }
     console.log('[ws-do] apns notifications sent', { account: this.accountDigest?.slice(0, 16), total: tokens.length, stale: staleTokens.length });
+  }
+
+  async _sendVoipNotifications(payload, apns) {
+    if (!this.accountDigest || !this.env.DB) return;
+    if (!apns || !apns.enabled || typeof apns.sendVoip !== 'function') return;
+
+    const callId = payload.callId || payload.call_id || null;
+    if (!callId) return;
+    const kind = (payload.payload?.kind || payload.payload?.mode) === 'video' ? 'video' : 'voice';
+
+    const rows = await this.env.DB.prepare(
+      `SELECT token, topic FROM voip_tokens WHERE account_digest = ?1`
+    ).bind(this.accountDigest).all();
+    const tokens = rows?.results || [];
+    if (!tokens.length) {
+      console.log('[ws-do] voip: no tokens for', this.accountDigest?.slice(0, 16));
+      return;
+    }
+
+    const voipTopic = this.env.APNS_TOPIC ? `${this.env.APNS_TOPIC}.voip` : null;
+    const staleTokens = [];
+    await Promise.allSettled(tokens.map(async (t) => {
+      try {
+        // E2EE: only non-sensitive routing info travels in the push.
+        const r = await apns.sendVoip(t.token, { callId, kind }, { topic: t.topic || voipTopic });
+        if (r.gone) staleTokens.push(t.token);
+      } catch (err) {
+        console.warn('[ws-do] voip send error', { token: t.token?.slice(0, 12), error: err?.message || err });
+      }
+    }));
+
+    for (const tok of staleTokens) {
+      try {
+        await this.env.DB.prepare(`DELETE FROM voip_tokens WHERE token = ?1`).bind(tok).run();
+        console.log('[ws-do] removed stale voip token', tok.slice(0, 12));
+      } catch {}
+    }
+    console.log('[ws-do] voip notifications sent', { account: this.accountDigest?.slice(0, 16), total: tokens.length, stale: staleTokens.length });
   }
 
   async _flushEphemeralBuffers(ws) {

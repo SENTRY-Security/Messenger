@@ -10109,6 +10109,56 @@ async function handlePushRoutes(req, env) {
     }
   }
 
+  // POST /d1/push/voip/subscribe — register a PushKit VoIP device token
+  if (req.method === 'POST' && url.pathname === '/d1/push/voip/subscribe') {
+    let body;
+    try { body = await req.json(); } catch {
+      return json({ error: 'BadRequest', message: 'invalid json' }, { status: 400 });
+    }
+    const accountDigest = normalizeAccountDigest(body?.accountDigest || body?.account_digest);
+    const deviceId = normalizeDeviceId(body?.deviceId || body?.device_id);
+    const token = String(body?.token || '').trim();
+    const environment = body?.environment === 'sandbox' ? 'sandbox' : 'production';
+    if (!accountDigest || !token) {
+      return json({ error: 'BadRequest', message: 'accountDigest and token required' }, { status: 400 });
+    }
+    // VoIP topic = bundle id + '.voip'.
+    const voipTopic = env.APNS_TOPIC ? `${env.APNS_TOPIC}.voip` : null;
+    try {
+      await env.DB.prepare(
+        `INSERT INTO voip_tokens (account_digest, device_id, token, topic, environment, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, strftime('%s','now'), strftime('%s','now'))
+         ON CONFLICT(token) DO UPDATE SET
+           account_digest=excluded.account_digest,
+           device_id=excluded.device_id,
+           topic=excluded.topic,
+           environment=excluded.environment,
+           updated_at=strftime('%s','now')`
+      ).bind(accountDigest, deviceId || null, token, voipTopic, environment).run();
+      return json({ ok: true });
+    } catch (err) {
+      console.error('voip_subscribe_failed', err?.message || err);
+      return json({ error: 'VoipSubscribeFailed', message: err?.message || 'subscribe failed' }, { status: 500 });
+    }
+  }
+
+  // POST /d1/push/voip/unsubscribe — remove a PushKit VoIP device token
+  if (req.method === 'POST' && url.pathname === '/d1/push/voip/unsubscribe') {
+    let body;
+    try { body = await req.json(); } catch {
+      return json({ error: 'BadRequest', message: 'invalid json' }, { status: 400 });
+    }
+    const token = String(body?.token || '').trim();
+    if (!token) return json({ error: 'BadRequest', message: 'token required' }, { status: 400 });
+    try {
+      await env.DB.prepare(`DELETE FROM voip_tokens WHERE token = ?1`).bind(token).run();
+      return json({ ok: true });
+    } catch (err) {
+      console.error('voip_unsubscribe_failed', err?.message || err);
+      return json({ error: 'VoipUnsubscribeFailed', message: err?.message || 'unsubscribe failed' }, { status: 500 });
+    }
+  }
+
   // POST /d1/push/apns/test — send a test APNs push to an account's tokens (HMAC)
   if (req.method === 'POST' && url.pathname === '/d1/push/apns/test') {
     if (!await verifyHMAC(req, env)) return json({ error: 'Unauthorized' }, { status: 401 });

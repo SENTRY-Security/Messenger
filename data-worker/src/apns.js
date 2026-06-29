@@ -134,5 +134,59 @@ export function createAPNs({ teamId, keyId, p8, topic, environment, fetchImpl } 
     return { ok: false, status: res.status, gone, reason };
   }
 
-  return { enabled, send, _providerJwt: providerJwt };
+  /**
+   * Send a PushKit VoIP push to wake the app for an incoming call.
+   *
+   * Unlike `send` (apns-push-type: alert), this uses `apns-push-type: voip` and
+   * MUST target the VoIP topic `<bundleId>.voip`. The payload carries only
+   * non-sensitive call routing info (callId, kind) — the peer identity is
+   * resolved by the web layer after the call connects (E2EE: nothing sensitive
+   * is placed in the push).
+   *
+   * @returns same shape as `send`.
+   */
+  async function sendVoip(deviceToken, info = {}, opts = {}) {
+    if (!enabled) return { ok: false, status: 0, gone: false, reason: 'apns_disabled' };
+    if (!deviceToken) return { ok: false, status: 0, gone: false, reason: 'missing_token' };
+
+    // VoIP pushes carry a custom payload; an empty `aps` is fine.
+    const body = { aps: {} };
+    if (info.callId) body.callId = String(info.callId);
+    if (info.kind) body.kind = String(info.kind).toLowerCase() === 'video' ? 'video' : 'voice';
+    if (info.fromDeviceId) body.fromDeviceId = String(info.fromDeviceId);
+
+    // VoIP topic must be the bundle id with a `.voip` suffix.
+    const baseTopic = opts.topic || topic || '';
+    const voipTopic = /\.voip$/.test(baseTopic) ? baseTopic : (baseTopic ? `${baseTopic}.voip` : '');
+
+    let jwt;
+    try {
+      jwt = await providerJwt();
+    } catch (err) {
+      return { ok: false, status: 0, gone: false, reason: `jwt_error:${err?.message || err}` };
+    }
+
+    const res = await doFetch(`${host}/3/device/${deviceToken}`, {
+      method: 'POST',
+      headers: {
+        authorization: `bearer ${jwt}`,
+        'apns-topic': voipTopic,
+        'apns-push-type': 'voip',
+        'apns-priority': '10',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status === 200) return { ok: true, status: 200, gone: false };
+
+    let reason = '';
+    try { reason = (await res.json())?.reason || ''; } catch { /* no body */ }
+    const gone = res.status === 410
+      || reason === 'BadDeviceToken'
+      || reason === 'Unregistered'
+      || reason === 'DeviceTokenNotForTopic';
+    return { ok: false, status: res.status, gone, reason };
+  }
+
+  return { enabled, send, sendVoip, _providerJwt: providerJwt };
 }

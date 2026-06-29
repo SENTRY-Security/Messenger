@@ -1938,6 +1938,7 @@ When the recipient is offline, the Durable Object fans out over **both transport
 |-----------|--------------|----------|
 | Web Push (VAPID / RFC 8291) | `push_subscriptions` | Browser / home-screen PWA |
 | APNs (token-based ES256) | `apns_tokens` | Native iOS app / App Clip (WKWebView cannot receive Web Push) |
+| PushKit VoIP (ES256) | `voip_tokens` | Native iOS app — wake-on-incoming call → CallKit (topic `<bundleId>.voip`) |
 
 Both transports share the same Layer-1/Layer-2 type filtering and per-device encrypted preview (`encrypted_previews[device_id]`), and both auto-prune invalid endpoints/tokens on 404/410 (or `BadDeviceToken`/`Unregistered`).
 
@@ -2034,6 +2035,8 @@ Locale resolution logic is consistent with the main app's `locales/index.js` (BC
 | PIN verification | `POST /d1/push/pin/verify` | Verify PIN and complete subscription (iOS PWA) |
 | Register APNs token | `POST /d1/push/apns/subscribe` | Store native iOS APNs device token in `apns_tokens` |
 | Unregister APNs token | `POST /d1/push/apns/unsubscribe` | Remove an APNs device token |
+| Register VoIP token | `POST /d1/push/voip/subscribe` | Store PushKit VoIP token in `voip_tokens` (wake-on-call) |
+| Unregister VoIP token | `POST /d1/push/voip/unsubscribe` | Remove a PushKit VoIP token |
 | Unified fan-out (HMAC) | `POST /d1/push/send` | Send a background push to an account across Web Push + APNs |
 | Auto-cleanup | — | Automatically deletes invalid subscriptions/tokens upon receiving 404/410 (or BadDeviceToken/Unregistered) during push |
 
