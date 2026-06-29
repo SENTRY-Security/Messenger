@@ -20,6 +20,31 @@ function postNative(action, payload) {
   } catch { /* ignore */ }
 }
 
+/** Public alias so other modules (e.g. native-call-bridge) can message the shell. */
+export function postNativeMessage(action, payload) {
+  postNative(action, payload);
+}
+
+// Generic native→JS event subscribers. The shell only knows
+// `window.SentryNative.onEvent`, so we fan that single entry point out to any
+// number of feature listeners (push, calls, …).
+const nativeEventListeners = new Set();
+
+/** Subscribe to a native→JS event (e.g. 'callAnswered'). Returns an unsubscribe fn. */
+export function onNativeEvent(name, handler) {
+  if (typeof handler !== 'function') return () => {};
+  const entry = { name, handler };
+  nativeEventListeners.add(entry);
+  return () => nativeEventListeners.delete(entry);
+}
+
+function dispatchNativeEvent(name, data) {
+  for (const entry of Array.from(nativeEventListeners)) {
+    if (entry.name !== name) continue;
+    try { entry.handler(data || {}); } catch { /* ignore */ }
+  }
+}
+
 /** Ask the native shell to register for APNs push (triggers the iOS prompt). */
 export function requestNativePush() {
   postNative('registerPush');
@@ -49,6 +74,8 @@ export function initNativeBridge() {
       try {
         if (name === 'pushToken' && data && data.token) registerApnsToken(data.token);
       } catch { /* ignore */ }
+      // Fan out to feature listeners (calls, …).
+      dispatchNativeEvent(name, data);
     },
   };
 }

@@ -38,6 +38,7 @@ import { CALL_MEDIA_STATE_STATUS } from '../../../shared/calls/schemas.js';
 import { createCallAudioManager } from './call-audio.js';
 import { getCallAudioConstraints } from './browser-detection.js';
 import { showCallInfoOverlay } from '../../features/calls/call-info-overlay.js';
+import { initNativeCallBridge, setNativeCallActionHandlers } from '../../features/native-call-bridge.js';
 import { t } from '/locales/index.js';
 
 function getStatusLabel() {
@@ -1785,6 +1786,28 @@ export function initCallOverlay({ showToast }) {
     if (e2eeRetryTimer) { clearInterval(e2eeRetryTimer); e2eeRetryTimer = null; }
     if (e2eeTimeoutTimer) { clearTimeout(e2eeTimeoutTimer); e2eeTimeoutTimer = null; }
   }
+
+  // ── Native CallKit bridge (iOS shell only; no-op elsewhere) ──
+  // Route system call-UI actions (answer / end / mute) through the same paths as
+  // the on-screen buttons so behaviour and signalling stay identical.
+  function handleNativeEnd() {
+    const session = getCallSessionSnapshot();
+    const status = session?.status;
+    if (status === CALL_SESSION_STATUS.INCOMING) handleReject();
+    else if (status === CALL_SESSION_STATUS.OUTGOING) handleCancel();
+    else handleHangup();
+  }
+  function handleNativeSetMuted(muted) {
+    const session = getCallSessionSnapshot();
+    const current = session?.mediaState?.controls?.audioMuted ?? isLocalAudioMuted();
+    if (current !== muted) handleMuteToggle();
+  }
+  setNativeCallActionHandlers({
+    answer: () => handleAccept(),
+    end: handleNativeEnd,
+    setMuted: handleNativeSetMuted
+  });
+  initNativeCallBridge();
 
   const unsubscribers = [
     subscribeCallEvent(CALL_EVENT.STATE, ({ session }) => {
