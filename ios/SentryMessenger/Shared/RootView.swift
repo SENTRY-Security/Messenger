@@ -14,6 +14,12 @@ struct RootView: View {
         if let url = router.sessionURL {
             WebContainerView(url: url)
                 .transition(.opacity)
+        } else if router.validating {
+            // Validating an SDM tag-wake URL before loading the web login.
+            ZStack {
+                Color.black.ignoresSafeArea()
+                ProgressView().progressViewStyle(.circular).tint(.white)
+            }
         } else {
             LoginView { url in
                 withAnimation { router.open(url) }

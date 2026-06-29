@@ -7600,6 +7600,21 @@ const SDM_EXCHANGE_TTL = 300; // seconds
 const OPAQUE_SESSION_TTL = 120;
 
 async function handleAuthRoutes(path, method, url, body, req, env, baseUrl) {
+  // POST /api/v1/auth/sdm/verify — validate an NTAG424 SDM URL's CMAC WITHOUT
+  // consuming it (no counter advance, no session created). Used by the native
+  // shell to verify a tag-wake URL before loading the web login; the web layer
+  // then performs the real /sdm/exchange (which advances the counter exactly once).
+  if (path === '/api/v1/auth/sdm/verify' && method === 'POST') {
+    if (!body?.uid || !body?.sdmmac) return json({ error: 'BadRequest', message: 'uid, sdmmac required' }, { status: 400 });
+    const uidHex = String(body.uid).replace(/[^0-9a-f]/gi, '').toUpperCase();
+    const ctrHex = typeof body.sdmcounter === 'number' ? body.sdmcounter.toString(16) : String(body.sdmcounter || '0');
+    const cmacHex = String(body.sdmmac).replace(/[^0-9a-f]/gi, '').toUpperCase();
+    let vr;
+    try { vr = await ntag424_verifyCmac(env, uidHex, ctrHex, cmacHex); }
+    catch (e) { return json({ error: 'ConfigError', message: e?.message || 'NTAG424 config missing' }, { status: 500 }); }
+    return json({ ok: !!vr.ok });
+  }
+
   // POST /api/v1/auth/sdm/exchange
   if (path === '/api/v1/auth/sdm/exchange' && method === 'POST') {
     if (!body?.uid || !body?.sdmmac) return json({ error: 'BadRequest', message: 'uid, sdmmac required' }, { status: 400 });
