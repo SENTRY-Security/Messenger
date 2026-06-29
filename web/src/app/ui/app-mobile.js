@@ -131,7 +131,7 @@ import { replayAllBizConvMessages } from '../features/biz-conv-replay.js';
 import { createBizConvCreateModal } from './mobile/modals/biz-conv-create-modal.js';
 import { createBizConvInfoModal } from './mobile/modals/biz-conv-info-modal.js';
 import { subscriptionStatus, redeemSubscription } from '../api/subscription.js';
-import '../features/native-bridge.js';   // installs window.SentryNative (iOS shell ↔ APNs)
+import { isNativeApp } from '../features/native-bridge.js';   // installs window.SentryNative (iOS shell ↔ APNs)
 import { showVersionModal } from './version-info.js';
 import QrScanner from '../lib/vendor/qr-scanner.min.js';
 import { disableZoom } from './mobile/zoom-disabler.js';
@@ -3112,7 +3112,11 @@ postLoginInitPromise
     await profileInitPromise.catch(() => { });
     // --- Loading Modal: hydration done → enter or dismiss ---
     window.__updateLoadingProgress?.('ready');
-    if (_mediaPermissionNeeded) {
+    // Native app: media permissions are granted by the iOS shell
+    // (requestMediaCapturePermissionFor), so the manual "enter" gesture gate is
+    // unnecessary — enter directly. Browsers still show the button to satisfy
+    // the getUserMedia/autoplay user-gesture requirement.
+    if (_mediaPermissionNeeded && !isNativeApp()) {
       setTimeout(() => {
         window.__morphToEnterButton?.();
         // Wire up splash enter-button click → request mic+camera permission
