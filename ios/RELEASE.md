@@ -4,7 +4,7 @@
 > 多數無法由 CI 代勞（需簽章憑證與 App Store Connect 設定）。
 
 ## 1. Apple Developer Portal
-- App ID：`red.sentry.app.SENTRY-Messenger`、App Clip ID：`…​.Clip`（Team `DYAAM5G8JF`）。
+- App ID：`red.sentry.app.SENTRY-Messenger`、App Clip ID：`…​.Clip`（Team `HW8N8C46HG`）。
 - 啟用 Capabilities：
   - Near Field Communication Tag Reading（NDEF）
   - Push Notifications
@@ -14,7 +14,7 @@
 - 建立 APNs 金鑰（.p8）供後端發送（topic = bundle id）。
 
 ## 2. 簽章
-- Xcode Signing & Capabilities 選擇 Team `DYAAM5G8JF`（已寫入 `project.yml`）。
+- Xcode Signing & Capabilities 選擇 Team `HW8N8C46HG`（已寫入 `project.yml`）。
 - `aps-environment` 上架/TestFlight 改為 `production`（見 entitlements）。
 
 ## 3. Associated Domains / AASA
