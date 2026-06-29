@@ -15,7 +15,7 @@ final class SecureSessionController: SecureSessionBridge {
     private init() {
         // When the lock manager needs to verify a tapped card, push the SDM URL to
         // web (which confirms it resolves to the logged-in account) and await reply.
-        DispatchQueue.main.async {
+        Task { @MainActor in
             AppLockManager.shared.verifyNfcUrl = { [weak self] url, completion in
                 guard let self else { completion(false); return }
                 self.pendingNfcVerify = completion
@@ -44,20 +44,20 @@ final class SecureSessionController: SecureSessionBridge {
             KeychainStore.clearSession()
 
         case "getLockMode":
-            DispatchQueue.main.async { [weak self] in
+            Task { @MainActor [weak self] in
                 self?.sendToWeb?("lockMode", ["mode": AppLockManager.shared.mode.rawValue])
             }
 
         case "setLockMode":
             if let raw = payload["mode"] as? String, let m = LockMode(rawValue: raw) {
-                DispatchQueue.main.async { AppLockManager.shared.setMode(m) }
+                Task { @MainActor in AppLockManager.shared.setMode(m) }
             }
 
         case "openLockSettings":
-            DispatchQueue.main.async { AppLockManager.shared.showSettings = true }
+            Task { @MainActor in AppLockManager.shared.showSettings = true }
 
         case "lockNow":
-            DispatchQueue.main.async { AppLockManager.shared.lockNow() }
+            Task { @MainActor in AppLockManager.shared.lockNow() }
 
         case "nfcUnlockResult":
             let ok = (payload["ok"] as? Bool) ?? false
