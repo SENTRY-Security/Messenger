@@ -1714,6 +1714,7 @@ media_objects         # Media object tracking
 | `/auth/opaque/debug` | GET | OPAQUE config debug (non-sensitive info) | — |
 | `/mk/store` | POST | Store wrapped MK (first-time setup, consumes session) | KV session single-use |
 | `/mk/update` | POST | Update wrapped MK (password change) | — |
+| `/mk/fetch` | POST | Re-fetch wrapped MK for a logged-in device (iOS secure-session re-open). Auth: `account_token`+`account_digest`+`device_id`+`ts`+`hmac` (HMAC-SHA256 keyed by token, anti-replay). Active device only. | Returns ciphertext only |
 
 ### Key Management (`/api/v1/keys/`)
 

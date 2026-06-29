@@ -7718,6 +7718,62 @@ async function handleAuthRoutes(path, method, url, body, req, env, baseUrl) {
     return new Response(null, { status: 204 });
   }
 
+  // POST /api/v1/mk/fetch — re-fetch the wrapped MK for an already-logged-in
+  // device (iOS App secure-session re-open, no card re-tap). Auth:
+  //   account_token + account_digest + device_id + ts + hmac
+  // where hmac = base64url(HMAC-SHA256(key=account_token, msg=`${digest}.${device_id}.${ts}`)).
+  // The HMAC binds device_id/digest/ts (anti-replay) and proves token possession.
+  // Returns ciphertext only (server cannot decrypt). The KEK that unwraps it lives
+  // only in the device Keychain (FaceID-protected), so a leaked token is useless.
+  if (path === '/api/v1/mk/fetch' && method === 'POST') {
+    const accountToken = String(body?.account_token || body?.accountToken || '').trim();
+    const accountDigest = normalizeAccountDigest(body?.account_digest || body?.accountDigest);
+    const deviceId = normalizeDeviceId(body?.device_id || body?.deviceId);
+    const ts = Number(body?.ts);
+    const providedHmac = String(body?.hmac || '').trim();
+    if (!accountToken || !accountDigest || !deviceId || !Number.isFinite(ts) || !providedHmac) {
+      return json({ error: 'BadRequest', message: 'account_token, account_digest, device_id, ts, hmac required' }, { status: 400 });
+    }
+    // Anti-replay: reject stale/early timestamps (±300s).
+    if (Math.abs(Date.now() - ts) > 300_000) {
+      return json({ error: 'StaleRequest', message: 'ts out of range' }, { status: 401 });
+    }
+    // Recompute and compare the per-device HMAC (keyed by the account token).
+    let expectedHmac;
+    try {
+      const hkey = await crypto.subtle.importKey(
+        'raw', new TextEncoder().encode(accountToken),
+        { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+      const mac = await crypto.subtle.sign('HMAC', hkey,
+        new TextEncoder().encode(`${accountDigest}.${deviceId}.${ts}`));
+      expectedHmac = btoa(String.fromCharCode(...new Uint8Array(mac)))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    } catch (err) {
+      console.error('mk_fetch_hmac_failed', err?.message || err);
+      return json({ error: 'ServerError' }, { status: 500 });
+    }
+    if (!timingSafeEqual(providedHmac, expectedHmac)) {
+      return json({ error: 'Unauthorized', message: 'bad hmac' }, { status: 401 });
+    }
+    // Verify token + account and pull the wrapped MK.
+    const account = await resolveAccount(env, { accountToken, accountDigest });
+    if (!account) return json({ error: 'Unauthorized' }, { status: 401 });
+    // Device must still be active for this account (kicked/removed → reject).
+    let deviceActive = false;
+    try {
+      const rows = await env.DB.prepare(
+        `SELECT status FROM devices WHERE account_digest=?1 AND device_id=?2`
+      ).bind(account.account_digest, deviceId).all();
+      deviceActive = (rows?.results?.[0]?.status === 'active');
+    } catch (err) {
+      console.error('mk_fetch_device_check_failed', err?.message || err);
+      return json({ error: 'ServerError' }, { status: 500 });
+    }
+    if (!deviceActive) return json({ error: 'DeviceNotActive' }, { status: 403 });
+    if (!account.wrapped_mk_json) return json({ error: 'NoWrappedMK', message: 'no wrapped_mk for account' }, { status: 404 });
+    return json({ wrapped_mk: account.wrapped_mk_json });
+  }
+
   // ---- OPAQUE endpoints ----
   // POST /api/v1/auth/opaque/register-init
   if (path === '/api/v1/auth/opaque/register-init' && method === 'POST') {
@@ -7912,7 +7968,7 @@ async function handlePublicRoutes(req, env) {
   }
 
   // ── Auth (SDM exchange, OPAQUE, MK) ──────────────────────────
-  if (path.startsWith('/api/v1/auth/') || path === '/api/v1/mk/store' || path === '/api/v1/mk/update') {
+  if (path.startsWith('/api/v1/auth/') || path === '/api/v1/mk/store' || path === '/api/v1/mk/update' || path === '/api/v1/mk/fetch') {
     // Rate limit for auth endpoints: 50 requests per 60s per account (fallback to IP)
     const authRlKey = resolveRateLimitKey(req, { body });
     if (authRlKey) {
