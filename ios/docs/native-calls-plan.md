@@ -142,7 +142,7 @@ JS → 原生（`postMessage({action,payload})`）：
 | **P1 CallKit 前景整合** | `CallKitController` + bridge（撥出/接通/掛斷/靜音） | ✅ 已實作 | 撥出與接聽顯示原生 UI；通話進系統記錄；靜音同步 |
 | **P2 PushKit 喚醒** | `voip` 背景模式 + `VoipPushService`；收 VoIP push → 同步報 CallKit | ✅ 已實作 | App 被關閉時，對方來電仍跳鎖屏來電並可接聽 |
 | **P3 後端 VoIP push** | `apns.js sendVoip` + `voip_tokens`（migration 0022）+ `account-ws` 於 call-invite 離線觸發 + worker 端點 | ✅ 已實作 | 端到端：離線被叫收到鎖屏來電 |
-| **P4 收尾／驗證** | 通話記錄 UI、邊界情境（多來電、未接、忙線）、實機 PoC | ⏳ 進行中 | 各情境穩定；音訊 PoC 通過 |
+| **P4 收尾／驗證** | 邊界情境（忙線拒接、未接逾時、冷啟動拒接重放）已於 `CallKitController` 實作；通話記錄 UI 與實機 PoC 待辦 | ⏳ 進行中 | 各情境穩定；音訊 PoC 通過 |
 
 實作落點：
 - iOS：`AudioSessionManager.swift`、`CallKitController.swift`（singleton + 冷啟動接聽重放）、
@@ -154,8 +154,14 @@ JS → 原生（`postMessage({action,payload})`）：
 - Web：`native-bridge.js`（voipToken → `/d1/push/voip/subscribe`，登入前快取重試）、
   `native-call-bridge.js`、`call-overlay.js`。
 
-**尚待（P4 / 實機）**：WKWebView WebRTC × CallKit 音訊 PoC、冷啟動端到端時序、忙線/多來電/未接
-邊界、App Store 憑證與 VoIP topic 設定。
+P4 已實作的原生邊界處理（`CallKitController`）：
+- **忙線拒接**：已有通話時的新來電會被報告後立即結束（滿足 VoIP 必報要求），不打斷現有通話。
+- **未接逾時**：來電顯示後 40 秒未接通則自動結束為「未接」，避免 CallKit UI 卡住（web 未連線時的安全網）。
+- **冷啟動拒接重放**：接聽與拒接皆支援在 web 就緒前先排隊、就緒後重放。
+- **`reportIncoming` 冪等**：VoIP push 與 web 對同一 callId 不重複報告。
+
+**尚待（實機 / 帳號）**：WKWebView WebRTC × CallKit 音訊 PoC、冷啟動端到端時序、通話記錄 UI
+對齊、App Store 憑證與 VoIP topic 設定。
 
 ---
 

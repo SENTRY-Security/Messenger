@@ -37,12 +37,30 @@ final class CallKitController: NSObject {
     }
     private var pendingAnsweredCallId: String?
     /// Emitted when the user ends/declines via the system UI. Web should run its
-    /// reject (if ringing) or hangup (if connected) path.
-    var onEnd: ((_ callId: String) -> Void)?
+    /// reject (if ringing) or hangup (if connected) path. Cold-launch decline is
+    /// queued and replayed once the callback attaches (symmetric to `onAnswer`).
+    var onEnd: ((_ callId: String) -> Void)? {
+        didSet {
+            guard onEnd != nil, let pending = pendingEndedCallId else { return }
+            pendingEndedCallId = nil
+            onEnd?(pending)
+        }
+    }
+    private var pendingEndedCallId: String?
+    /// Emitted when a new incoming call is rejected because another call is
+    /// already active (busy). Web should send `call-busy` to the caller.
+    var onBusy: ((_ callId: String) -> Void)?
     /// Emitted when the user toggles mute via the system UI.
     var onMute: ((_ callId: String, _ muted: Bool) -> Void)?
     /// Emitted after CallKit activates the audio session — web may (re)start media.
     var onAudioReady: ((_ callId: String) -> Void)?
+
+    /// The call currently occupying the device (answered/connected or outgoing).
+    /// Used to reject concurrent incoming calls as busy (single-call app).
+    private var activeCallId: String?
+    /// Per-call missed-call safety net: auto-end an unanswered incoming call.
+    private var incomingTimers: [UUID: DispatchWorkItem] = [:]
+    private let incomingTimeout: TimeInterval = 40
 
     private let provider: CXProvider
     private let callController = CXCallController()
@@ -84,10 +102,30 @@ final class CallKitController: NSObject {
     private func forget(_ uuid: UUID) {
         videoFlags[uuid] = nil
         reportedIncoming.remove(uuid)
+        cancelIncomingTimer(uuid)
         if let callId = uuidToId[uuid] {
             idToUUID[callId] = nil
+            if activeCallId == callId { activeCallId = nil }
         }
         uuidToId[uuid] = nil
+    }
+
+    // MARK: missed-call timeout
+
+    private func startIncomingTimer(_ uuid: UUID) {
+        cancelIncomingTimer(uuid)
+        let work = DispatchWorkItem { [weak self] in
+            guard let self, let callId = self.uuidToId[uuid] else { return }
+            // Never answered/connected in time → end the system call as missed.
+            self.reportEnded(callId: callId, reason: "unanswered")
+        }
+        incomingTimers[uuid] = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + incomingTimeout, execute: work)
+    }
+
+    private func cancelIncomingTimer(_ uuid: UUID) {
+        incomingTimers[uuid]?.cancel()
+        incomingTimers[uuid] = nil
     }
 
     // MARK: state in (from web via NativeBridge)
@@ -95,10 +133,31 @@ final class CallKitController: NSObject {
     /// Incoming call → present the system incoming-call UI.
     func reportIncoming(callId: String, peerName: String, hasVideo: Bool) {
         guard let id = uuid(for: callId) else { return }
+
+        // Busy: another call is already active. iOS still requires that a VoIP
+        // push results in a reported call, so report this one then immediately
+        // end it as busy and let web notify the caller (`call-busy`).
+        if let active = activeCallId, active != callId {
+            guard !reportedIncoming.contains(id) else { return }
+            reportedIncoming.insert(id)
+            let update = CXCallUpdate()
+            update.remoteHandle = CXHandle(type: .generic, value: peerName.isEmpty ? "SENTRY" : peerName)
+            update.hasVideo = hasVideo
+            provider.reportNewIncomingCall(with: id, update: update) { [weak self] error in
+                guard let self else { return }
+                if let error { print("[CallKit] busy reportIncoming failed: \(error.localizedDescription)") }
+                self.provider.reportCall(with: id, endedAt: nil, reason: .remoteEnded)
+                self.onBusy?(callId)
+                self.forget(id)
+            }
+            return
+        }
+
         videoFlags[id] = hasVideo
         // Idempotent: if already presented (e.g. via VoIP push), don't re-report.
         guard !reportedIncoming.contains(id) else { return }
         reportedIncoming.insert(id)
+        activeCallId = callId  // a ringing call occupies the device (single-call app)
         let update = CXCallUpdate()
         update.remoteHandle = CXHandle(type: .generic, value: peerName.isEmpty ? "SENTRY" : peerName)
         update.hasVideo = hasVideo
@@ -107,7 +166,13 @@ final class CallKitController: NSObject {
         update.supportsUngrouping = false
         update.supportsDTMF = false
         provider.reportNewIncomingCall(with: id, update: update) { [weak self] error in
-            if let error { print("[CallKit] reportIncoming failed: \(error.localizedDescription)"); self?.forget(id) }
+            guard let self else { return }
+            if let error {
+                print("[CallKit] reportIncoming failed: \(error.localizedDescription)")
+                self.forget(id)
+            } else {
+                self.startIncomingTimer(id)  // missed-call safety net
+            }
         }
     }
 
@@ -115,6 +180,7 @@ final class CallKitController: NSObject {
     func reportOutgoing(callId: String, peerName: String, hasVideo: Bool) {
         guard let id = uuid(for: callId) else { return }
         videoFlags[id] = hasVideo
+        activeCallId = callId
         let handle = CXHandle(type: .generic, value: peerName.isEmpty ? "SENTRY" : peerName)
         let action = CXStartCallAction(call: id, handle: handle)
         action.isVideo = hasVideo
@@ -128,6 +194,8 @@ final class CallKitController: NSObject {
     /// Call became fully connected (media flowing).
     func reportConnected(callId: String) {
         guard let id = uuid(for: callId, createIfMissing: false) else { return }
+        activeCallId = callId
+        cancelIncomingTimer(id)
         provider.reportOutgoingCall(with: id, connectedAt: nil)
     }
 
@@ -173,13 +241,15 @@ extension CallKitController: CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
         guard let callId = uuidToId[action.callUUID] else { action.fail(); return }
+        activeCallId = callId
+        cancelIncomingTimer(action.callUUID)
         if let onAnswer { onAnswer(callId) } else { pendingAnsweredCallId = callId }
         action.fulfill()
     }
 
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
         guard let callId = uuidToId[action.callUUID] else { action.fail(); return }
-        onEnd?(callId)
+        if let onEnd { onEnd(callId) } else { pendingEndedCallId = callId }
         forget(action.callUUID)
         action.fulfill()
     }
