@@ -29,8 +29,12 @@ import {
 // crypto deps
 import {
   wrapMKWithPasswordArgon2id,
-  unwrapMKWithPasswordArgon2id
+  unwrapMKWithPasswordArgon2id,
+  unwrapMKWithPasswordArgon2idEx
 } from '../crypto/kdf.js';
+// iOS App secure-session: persist the KEK so the app can re-fetch + unwrap the MK
+// on cold launch without the card/password. No-op on web (isNativeApp() false).
+import { isNativeApp, postNativeMessage } from './native-bridge.js';
 
 import {
   wrapDevicePrivWithMK,
@@ -240,6 +244,26 @@ export async function exchangeSDM(p) {
   };
 }
 
+function _kekToHex(u8) {
+  return Array.from(u8 || []).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** iOS App only: persist KEK + token + digest in the native Keychain so the app
+ *  can re-fetch + unwrap the MK on cold launch without the card/password.
+ *  No-op on web (isNativeApp() false) or when the KEK is unavailable. */
+function maybePersistSecureSession(kekRaw) {
+  try {
+    if (!isNativeApp() || !kekRaw) return;
+    const kek = _kekToHex(kekRaw);
+    if (!kek) return;
+    postNativeMessage('secureStore', {
+      kek,
+      account_token: getAccountToken() || '',
+      account_digest: getAccountDigest() || ''
+    });
+  } catch { /* best-effort */ }
+}
+
 /**
  * 2) Unlock & Init — derive KEK from password to unwrap MK (or first-time wrap & store),
  * then ensure device prekeys exist and are replenished. Returns a summary object.
@@ -347,11 +371,14 @@ export async function unlockAndInit({ password, onProgress, onMkReady, preBundle
     report('mk-store', 'skip');
     // unwrap existing MK
     try {
-      const mk = await unwrapMKWithPasswordArgon2id(pwd, getWrappedMK());
+      const { mk, kekRaw } = await unwrapMKWithPasswordArgon2idEx(pwd, getWrappedMK());
       if (!mk) throw new Error('wrong password or envelope mismatch');
       setMkRaw(mk);
       emitMkSetTrace('login:unwrap-existing', mk);
       unlocked = true;
+      // iOS App: persist KEK + token + digest in the Keychain for password-less
+      // cold-launch restore (no-op on web).
+      maybePersistSecureSession(kekRaw);
       if (typeof onMkReady === 'function') { try { onMkReady(); } catch { } }
     } catch (e) {
       const mkSummary = await summarizeMkForLog(getMkRaw());
