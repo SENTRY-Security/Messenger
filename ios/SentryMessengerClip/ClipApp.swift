@@ -4,8 +4,9 @@ import SwiftUI
 ///
 /// An NTAG424 tap can launch this lightweight clip on devices without the full
 /// app installed. The tag URL arrives as a `NSUserActivityTypeBrowsingWeb`
-/// invocation and is routed into the web shell via `SessionRouter`. If launched
-/// without a URL (e.g. from the App Clip card) the native NFC login is shown.
+/// invocation and is routed into the web shell via `SessionRouter`. The clip is
+/// always entered via the card tap, so it does NOT show the native NFC login —
+/// `ClipRootView` loads the web shell directly (password login lives in web).
 ///
 /// TODO (to discuss later):
 ///   - Configure the App Clip's Advanced/Default Experience + invocation URL in
@@ -19,7 +20,7 @@ struct SentryMessengerClipApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(router: router)
+            ClipRootView(router: router)
                 .preferredColorScheme(.dark)
                 .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
                     if let url = activity.webpageURL { router.open(url) }
