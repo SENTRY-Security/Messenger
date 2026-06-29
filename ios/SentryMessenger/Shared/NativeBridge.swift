@@ -20,6 +20,11 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     /// App Clips cannot use CallKit/PushKit; calls only run in the full app.
     private let isAppClip = (Bundle.main.bundleIdentifier ?? "").hasSuffix(".Clip")
 
+    /// Secure-session / app-lock handler, provided by the full app at launch
+    /// (`SecureSessionController`). Stays nil in the App Clip, where the
+    /// secure-session actions are no-ops.
+    static var secureSession: SecureSessionBridge?
+
     override init() {
         super.init()
         NotificationCenter.default.addObserver(
@@ -53,6 +58,10 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         callKit.onAnswer = { [weak self] callId in
             self?.sendEvent("callAnswered", data: ["callId": callId])
         }
+        // Let the secure-session handler push events (e.g. nfcUnlockScanned) to web.
+        NativeBridge.secureSession?.sendToWeb = { [weak self] name, data in
+            self?.sendEvent(name, data: data)
+        }
     }
 
     deinit { NotificationCenter.default.removeObserver(self) }
@@ -81,6 +90,10 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             }
         case "callIncoming", "callStarted", "callConnected", "callStateChanged", "callEnded":
             handleCallAction(action, payload: payload)
+        case "secureStore", "secureLoad", "clearSecureSession",
+             "getLockMode", "setLockMode", "openLockSettings", "lockNow", "nfcUnlockResult":
+            // Routed to the full app's secure-session handler (nil in App Clip).
+            NativeBridge.secureSession?.handle(action: action, payload: payload)
         default:
             print("[NativeBridge] unhandled action: \(action)")
         }

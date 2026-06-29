@@ -115,11 +115,15 @@
 | 階段 | 內容 | 狀態 |
 |------|------|------|
 | S0 | iOS 關背景計時登出 + 隱藏設定（保留他處踢線） | ✅ 已實作 |
-| S1 | 原生 Keychain/Biometric/SecureFile + 設定畫面 | ⏳ |
-| S2 | Bridge action/event 串接 | ⏳ |
-| S3 | 後端 `mk/fetch` 端點 | ⏳ |
-| S4 | Web（isNativeApp）登入存 Keychain、重開金鑰重取、登出清除 | ⏳ |
-| S5 | 文件 + 實機驗證（FaceID、冷啟動取金鑰、他處踢線清 Keychain） | ⏳ |
+| S1 | 原生 Keychain + AppLock（FaceID/NFC 鎖定遮罩）+ 設定面（none/faceid/nfc） | ✅ 已實作 |
+| S2 | Bridge：secure-session 協定 + 動作/事件串接（含 NFC 解鎖驗證 round-trip） | ✅ 已實作 |
+| S3 | 後端 `mk/fetch` 端點 | ✅ 已實作 |
+| S4 | Web：NFC 解鎖唯讀驗證、鎖定設定入口、store/clear 助手 | ✅ 已實作（鎖定閘門）；⏳ 冷啟動金鑰重取 + 登入存 KEK 待接 |
+| S5 | 文件 + 實機驗證（FaceID/NFC 解鎖、冷啟動取金鑰、他處踢線清 Keychain） | ⏳ |
+
+> **本回合範圍**：鎖定閘門（FaceID + NFC，回前景/App 未被殺情境）已端到端可運作；
+> **尚待**：冷啟動「secureLoad → /api/v1/mk/fetch → 解封 MK → 注水」與「登入成功存 KEK 到 Keychain」
+> 需接入 `login-ui.js` 啟動流程（安全敏感、需實機驗證），以及實機測試 FaceID/NFC。
 
 ---
 

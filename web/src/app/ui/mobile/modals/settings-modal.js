@@ -3,6 +3,7 @@
 import { escapeHtml } from '../ui-utils.js';
 import { t, getCurrentLang, setLang, applyDOMTranslations } from '/locales/index.js';
 import { isNativeApp } from '../../../features/native-bridge.js';
+import { openNativeLockSettings } from '../../../features/native-secure-session.js';
 
 const SUPPORTED_LANGUAGES = [
   { code: 'zh-Hant', label: '🇹🇼 繁體中文' },
@@ -277,6 +278,13 @@ export function createSettingsModule({ deps }) {
           </div>
           <button type="button" class="settings-link" id="settingsChangePassword">${escapeHtml(t('settings.changePassword'))}</button>
         </div>
+        ${isNativeApp() ? `<div class="settings-item">
+          <div class="settings-text">
+            <strong>回到 App 解鎖</strong>
+            <p>選擇回到 App 時的解鎖方式：關閉 / FaceID / 感應 NFC 卡。</p>
+          </div>
+          <button type="button" class="settings-link" id="settingsLockMode">設定</button>
+        </div>` : ''}
         <div class="settings-item">
           <div class="settings-text">
             <strong>${escapeHtml(t('settings.language'))}</strong>
@@ -345,6 +353,11 @@ export function createSettingsModule({ deps }) {
     const logoutSummaryEl = body.querySelector('#settingsLogoutSummary');
     const logoutManageBtn = body.querySelector('#settingsLogoutManage');
     const changePasswordBtn = body.querySelector('#settingsChangePassword');
+
+    // iOS App only: open the native lock-mode settings sheet.
+    body.querySelector('#settingsLockMode')?.addEventListener('click', () => {
+      try { openNativeLockSettings(); } catch { /* ignore */ }
+    });
 
     const languageSelect = body.querySelector('#settingsLanguage');
     languageSelect?.addEventListener('change', async (e) => {

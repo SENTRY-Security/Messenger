@@ -132,6 +132,7 @@ import { createBizConvCreateModal } from './mobile/modals/biz-conv-create-modal.
 import { createBizConvInfoModal } from './mobile/modals/biz-conv-info-modal.js';
 import { subscriptionStatus, redeemSubscription } from '../api/subscription.js';
 import { isNativeApp } from '../features/native-bridge.js';   // installs window.SentryNative (iOS shell ↔ APNs)
+import '../features/native-secure-session.js';                // installs iOS lock-gate / secure-session glue (no-op on web)
 import { showVersionModal } from './version-info.js';
 import QrScanner from '../lib/vendor/qr-scanner.min.js';
 import { disableZoom } from './mobile/zoom-disabler.js';
