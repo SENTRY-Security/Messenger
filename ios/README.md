@@ -24,6 +24,8 @@ open SentryMessenger.xcodeproj
 
 ### 1) App 內 NFC 登入
 - 啟動後進入原生 `LoginView`，點「感應卡片登入」→ 系統 NFC 感應 UI 彈出。
+  畫面採用品牌 Logo（`Assets.xcassets/LogoMark`，向量 template 染白）與深色漸層
+  背景、青→靛漸層按鈕，視覺對齊 web 登入頁（`web/src/pages/login.html`）。
 - 讀取 NTAG424 的 NDEF URI（SDM 每次感應產生新的 `PICCData`/`CMAC`），
   驗證網域於 `AppConfig.allowedTagHosts` 白名單內後，載入該動態 URL，由
   web/後端（data-worker 的 NTAG424 SDM 驗證）完成登入。
