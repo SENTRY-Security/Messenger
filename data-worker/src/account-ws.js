@@ -21,6 +21,7 @@
 
 import { verifyJwt } from './jwt.js';
 import { createWebPush } from './web-push.js';
+import { createAPNs } from './apns.js';
 
 // ── Constants ────────────────────────────────────────────────────
 const CALL_LOCK_TTL_MS = 120_000;
@@ -307,22 +308,43 @@ export class AccountWebSocket {
       }
     }
 
-    // Always send Web Push notification (even when WS is connected)
-    const hasVapid = !!(this.env.VAPID_PUBLIC_KEY && this.env.VAPID_PRIVATE_KEY);
-    if (!hasVapid) {
-      console.warn('[ws-do] push skipped: VAPID keys not configured', {
-        hasPub: !!this.env.VAPID_PUBLIC_KEY,
-        hasPriv: !!this.env.VAPID_PRIVATE_KEY
-      });
+    // Background push (Web Push + APNs) is an OFFLINE delivery mechanism: fan out
+    // only when no active socket received the message (sent === 0). When the
+    // recipient is online the live WebSocket already delivered it, so pushing
+    // again would be redundant ("在線就不重複推"). This single chokepoint covers
+    // both the HTTP delivery path (Worker notifyAccountDO → /notify) and the WS
+    // relay path (sender DO _relayToTarget → target DO /notify), so each message
+    // triggers at most one push fan-out (idempotent per delivery).
+    if (sent > 0) {
+      return Response.json({ ok: true, sent });
     }
     if (!this.accountDigest) {
-      console.warn('[ws-do] push skipped: no accountDigest after notify');
+      console.warn('[ws-do] offline push skipped: no accountDigest after notify');
+      return Response.json({ ok: true, sent });
     }
-    if (this.accountDigest && hasVapid) {
+
+    const hasVapid = !!(this.env.VAPID_PUBLIC_KEY && this.env.VAPID_PRIVATE_KEY);
+    const apns = this._apns();
+    if (!hasVapid && !apns.enabled) {
+      console.warn('[ws-do] offline push skipped: neither Web Push (VAPID) nor APNs configured');
+    }
+
+    // Web Push (browser / home-screen PWA)
+    if (hasVapid) {
       try {
         await this._sendPushNotifications(payload);
       } catch (pushErr) {
-        console.warn('[ws-do] push notification failed', pushErr?.message || pushErr);
+        console.warn('[ws-do] web push notification failed', pushErr?.message || pushErr);
+      }
+    }
+
+    // APNs (native iOS app / App Clip) — parallel transport because WKWebView
+    // cannot receive Web Push.
+    if (apns.enabled) {
+      try {
+        await this._sendApnsNotifications(payload, apns);
+      } catch (apnsErr) {
+        console.warn('[ws-do] apns notification failed', apnsErr?.message || apnsErr);
       }
     }
 
@@ -1152,32 +1174,54 @@ export class AccountWebSocket {
     await this.state.storage.put(key, buf);
   }
 
-  async _sendPushNotifications(payload) {
-    if (!this.accountDigest || !this.env.DB) {
-      console.warn('[ws-do] push skipped: no accountDigest or DB', { digest: !!this.accountDigest, db: !!this.env.DB });
-      return;
-    }
-    // Only send push for notification-worthy message types
+  // Build an APNs sender from this DO's env (mirrors the Worker's apnsFromEnv).
+  // The gateway (production vs sandbox) is selected per Worker deployment via
+  // APNS_ENV — prod = production gateway, uat = sandbox. Returns { enabled }.
+  _apns() {
+    return createAPNs({
+      teamId: this.env.APNS_TEAM_ID,
+      keyId: this.env.APNS_KEY_ID,
+      p8: this.env.APNS_KEY_P8,
+      topic: this.env.APNS_TOPIC,
+      environment: this.env.APNS_ENV,
+    });
+  }
+
+  // Shared push gating for both Web Push and APNs so the two transports stay in
+  // sync. Decides whether a notify payload warrants a background push and, if
+  // so, the effective notification type. Returns null to skip.
+  _resolvePushType(payload) {
+    // Only notification-worthy message types trigger a background push.
     const pushTypes = new Set([
       'message-new', 'secure-message', 'notify',
       'biz-conv-message', 'call-invite',
       'ephemeral-message'
     ]);
-    if (!pushTypes.has(payload.type)) return;
+    if (!payload || !pushTypes.has(payload.type)) return null;
 
-    // Skip push for messages sent by self (e.g. own profile-update, own read-receipt)
+    // Skip push for messages the recipient sent themselves (e.g. own
+    // profile-update / read-receipt echoed back).
     const sender = (payload.senderAccountDigest || payload.sender_account_digest || '').toUpperCase();
-    if (sender && sender === this.accountDigest.toUpperCase()) return;
+    if (sender && this.accountDigest && sender === this.accountDigest.toUpperCase()) return null;
 
-    // Reclassify control/internal message subtypes as system notifications
+    // Reclassify control/internal message subtypes as system notifications.
     const controlMsgTypes = new Set([
       'read-receipt', 'delivery-receipt',
       'session-init', 'session-ack', 'session-error',
       'profile-update', 'contact-share',
       'conversation-deleted', 'placeholder'
     ]);
-    const effectiveType = (payload.msgType && controlMsgTypes.has(payload.msgType))
+    return (payload.msgType && controlMsgTypes.has(payload.msgType))
       ? 'notify' : payload.type;
+  }
+
+  async _sendPushNotifications(payload) {
+    if (!this.accountDigest || !this.env.DB) {
+      console.warn('[ws-do] push skipped: no accountDigest or DB', { digest: !!this.accountDigest, db: !!this.env.DB });
+      return;
+    }
+    const effectiveType = this._resolvePushType(payload);
+    if (!effectiveType) return;
 
     const rows = await this.env.DB.prepare(
       `SELECT endpoint, keys_p256dh, keys_auth, device_id FROM push_subscriptions WHERE account_digest = ?1`
@@ -1242,6 +1286,50 @@ export class AccountWebSocket {
     if (subs.length > 0) {
       console.log('[ws-do] push notifications sent', { account: this.accountDigest?.slice(0, 16), total: subs.length, stale: staleEndpoints.length });
     }
+  }
+
+  async _sendApnsNotifications(payload, apns) {
+    if (!this.accountDigest || !this.env.DB) return;
+    if (!apns || !apns.enabled) return;
+    const effectiveType = this._resolvePushType(payload);
+    if (!effectiveType) return;
+
+    const rows = await this.env.DB.prepare(
+      `SELECT token, topic, device_id FROM apns_tokens WHERE account_digest = ?1`
+    ).bind(this.accountDigest).all();
+    const tokens = rows?.results || [];
+    if (!tokens.length) {
+      console.log('[ws-do] apns: no tokens for', this.accountDigest?.slice(0, 16));
+      return;
+    }
+
+    // E2EE: title/body stay opaque; forward only the per-device encrypted
+    // preview (ciphertext the server cannot read) plus the message type so the
+    // native app can render a type-specific notification. Previews are keyed by
+    // device_id (preferred) with a token fallback, mirroring the Web Push path.
+    const encryptedPreviews = payload.encrypted_previews || {};
+    const staleTokens = [];
+    await Promise.allSettled(tokens.map(async (t) => {
+      try {
+        const notification = { type: effectiveType };
+        const preview = (t.device_id && encryptedPreviews[t.device_id]) || encryptedPreviews[t.token];
+        if (preview) notification.encrypted_preview = preview;
+        if (payload.url) notification.url = payload.url;
+        const r = await apns.send(t.token, notification, { topic: t.topic || this.env.APNS_TOPIC });
+        if (r.gone) staleTokens.push(t.token);
+      } catch (err) {
+        console.warn('[ws-do] apns send error', { token: t.token?.slice(0, 12), error: err?.message || err });
+      }
+    }));
+
+    // Clean up invalid tokens (410 Unregistered / BadDeviceToken / topic mismatch)
+    for (const tok of staleTokens) {
+      try {
+        await this.env.DB.prepare(`DELETE FROM apns_tokens WHERE token = ?1`).bind(tok).run();
+        console.log('[ws-do] removed stale apns token', tok.slice(0, 12));
+      } catch {}
+    }
+    console.log('[ws-do] apns notifications sent', { account: this.accountDigest?.slice(0, 16), total: tokens.length, stale: staleTokens.length });
   }
 
   async _flushEphemeralBuffers(ws) {
