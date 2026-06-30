@@ -1353,7 +1353,7 @@ export class AccountWebSocket {
     const kind = (payload.payload?.kind || payload.payload?.mode) === 'video' ? 'video' : 'voice';
 
     const rows = await this.env.DB.prepare(
-      `SELECT token, topic FROM voip_tokens WHERE account_digest = ?1`
+      `SELECT token, topic, environment FROM voip_tokens WHERE account_digest = ?1`
     ).bind(this.accountDigest).all();
     const tokens = rows?.results || [];
     if (!tokens.length) {
@@ -1362,11 +1362,30 @@ export class AccountWebSocket {
     }
 
     const voipTopic = this.env.APNS_TOPIC ? `${this.env.APNS_TOPIC}.voip` : null;
+    // Route each token to the APNs gateway matching the environment it registered
+    // with: a development/sandbox build's token is only valid on the sandbox
+    // gateway, even when this Worker's default APNS_ENV is production. Senders
+    // share credentials (only the host differs) and are built lazily per env.
+    const senders = {};
+    const senderFor = (envName) => {
+      const key = envName === 'sandbox' ? 'sandbox' : 'production';
+      if (!senders[key]) {
+        senders[key] = createAPNs({
+          teamId: this.env.APNS_TEAM_ID,
+          keyId: this.env.APNS_KEY_ID,
+          p8: this.env.APNS_KEY_P8,
+          topic: this.env.APNS_TOPIC,
+          environment: key,
+        });
+      }
+      return senders[key];
+    };
     const staleTokens = [];
     await Promise.allSettled(tokens.map(async (t) => {
       try {
         // E2EE: only non-sensitive routing info travels in the push.
-        const r = await apns.sendVoip(t.token, { callId, kind }, { topic: t.topic || voipTopic });
+        const sender = senderFor(t.environment);
+        const r = await sender.sendVoip(t.token, { callId, kind }, { topic: t.topic || voipTopic });
         if (r.gone) staleTokens.push(t.token);
       } catch (err) {
         console.warn('[ws-do] voip send error', { token: t.token?.slice(0, 12), error: err?.message || err });

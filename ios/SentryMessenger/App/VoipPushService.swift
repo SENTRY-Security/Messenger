@@ -34,7 +34,11 @@ extension VoipPushService: PKPushRegistryDelegate {
                       for type: PKPushType) {
         guard type == .voIP else { return }
         let token = pushCredentials.token.map { String(format: "%02x", $0) }.joined()
-        NotificationCenter.default.post(name: .sentryVoipToken, object: token)
+        // Carry the build's APNs environment so the backend routes pushes to the
+        // matching gateway (sandbox for dev builds, production for TestFlight/App Store).
+        NotificationCenter.default.post(
+            name: .sentryVoipToken, object: token,
+            userInfo: ["environment": ApnsEnvironment.current])
     }
 
     func pushRegistry(_ registry: PKPushRegistry,

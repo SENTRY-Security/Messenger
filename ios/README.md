@@ -85,7 +85,7 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `nfcResult` | `{ url }`                     |
 | `nfcError`  | `{ message, code }` — code: `unavailable` / `no_url` / `invalid_host` / `cancelled` / `system` |
 | `pushToken` | `{ token, platform: 'ios' }`  |
-| `voipToken` | `{ token, platform: 'ios' }` — PushKit VoIP token，web 上報 `/d1/push/voip/subscribe` |
+| `voipToken` | `{ token, platform: 'ios', environment }` — PushKit VoIP token；`environment` 為 `sandbox`/`production`（dev 簽章為 sandbox），web 上報 `/d1/push/voip/subscribe`，後端據此選對應 APNs gateway |
 | `callAnswered`    | `{ callId }` — 使用者於系統來電 UI 按接聽 |
 | `callEndedByUser` | `{ callId }` — 使用者於系統 UI 按結束/拒接 |
 | `callMuteToggled` | `{ callId, muted }` — 系統 UI 靜音切換   |
