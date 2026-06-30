@@ -71,6 +71,11 @@ final class CallKitController: NSObject {
     private var uuidToId: [UUID: String] = [:]
     /// Tracks whether each active call is video, for audio-session config.
     private var videoFlags: [UUID: Bool] = [:]
+    /// Incoming calls that arrived while the app was foreground are NOT rung
+    /// through CallKit (the in-app floating card is the incoming UI). They're
+    /// stashed here and registered with CallKit on answer (`reportConnected`) so
+    /// the call survives backgrounding via the CallKit-managed audio session.
+    private var pendingForegroundCalls: [String: (peerName: String, hasVideo: Bool)] = [:]
     /// Calls already presented as incoming, so a VoIP-push report and a later
     /// web-side `callIncoming` for the same callId don't double-report.
     private var reportedIncoming: Set<UUID> = []
@@ -144,6 +149,15 @@ final class CallKitController: NSObject {
 
     /// Incoming call → present the system incoming-call UI.
     func reportIncoming(callId: String, peerName: String, hasVideo: Bool) {
+        // Foreground → the in-app floating call card is the incoming UI (mainstream
+        // habit); don't ring the redundant system CallKit banner. Stash the call so
+        // it can be registered with CallKit on answer (background continuation).
+        // Background / lock-screen wake (VoIP push) has applicationState != .active,
+        // so we fall through and present the required system incoming UI.
+        if UIApplication.shared.applicationState == .active {
+            pendingForegroundCalls[callId] = (peerName, hasVideo)
+            return
+        }
         guard let id = uuid(for: callId) else { return }
 
         // Busy: another call is already active. iOS still requires that a VoIP
@@ -205,6 +219,12 @@ final class CallKitController: NSObject {
 
     /// Call became fully connected (media flowing).
     func reportConnected(callId: String) {
+        // A call answered while foreground was deferred (no system ring). Register
+        // it with CallKit now — as an active call — so it survives backgrounding.
+        // Skip if it was already reported (e.g. a VoIP-push call rung in background).
+        if let pending = pendingForegroundCalls.removeValue(forKey: callId), idToUUID[callId] == nil {
+            reportOutgoing(callId: callId, peerName: pending.peerName, hasVideo: pending.hasVideo)
+        }
         guard let id = uuid(for: callId, createIfMissing: false) else { return }
         activeCallId = callId
         cancelIncomingTimer(id)
@@ -223,6 +243,8 @@ final class CallKitController: NSObject {
     /// Call ended from the web side (peer hung up, failure, local hangup already
     /// processed by web). Tear down the system call.
     func reportEnded(callId: String, reason: String) {
+        // Clear a foreground call that ended before it was answered/registered.
+        pendingForegroundCalls[callId] = nil
         guard let id = uuid(for: callId, createIfMissing: false) else { return }
         let cxReason: CXCallEndedReason
         switch reason {
@@ -242,6 +264,7 @@ final class CallKitController: NSObject {
 extension CallKitController: CXProviderDelegate {
     func providerDidReset(_ provider: CXProvider) {
         // System reset (e.g. another call app) — drop everything.
+        pendingForegroundCalls.removeAll()
         for uuid in Array(uuidToId.keys) { forget(uuid) }
     }
 
