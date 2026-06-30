@@ -120,9 +120,14 @@
   signaling 採 **(B)**，仍走 web 帳號 WS，媒體經 `native-media-bridge.js` ↔ 原生交換
   SDP；TURN 由 web 取得後以 `iceServers` 傳入原生。step1 #90 / step2 #91 / step3 #92。
   驗收：**實機** App↔App 語音雙向通（開 `UseNativeCalls` 旗標）。
-- **P2 視訊**：`CallMediaCapturer` 視訊 + `RTCMTLVideoView` 本地/遠端 + 翻轉鏡頭。
-  驗收：實機雙向視訊。
-- **P3 原生通話 UI**：SwiftUI 來電卡/控制列（兩排+自動隱藏），取代該情境的 web overlay。
+- **P2 視訊** ✅（程式完成，旗標關，待實機）：P2a `CallPeerConnection` 視訊擷取
+  （`RTCCameraVideoCapturer`）/軌道/翻轉/遠端軌道（#94）；P2b 渲染併入 P3 原生 UI
+  （`RTCMTLVideoView` 本地 PiP + 遠端全螢幕），避免 native-video-under-web 透明穿透的脆弱。
+- **P3 原生通話 UI** ✅（程式完成，旗標關，待實機）：`NativeCallVideoView`（Metal 渲染、
+  本地 PiP 可拖曳）+ `NativeCallViewController`（兩排控制列 + 點擊顯示/自動隱藏、頂部對端
+  名稱/狀態），由 `NativeCallController` 於**視訊**通話 present/dismiss；End/Mute 回灌 web
+  狀態機（callEndedByUser/callMuteToggled），翻鏡頭/擴音/視訊開關走原生。**語音通話維持
+  web overlay**（無渲染需求）。
 - **P4 背景/鎖屏/VoIP**：與 `VoipPushService` 整合，背景續通、鎖屏接聽。
 - **P5 收尾**：靜音/擴音/路由（`RTCAudioSession` + `overrideOutputAudioPort`）、
   錯誤/重連、與 web 狀態/通話紀錄一致、移除該情境對 WebView 媒體的依賴。
