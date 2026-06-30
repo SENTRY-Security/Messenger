@@ -91,5 +91,10 @@
 	     instead of WebKit's WebSocket. Default off; flip only after device test. -->
 	<key>UseNativeAccountSocket</key>
 	<string>false</string>
+	<!-- Native background media download (Tier 2). When "true", single-shot media
+	     downloads run through a background URLSession and are handed back via the
+	     sentry-dl:// scheme. Default off; web falls back on failure. -->
+	<key>UseNativeMediaDownload</key>
+	<string>false</string>
 </dict>
 </plist>

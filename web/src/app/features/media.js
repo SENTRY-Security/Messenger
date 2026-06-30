@@ -7,6 +7,7 @@ import { getMkRaw, getAccountDigest, buildAccountPayload } from '../core/store.j
 import { encryptWithMK as aeadEncryptWithMK, decryptWithMK as aeadDecryptWithMK, b64, b64u8 } from '../crypto/aead.js';
 import { toU8Strict } from '/shared/utils/u8-strict.js';
 import { encryptAndPutChunked, CHUNK_SIZE, UnsupportedVideoFormatError } from './chunked-upload.js';
+import { isNativeMediaDownloadMode, nativeBackgroundDownload } from './native-media-download.js';
 import { t } from '/locales/index.js';
 
 const encoder = new TextEncoder();
@@ -579,7 +580,21 @@ export async function downloadAndDecrypt({ key, envelope, onStatus, onProgress, 
 
   let cipherU8;
 
-  if (shouldUseXhr) {
+  // Native app (Tier 2): pull the ciphertext via a background URLSession so the
+  // transfer survives app suspension. Falls through to the web download below on
+  // any failure (flag off, handback blocked, error).
+  if (isNativeMediaDownloadMode()) {
+    try {
+      progress?.({ stage: 'download-start', total: null });
+      cipherU8 = await nativeBackgroundDownload(download.url);
+      if (cipherU8) progress?.({ stage: 'download', loaded: cipherU8.length, total: cipherU8.length });
+    } catch (err) {
+      console.warn('native bg download failed, fallback to web', err?.message || err);
+      cipherU8 = null;
+    }
+  }
+
+  if (!cipherU8 && shouldUseXhr) {
     try {
       cipherU8 = await xhrDownload();
     } catch (err) {

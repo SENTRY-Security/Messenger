@@ -39,6 +39,11 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     /// opening its own WebSocket (the `ws*` actions become no-ops).
     static var accountSocket: AccountSocketHandler?
 
+    /// Native background media downloader, provided by the full app at launch
+    /// (`BackgroundDownloadService`). Nil in the App Clip (the `bg*` actions
+    /// become no-ops and the web downloads media itself).
+    static var backgroundDownload: BackgroundDownloadHandler?
+
     override init() {
         super.init()
         NotificationCenter.default.addObserver(
@@ -96,6 +101,10 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         }
         // Let the native account socket push wsEvent frames back to web.
         NativeBridge.accountSocket?.sendToWeb = { [weak self] name, data in
+            self?.sendEvent(name, data: data)
+        }
+        // Let the background downloader push bgDownloadDone back to web.
+        NativeBridge.backgroundDownload?.sendToWeb = { [weak self] name, data in
             self?.sendEvent(name, data: data)
         }
         // CallKit audio gate: only render WebRTC audio while CallKit owns the
@@ -167,6 +176,10 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             // Close) is the web-driven shim; B2 (wsConfigure/EnsureNative/SendApp/
             // CloseNative) is the native-autonomous lifecycle.
             NativeBridge.accountSocket?.handle(action: action, payload: payload)
+        case "bgDownload", "bgDownloadClear":
+            // Native background media download (full app only; nil in App Clip).
+            // Only exercised when `UseNativeMediaDownload` is on.
+            NativeBridge.backgroundDownload?.handle(action: action, payload: payload)
         default:
             print("[NativeBridge] unhandled action: \(action)")
         }
