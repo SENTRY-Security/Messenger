@@ -146,7 +146,7 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             // Routed to the full app's secure-session handler (nil in App Clip).
             NativeBridge.secureSession?.handle(action: action, payload: payload)
         case "nativeCallStart", "nativeCallReceiveOffer", "nativeCallReceiveAnswer",
-             "nativeCallMute", "nativeCallEnd":
+             "nativeCallMute", "nativeCallEnd", "nativeCallSwitchCamera", "nativeCallSetVideo":
             // Native WebRTC media engine (full app only; nil in App Clip). Only
             // exercised when `UseNativeCalls` is on — the web checks the injected
             // `window.USE_NATIVE_CALLS` before emitting these.

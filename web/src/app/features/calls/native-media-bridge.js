@@ -60,4 +60,14 @@ export function nativeCallEnd({ callId }) {
   postNativeMessage('nativeCallEnd', { callId });
 }
 
+/** Flip the native camera (front ↔ back) — P2 video. */
+export function nativeCallSwitchCamera({ callId }) {
+  postNativeMessage('nativeCallSwitchCamera', { callId });
+}
+
+/** Enable / disable the native local video track (camera on/off) — P2 video. */
+export function nativeCallSetVideo({ callId, enabled }) {
+  postNativeMessage('nativeCallSetVideo', { callId, enabled: !!enabled });
+}
+
 export { onNativeEvent };

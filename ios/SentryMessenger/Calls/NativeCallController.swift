@@ -85,6 +85,10 @@ final class NativeCallController: NativeCallHandler {
             if let sdp = payload["sdp"] as? String { peers[callId]?.receiveAnswer(sdp: sdp) }
         case "nativeCallMute":
             peers[callId]?.setMuted((payload["muted"] as? Bool) ?? false)
+        case "nativeCallSwitchCamera":
+            peers[callId]?.switchCamera()
+        case "nativeCallSetVideo":
+            peers[callId]?.setVideoEnabled((payload["enabled"] as? Bool) ?? true)
         case "nativeCallEnd":
             tearDown(callId: callId)
         default:
