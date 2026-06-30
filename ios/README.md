@@ -69,6 +69,7 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `callConnected`| 通話接通（payload: callId）          |
 | `callStateChanged`| 狀態變更（payload: callId, muted） |
 | `callEnded`   | 通話結束（payload: callId, reason）    |
+| `setAudioRoute`| 切換擴音/聽筒（payload: `speaker: true/false`）；web 在 iOS 無法控制路由，故原生代為覆寫 |
 | `secureStore` | 存入 Keychain（payload: kek, account_token, account_digest） |
 | `secureLoad`  | 解鎖後讀出 session（回 `secureSessionLoaded`） |
 | `clearSecureSession`| 清除 Keychain session（登出/被踢） |
@@ -88,6 +89,7 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `callAnswered`    | `{ callId }` — 使用者於系統來電 UI 按接聽 |
 | `callEndedByUser` | `{ callId }` — 使用者於系統 UI 按結束/拒接 |
 | `callMuteToggled` | `{ callId, muted }` — 系統 UI 靜音切換   |
+| `audioRouteChanged` | `{ speaker }` — 目前是否為擴音（系統路由變更/切換時回報，同步通話 UI 喇叭鈕） |
 | `audioReady`      | `{ callId }` — CallKit 啟用音訊 session |
 | `secureSessionLoaded` | `{ hasSession, account_token?, account_digest?, kek? }` — 解鎖後送出 |
 | `lockMode`        | `{ mode }` — 目前鎖定模式 |

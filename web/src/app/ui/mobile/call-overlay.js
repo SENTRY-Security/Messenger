@@ -39,7 +39,7 @@ import { createCallAudioManager } from './call-audio.js';
 import { getCallAudioConstraints } from './browser-detection.js';
 import { showCallInfoOverlay } from '../../features/calls/call-info-overlay.js';
 import { initNativeCallBridge, setNativeCallActionHandlers } from '../../features/native-call-bridge.js';
-import { isNativeApp } from '../../features/native-bridge.js';
+import { isNativeApp, postNativeMessage, onNativeEvent } from '../../features/native-bridge.js';
 import { t } from '/locales/index.js';
 
 function getStatusLabel() {
@@ -558,6 +558,7 @@ function ensureOverlayElements() {
       actionsRow: root.querySelector('.call-actions'),
       controlsRow: root.querySelector('.call-controls'),
       muteBtn: root.querySelector('[data-call-action="mute"]'),
+      speakerBtn: root.querySelector('[data-call-action="speaker"]'),
       hangupBtn: root.querySelector('[data-call-action="hangup"]'),
       cameraBtn: root.querySelector('[data-call-action="camera"]'),
       flipCameraBtn: root.querySelector('[data-call-action="flip-camera"]'),
@@ -614,6 +615,9 @@ function ensureOverlayElements() {
         <button type="button" class="call-btn toggle" data-call-action="mute" aria-pressed="false">
           <svg class="icon"><use href="#i-mic-off"/></svg><span>${t('calls.mute')}</span>
         </button>
+        <button type="button" class="call-btn toggle" data-call-action="speaker" aria-pressed="false" style="display:none">
+          <svg class="icon"><use href="#i-volume-2"/></svg><span>${t('calls.speaker')}</span>
+        </button>
         <button type="button" class="call-btn hangup" data-call-action="hangup">
           <svg class="icon"><use href="#i-phone-off"/></svg><span>${t('calls.hangup')}</span>
         </button>
@@ -666,6 +670,7 @@ function ensureOverlayElements() {
     actionsRow: root.querySelector('.call-actions'),
     controlsRow: root.querySelector('.call-controls'),
     muteBtn: root.querySelector('[data-call-action="mute"]'),
+      speakerBtn: root.querySelector('[data-call-action="speaker"]'),
       hangupBtn: root.querySelector('[data-call-action="hangup"]'),
       cameraBtn: root.querySelector('[data-call-action="camera"]'),
       flipCameraBtn: root.querySelector('[data-call-action="flip-camera"]'),
@@ -1660,6 +1665,17 @@ export function initCallOverlay({ showToast }) {
     setLocalAudioMuted(next);
   }
 
+  // Speaker / earpiece toggle — native app only (web on iOS can't control audio
+  // routing). The native shell performs the override and echoes the real route
+  // back via the `audioRouteChanged` event so the button stays in sync.
+  let speakerOn = false;
+  let speakerRouteWired = false;
+  function handleSpeakerToggle() {
+    speakerOn = !speakerOn;
+    setToggleState(ui.speakerBtn, speakerOn);
+    postNativeMessage('setAudioRoute', { speaker: speakerOn });
+  }
+
   async function handleCameraToggle() {
     const session = getCallSessionSnapshot();
     if (!session) return;
@@ -1700,6 +1716,18 @@ export function initCallOverlay({ showToast }) {
   ui.cancelBtn?.addEventListener('click', handleCancel);
   ui.hangupBtn?.addEventListener('click', handleHangup);
   ui.muteBtn?.addEventListener('click', handleMuteToggle);
+  ui.speakerBtn?.addEventListener('click', handleSpeakerToggle);
+  // Speaker control is native-only; reveal it and sync to the real route.
+  if (isNativeApp() && ui.speakerBtn) {
+    ui.speakerBtn.style.display = '';
+    if (!speakerRouteWired) {
+      speakerRouteWired = true;
+      onNativeEvent('audioRouteChanged', ({ speaker } = {}) => {
+        speakerOn = !!speaker;
+        setToggleState(ui.speakerBtn, speakerOn);
+      });
+    }
+  }
   ui.cameraBtn?.addEventListener('click', handleCameraToggle);
   ui.flipCameraBtn?.addEventListener('click', handleFlipCamera);
   ui.blurModeBtn?.addEventListener('click', handleBlurModeCycle);
@@ -1857,6 +1885,7 @@ export function initCallOverlay({ showToast }) {
     ui.cancelBtn?.removeEventListener('click', handleCancel);
     ui.hangupBtn?.removeEventListener('click', handleHangup);
     ui.muteBtn?.removeEventListener('click', handleMuteToggle);
+    ui.speakerBtn?.removeEventListener('click', handleSpeakerToggle);
     ui.cameraBtn?.removeEventListener('click', handleCameraToggle);
     ui.flipCameraBtn?.removeEventListener('click', handleFlipCamera);
     ui.blurModeBtn?.removeEventListener('click', handleBlurModeCycle);

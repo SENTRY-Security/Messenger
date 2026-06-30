@@ -22,10 +22,13 @@ enum AudioSessionManager {
     static func configureForCall(video: Bool) {
         let session = AVAudioSession.sharedInstance()
         do {
+            // No `.defaultToSpeaker`: let the mode pick the natural route (voiceChat
+            // → earpiece, videoChat → speaker) so the in-app speaker toggle can
+            // override it both ways via `setSpeaker`.
             try session.setCategory(
                 .playAndRecord,
                 mode: video ? .videoChat : .voiceChat,
-                options: [.allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker]
+                options: [.allowBluetooth, .allowBluetoothA2DP]
             )
         } catch {
             print("[AudioSession] configure failed: \(error.localizedDescription)")
@@ -40,6 +43,21 @@ enum AudioSessionManager {
         } catch {
             print("[AudioSession] activate failed: \(error.localizedDescription)")
         }
+    }
+
+    /// Toggle speaker (loudspeaker) vs the mode's default route (earpiece for
+    /// voice). Web/Safari on iOS can't control routing, so this is native-only.
+    static func setSpeaker(_ on: Bool) {
+        do {
+            try AVAudioSession.sharedInstance().overrideOutputAudioPort(on ? .speaker : .none)
+        } catch {
+            print("[AudioSession] setSpeaker failed: \(error.localizedDescription)")
+        }
+    }
+
+    /// Whether audio is currently routed to the built-in loudspeaker.
+    static var isSpeakerOn: Bool {
+        AVAudioSession.sharedInstance().currentRoute.outputs.contains { $0.portType == .builtInSpeaker }
     }
 
     /// Release the session when a call ends, restoring other audio.

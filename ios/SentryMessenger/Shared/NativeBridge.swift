@@ -1,6 +1,7 @@
 import Foundation
 import WebKit
 import UIKit
+import AVFoundation
 
 /// Bridges messages between the web app and native iOS.
 ///
@@ -36,7 +37,16 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         NotificationCenter.default.addObserver(
             self, selector: #selector(handleOpenURL(_:)),
             name: .sentryOpenURL, object: nil)
+        // Keep the web call UI's speaker button in sync with the actual audio
+        // route (system route changes, Bluetooth connect, CallKit activation).
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(handleRouteChange(_:)),
+            name: AVAudioSession.routeChangeNotification, object: nil)
         wireCallKit()
+    }
+
+    @objc private func handleRouteChange(_ note: Notification) {
+        sendEvent("audioRouteChanged", data: ["speaker": AudioSessionManager.isSpeakerOn])
     }
 
     /// Attach this bridge's webview-relaying callbacks to the shared CallKit
@@ -90,6 +100,12 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             }
         case "callIncoming", "callStarted", "callConnected", "callStateChanged", "callEnded":
             handleCallAction(action, payload: payload)
+        case "setAudioRoute":
+            // Speaker / earpiece toggle from the in-app call UI (web on iOS can't
+            // control routing, so this is native-only).
+            let speaker = (payload["speaker"] as? Bool) ?? ((payload["route"] as? String) == "speaker")
+            AudioSessionManager.setSpeaker(speaker)
+            sendEvent("audioRouteChanged", data: ["speaker": AudioSessionManager.isSpeakerOn])
         case "secureStore", "secureLoad", "clearSecureSession",
              "getLockMode", "setLockMode", "openLockSettings", "lockNow", "nfcUnlockResult":
             // Routed to the full app's secure-session handler (nil in App Clip).
