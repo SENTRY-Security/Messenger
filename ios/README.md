@@ -134,6 +134,10 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
   > **待實機驗證（PoC）**：WKWebView 內 WebRTC 音訊與 CallKit 主導的 `AVAudioSession`
   > 之協調需在實機確認；冷啟動「VoIP push → 接聽 → web 連線完成媒體」端到端時序亦需
   > 實機驗證。詳見 `docs/native-calls-plan.md`。
+  > **未來（mid-term）**：將通話媒體層由 WKWebView 內 WebRTC 改為原生
+  > WebRTC（`RTCPeerConnection`/`RTCAudioSession` + CallKit、沿用 signaling/TURN/
+  > E2EE），分階段、feature flag（`UseNativeCalls`）控制——規畫見
+  > `docs/native-webrtc-migration-plan.md`。
   > **需求**：Apple 付費帳號、Push Notifications 能力（含 VoIP）、`<bundleId>.voip`
   > APNs topic，以及後端 `APNS_*` 環境變數。
 - **檔案上傳**：`<input type=file>` 由 WKWebView 原生支援（相機/相簿需 Info.plist
