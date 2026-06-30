@@ -196,7 +196,8 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     /// backend (`/d1/push/voip/subscribe`) keyed by the account digest.
     @objc private func handleVoipToken(_ note: Notification) {
         guard let token = note.object as? String else { return }
-        sendEvent("voipToken", data: ["token": token, "platform": "ios"])
+        let environment = (note.userInfo?["environment"] as? String) ?? "production"
+        sendEvent("voipToken", data: ["token": token, "platform": "ios", "environment": environment])
     }
 
     /// Navigate the existing web view to a notification's deep link, in place,

@@ -67,10 +67,14 @@ async function registerApnsToken(token) {
 // The PushKit VoIP token arrives at app launch — before login — so the account
 // digest may not be known yet. Cache it and retry until login completes.
 let pendingVoipToken = null;
+// APNs environment of the build that produced the token (sandbox | production).
+// The backend routes the VoIP push to the matching gateway.
+let pendingVoipEnv = null;
 let voipRetryTimer = null;
 
-async function registerVoipToken(token) {
+async function registerVoipToken(token, environment) {
   if (token) pendingVoipToken = token;
+  if (environment) pendingVoipEnv = environment;
   if (!pendingVoipToken) return;
   const accountDigest = getAccountDigest();
   if (!accountDigest) {
@@ -89,7 +93,7 @@ async function registerVoipToken(token) {
     await fetch('/d1/push/voip/subscribe', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ accountDigest, deviceId, token: pendingVoipToken }),
+      body: JSON.stringify({ accountDigest, deviceId, token: pendingVoipToken, environment: pendingVoipEnv || undefined }),
     });
   } catch { /* best-effort */ }
 }
@@ -103,7 +107,7 @@ export function initNativeBridge() {
     onEvent(name, data) {
       try {
         if (name === 'pushToken' && data && data.token) registerApnsToken(data.token);
-        if (name === 'voipToken' && data && data.token) registerVoipToken(data.token);
+        if (name === 'voipToken' && data && data.token) registerVoipToken(data.token, data.environment);
       } catch { /* ignore */ }
       // Fan out to feature listeners (calls, …).
       dispatchNativeEvent(name, data);
