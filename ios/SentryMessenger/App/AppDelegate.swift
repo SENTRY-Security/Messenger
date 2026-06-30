@@ -37,6 +37,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         // Provide this device's push-preview public key for APNs registration
         // (enables the Notification Service Extension to decrypt previews).
         NativeBridge.pushPreviewPublicKey = { PushPreviewKey.ensurePublicKeyB64u() }
+        // Inject the full-app native background media downloader (nil in Clip).
+        NativeBridge.backgroundDownload = BackgroundDownloadService.shared
         return true
     }
 
@@ -65,6 +67,16 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         print("[Push] registration failed: \(error.localizedDescription)")
+    }
+
+    /// The system relaunched us to finish background media downloads (Tier 2).
+    /// Hold the completion handler until the background session drains its events.
+    func application(
+        _ application: UIApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
+        BackgroundDownloadService.shared.backgroundCompletion = completionHandler
     }
 
     /// Clear the app badge whenever the app becomes active.

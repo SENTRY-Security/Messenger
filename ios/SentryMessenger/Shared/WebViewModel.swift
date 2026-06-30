@@ -45,6 +45,13 @@ final class WebViewModel: NSObject, ObservableObject {
         let nativeWsJS = "window.USE_NATIVE_ACCOUNT_SOCKET = \(AppConfig.useNativeAccountSocket ? "true" : "false");"
         controller.addUserScript(WKUserScript(source: nativeWsJS, injectionTime: .atDocumentStart, forMainFrameOnly: true))
 
+        // Native background media download (Tier 2). Register the handback scheme
+        // (`sentry-dl://`) the native downloader serves staged ciphertext over, and
+        // expose the flag. When off the web never fetches this scheme.
+        config.setURLSchemeHandler(MediaDownloadSchemeHandler(), forURLScheme: BackgroundDownloadPaths.scheme)
+        let nativeDlJS = "window.USE_NATIVE_MEDIA_DOWNLOAD = \(AppConfig.useNativeMediaDownload ? "true" : "false");"
+        controller.addUserScript(WKUserScript(source: nativeDlJS, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+
         webView = WKWebView(frame: .zero, configuration: config)
         super.init()
 

@@ -62,6 +62,15 @@ enum AppConfig {
         (Bundle.main.object(forInfoDictionaryKey: "UseNativeAccountSocket") as? String)?.lowercased() == "true"
     }
 
+    /// Native background media download (mid-term migration Tier 2). When true the
+    /// web routes single-shot encrypted media downloads through a native
+    /// background `URLSession` (survives suspension), handing the ciphertext back
+    /// over the `sentry-dl://` scheme. Toggle via Info.plist `UseNativeMediaDownload`.
+    /// Full app only; falls back to the web download path on any failure.
+    static var useNativeMediaDownload: Bool {
+        (Bundle.main.object(forInfoDictionaryKey: "UseNativeMediaDownload") as? String)?.lowercased() == "true"
+    }
+
     static let bundleScheme = "sentry-app"
     static let bundleHost = "app"
     /// Entry HTML inside `WebApp/` (relative path).

@@ -236,6 +236,25 @@ App Clip 則因容量限制維持遠端載入。
 > 切換 `UseBundledWeb=true` 前請務必實機測試。完整離線「訊息」另需本地加密儲存
 > 與同步（後續工程）。
 
+## 原生背景媒體下載（Tier 2，旗標控制）
+
+附件加解密維持 web（per-file AES-GCM），但**位元組傳輸**可交原生**背景** `URLSession`，
+讓下載在 App 被 suspend/關閉後仍續傳完成。
+
+- **開關**：Info.plist `UseNativeMediaDownload`（預設 `false`）；關時走原本 web 下載。
+- **範圍**：目前僅**單次下載**路徑（`media.js downloadAndDecrypt`）；分塊/視訊串流維持 web。
+- **流程**：web 取得 presigned GET URL → 原生 `BackgroundDownloadService` 以背景 session
+  下載密文到 `<caches>/sentrydl/<id>` → 經 `sentry-dl://file/<id>` 自訂 scheme 把密文交回
+  web（**不走 base64 bridge**）→ web 解密如常。任何失敗（旗標關、scheme fetch 被擋、
+  下載錯誤）皆 **fallback** 回 web 下載。
+- **回灌機制風險**：跨來源（https 頁面）`fetch` 自訂 scheme 能否成功需**實機驗證**；
+  `MediaDownloadSchemeHandler` 回 `Access-Control-Allow-Origin: *`，但行為依 WKWebView 版本。
+- bridge 動作 `bgDownload`/`bgDownloadClear`，事件 `bgDownloadDone`。`AppDelegate`
+  以 `handleEventsForBackgroundURLSession` 處理背景喚醒。
+
+> ⚠️ 上傳與視訊串流的背景化與分塊/bridge 架構衝突（大檔位元組無法過 bridge），暫不納入；
+> 見評估 Tier 2 說明。
+
 ## 設定載入網址
 
 `Info.plist` 的 `WebBaseURL` 控制要載入的 web 站台（預設
