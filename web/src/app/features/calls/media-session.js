@@ -37,7 +37,7 @@ import {
   nativeCallMute,
   nativeCallEnd,
   onNativeEvent
-} from './native-call-bridge.js';
+} from './native-media-bridge.js';
 import { t } from '/locales/index.js';
 
 // Flag set by ephemeral-call-adapter when ephemeral mode is active.

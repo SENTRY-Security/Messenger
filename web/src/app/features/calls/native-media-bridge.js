@@ -1,4 +1,8 @@
-// Native (iOS) WebRTC call bridge — mid-term migration P1 (web half).
+// Native (iOS) WebRTC **media** bridge — mid-term migration P1 (web half).
+//
+// Distinct from `features/native-call-bridge.js`, which mirrors call *lifecycle*
+// into CallKit (callIncoming/started/connected/ended). This module hands the
+// *media* (SDP offer/answer, mute, teardown) to the native WebRTC engine.
 //
 // When the iOS shell enables the native call engine it injects
 // `window.USE_NATIVE_CALLS = true`. In that mode the *media* (RTCPeerConnection,

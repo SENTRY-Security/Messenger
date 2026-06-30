@@ -45,22 +45,35 @@
 
 新增 `ios/SentryMessenger/Calls/`（完整 App target）：
 
-| 模組 | 職責 | 對應 web |
-|---|---|---|
-| `NativeCallController` | 通話狀態機、與 CallKit/Audio 整合、生命週期 | state.js + 部分 media-session |
-| `CallSignalingClient` | 用既有帳號 WS 收送信令（offer/answer/candidate/…） | signaling.js |
-| `PeerConnectionManager` | `RTCPeerConnection`、SDP、ICE、軌道、`RTCAudioSession` | media-session.js |
-| `CallMediaCapturer` | `RTCCameraVideoCapturer`（前後鏡頭/翻轉）、`RTCAudioTrack` | getUserMedia |
-| `CallVideoView` | `RTCMTLVideoView` 本地/遠端渲染 | video elements |
-| `TurnCredentialsService` | 打 `/api/v1/calls/turn-credentials` 取 Cloudflare TURN | api/calls.js |
-| `NativeCallUI`（SwiftUI） | 來電卡/通話中控制（沿用現有兩排+自動隱藏設計） | call-overlay.js |
+| 模組 | 職責 | 對應 web | 狀態 |
+|---|---|---|---|
+| `CallPeerConnection` | 單通 `RTCPeerConnection`、SDP、ICE（非 trickle）、`RTCAudioSession` manual audio、音軌 | media-session.js（媒體半部） | ✅ P1 #90 |
+| `NativeCallController` | orchestrator：per-call peer 生命週期、iceServers 轉換、SDP/state 回送、CallKit 音訊閘門 | 部分 media-session | ✅ P1 #91 |
+| `native-media-bridge.js`（web） | 把媒體（SDP offer/answer、mute、teardown）交給原生引擎；沿用 signaling 送 call-offer/answer | media-session.js 接縫 | ✅ P1 #92 |
+| `CallMediaCapturer` | `RTCCameraVideoCapturer`（前後鏡頭/翻轉）、視訊軌 | getUserMedia | ⬜ P2 |
+| `CallVideoView` | `RTCMTLVideoView` 本地/遠端渲染 | video elements | ⬜ P2 |
+| `NativeCallUI`（SwiftUI） | 來電卡/通話中控制（沿用現有兩排+自動隱藏設計） | call-overlay.js | ⬜ P3 |
 
-**WS 共用**：原生需要一條到帳號 WS 的連線來送信令。兩種選項：
-- (A) 原生自建 WS（`URLSessionWebSocketTask`）＋帳號驗證（沿用 token）。最乾淨、與
-  WebView 解耦，但要在原生重現連線/驗證/重連。
-- (B) 信令仍經 WKWebView 的 JS（web 維持 WS），native 與 web 以 bridge 交換
-  SDP/candidate。較少重寫，但 native↔web 來回、且通話時仍需 WebView 存活。
-  → **建議 (A)**（原生通話的價值就在脫離 WebView）；(B) 可作為過渡。
+**信令（WS）放哪？— 分階段決策（取代原 (A)/(B) 二選一）**
+
+原生需要一條到帳號 WS 的連線來收送信令。兩種放法：
+- **(A) 原生自建 WS**（`URLSessionWebSocketTask`）＋帳號驗證＋`deriveCallTokenFromDR`。
+  與 WebView 完全解耦，但要在 Swift 重現連線/驗證/重連/信令封套，且 Double Ratchet
+  金鑰狀態在 web 層（IndexedDB / JS crypto）→ 等於在原生重做一份密碼學協定（plan §0
+  明示要避免）。
+- **(B) 信令續留 WKWebView 的 JS**（web 維持帳號 WS），native 與 web 以 bridge 交換
+  SDP。重寫最少，但通話時需 WebView 存活；背景被 suspend 時 JS 的 WS 會停擺。
+
+**決策**：
+- **P1–P3（前景通話）採 (B)**。前景痛點是「沒聲音」＝媒體層 `AVAudioSession` 互搶，
+  已由原生 `RTCAudioSession` manual audio 解掉（#90/#91）；前景時 WebView 本就存活，
+  信令走 JS 無虞。拉原生 WS 不解任何現有 bug，只增成本。**此即目前實作。**
+- **P4（背景/鎖屏續通）才重評估**。VoIP push 喚醒後 App 在背景時，WKWebView 可能被
+  suspend/throttle → JS 的 WS 停擺 → 接聽/重連失敗；此時「信令在原生」才有價值。
+- **即使到 P4 也不整條帳號 WS 搬家**：建議「**web 發短期通話 token + WS URL，原生只在
+  單通通話期間開一條 scoped 信令 WS**（只收送 offer/answer/end，通話結束即關）」。
+  金鑰衍生與 DR 仍留 web，Swift 只碰通話信令、碰不到帳號協定全貌 → 背景續通與低維護
+  成本兼得，避免重做 DR/驗證。
 
 ## 3. 依賴
 
@@ -73,8 +86,11 @@
 
 - **P0 依賴與骨架（可編譯驗證）**：加 `UseNativeCalls` 旗標 + WebRTC SPM 依賴 +
   空殼 `NativeCallController`（旗標關時不啟用）。驗收：CI 綠（含依賴可編譯）。
-- **P1 撥出/接聽（語音）**：`CallSignalingClient`（WS）+ `PeerConnectionManager`
-  音訊 + TURN 憑證 + CallKit 撥出/接聽。驗收：**實機** App↔App 語音雙向通。
+- **P1 撥出/接聽（語音）** ✅（程式完成，旗標關，待實機驗證）：原生 `CallPeerConnection`
+  音訊 + `NativeCallController` orchestrator + CallKit 音訊閘門（manual audio）；
+  signaling 採 **(B)**，仍走 web 帳號 WS，媒體經 `native-media-bridge.js` ↔ 原生交換
+  SDP；TURN 由 web 取得後以 `iceServers` 傳入原生。step1 #90 / step2 #91 / step3 #92。
+  驗收：**實機** App↔App 語音雙向通（開 `UseNativeCalls` 旗標）。
 - **P2 視訊**：`CallMediaCapturer` 視訊 + `RTCMTLVideoView` 本地/遠端 + 翻轉鏡頭。
   驗收：實機雙向視訊。
 - **P3 原生通話 UI**：SwiftUI 來電卡/控制列（兩排+自動隱藏），取代該情境的 web overlay。
