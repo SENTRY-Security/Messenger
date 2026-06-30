@@ -66,6 +66,10 @@
   flex-direction: column;
   gap: 16px;
   flex: 1 1 auto;
+  /* Allow this middle column to shrink below its content's intrinsic width so
+     the nickname can ellipsis instead of forcing the row past the viewport
+     (which clipped the subscription badge under .profile-card overflow:hidden). */
+  min-width: 0;
   align-items: flex-end;
 }
 
@@ -81,10 +85,15 @@
   background: var(--bg-elevated);
   border-radius: 14px;
   padding: 8px 6px 8px 14px;
+  /* Cap the nickname card to the available column width so a long name
+     truncates with an ellipsis rather than overflowing the header row. */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .profile-nickname strong {
   flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
