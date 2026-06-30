@@ -57,6 +57,10 @@ final class NFCLoginService: NSObject {
             completion(.failure(NFCError.unavailable)); return
         }
         self.completion = completion
+        // The system NFC sheet backgrounds the app; tell the full app's lock
+        // manager so it doesn't re-lock on the resulting foreground return
+        // (covers both the login scan and the unlock scan). No-op in the Clip.
+        NotificationCenter.default.post(name: .sentryNfcSessionWillBegin, object: nil)
         let session = NFCNDEFReaderSession(delegate: self, queue: nil, invalidateAfterFirstRead: true)
         session.alertMessage = prompt
         self.session = session

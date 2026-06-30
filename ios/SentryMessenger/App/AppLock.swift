@@ -64,6 +64,19 @@ final class AppLockManager: ObservableObject {
     /// unlock UI is dismissed so a *genuine* later background still re-locks.
     private var ignoreForegroundRelock = false
 
+    private init() {
+        // The login scan (LoginView's own NFCLoginService) also presents the
+        // system NFC sheet, which backgrounds the app. Without this, the foreground
+        // return right after a fresh login would trigger `evaluateLockOnForeground`
+        // and pop the lock screen. `NFCLoginService` signals every scan (login or
+        // unlock) so we suppress that one re-lock uniformly.
+        NotificationCenter.default.addObserver(
+            forName: .sentryNfcSessionWillBegin, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.ignoreForegroundRelock = true }
+        }
+    }
+
     func refreshMode() { mode = KeychainStore.lockMode }
 
     func setMode(_ newMode: LockMode) {

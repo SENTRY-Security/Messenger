@@ -17,4 +17,10 @@ extension Notification.Name {
     /// Posted by `VoipPushService` once a PushKit VoIP token is available.
     /// `object` is the hex token `String`. Forwarded to web as `voipToken`.
     static let sentryVoipToken = Notification.Name("red.sentry.messenger.voipToken")
+
+    /// Posted by `NFCLoginService` right before it presents the system NFC scan
+    /// sheet (login *or* unlock). The full app's `AppLockManager` uses it to skip
+    /// the re-lock that the sheet's own background→foreground cycle would
+    /// otherwise trigger. No-op in the App Clip (no observer).
+    static let sentryNfcSessionWillBegin = Notification.Name("red.sentry.messenger.nfcSessionWillBegin")
 }
