@@ -36,6 +36,8 @@ import {
   nativeCallReceiveAnswer,
   nativeCallMute,
   nativeCallEnd,
+  nativeCallSwitchCamera,
+  nativeCallSetVideo,
   onNativeEvent
 } from './native-media-bridge.js';
 import { t } from '/locales/index.js';
@@ -577,6 +579,13 @@ export function setLocalVideoElement(el) {
 }
 
 export async function toggleLocalVideo(enabled) {
+  if (isNativeCallMode()) {
+    // Native owns the camera/track; toggle there and reflect UI state.
+    if (activeCallId) nativeCallSetVideo({ callId: activeCallId, enabled: !!enabled });
+    localVideoMuted = !enabled;
+    updateCallMedia({ controls: { videoEnabled: !!enabled, videoMuted: !enabled } });
+    return;
+  }
   if (!peerConnection || !localStream) return;
   const videoSender = peerConnection.getSenders().find((s) => s.track?.kind === 'video' || (!s.track && s._wasVideo));
   if (enabled) {
@@ -641,6 +650,12 @@ export async function toggleLocalVideo(enabled) {
 }
 
 export async function switchCamera() {
+  if (isNativeCallMode()) {
+    // Native owns the capturer; flip there and mirror the facing state.
+    if (activeCallId) nativeCallSwitchCamera({ callId: activeCallId });
+    cameraFacing = cameraFacing === 'user' ? 'environment' : 'user';
+    return;
+  }
   if (!peerConnection || !localStream) return;
   const nextFacing = cameraFacing === 'user' ? 'environment' : 'user';
   try {

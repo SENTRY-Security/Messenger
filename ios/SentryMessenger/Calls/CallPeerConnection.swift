@@ -1,4 +1,6 @@
 import Foundation
+import AVFoundation
+import CoreMedia
 #if canImport(WebRTC)
 import WebRTC
 #endif
@@ -25,6 +27,14 @@ protocol CallPeerConnectionDelegate: AnyObject {
     func callPeer(_ peer: CallPeerConnection, didProduceLocalSDP sdp: String, type: String)
     /// Aggregate connection state for UI / call lifecycle.
     func callPeer(_ peer: CallPeerConnection, didChangeState state: RTCPeerConnectionState)
+    /// The remote video track arrived (unified-plan `didAdd rtpReceiver`). Nil
+    /// when the remote removes video. P2: the native video layer renders it.
+    func callPeer(_ peer: CallPeerConnection, didReceiveRemoteVideoTrack track: RTCVideoTrack?)
+}
+
+extension CallPeerConnectionDelegate {
+    // Optional: audio-only callers (P1) need not implement video.
+    func callPeer(_ peer: CallPeerConnection, didReceiveRemoteVideoTrack track: RTCVideoTrack?) {}
 }
 
 final class CallPeerConnection: NSObject {
@@ -35,6 +45,16 @@ final class CallPeerConnection: NSObject {
     private let factory: RTCPeerConnectionFactory
     private var pc: RTCPeerConnection?
     private var localAudioTrack: RTCAudioTrack?
+
+    // Video (P2). Created only for video calls. The capturer feeds frames into
+    // the local video source; rendering is done by the native video layer.
+    private var localVideoTrack: RTCVideoTrack?
+    private var videoCapturer: RTCCameraVideoCapturer?
+    private(set) var remoteVideoTrack: RTCVideoTrack?
+    private var cameraPosition: AVCaptureDevice.Position = .front
+
+    /// Exposed so the native video layer can render the local self-preview.
+    var localVideoTrackForRender: RTCVideoTrack? { localVideoTrack }
 
     /// How long to wait for ICE gathering before sending the SDP anyway.
     private let iceGatherTimeout: TimeInterval = 6
@@ -65,6 +85,7 @@ final class CallPeerConnection: NSObject {
         pc = factory.peerConnection(with: config, constraints: constraints, delegate: self)
 
         addLocalAudio()
+        if hasVideo { addLocalVideo() }
     }
 
     private func addLocalAudio() {
@@ -73,6 +94,52 @@ final class CallPeerConnection: NSObject {
         let track = factory.audioTrack(with: source, trackId: "audio0")
         localAudioTrack = track
         pc?.add(track, streamIds: ["stream0"])
+    }
+
+    // MARK: video (P2)
+
+    /// Create the local camera video track and start capture (front camera).
+    private func addLocalVideo() {
+        let source = factory.videoSource()
+        let capturer = RTCCameraVideoCapturer(delegate: source)
+        let track = factory.videoTrack(with: source, trackId: "video0")
+        localVideoTrack = track
+        videoCapturer = capturer
+        pc?.add(track, streamIds: ["stream0"])
+        startCapture(position: cameraPosition)
+    }
+
+    /// Pick the best capture format for `position` (target ~720p / 30fps) and
+    /// start the camera. No-op where the device/format is unavailable (e.g. the
+    /// simulator), so audio negotiation still proceeds.
+    private func startCapture(position: AVCaptureDevice.Position) {
+        guard let capturer = videoCapturer else { return }
+        let devices = RTCCameraVideoCapturer.captureDevices()
+        guard let device = devices.first(where: { $0.position == position }) ?? devices.first else { return }
+        let formats = RTCCameraVideoCapturer.supportedFormats(for: device)
+        let target = 1280 * 720
+        let format = formats.min(by: { lhs, rhs in
+            let l = CMVideoFormatDescriptionGetDimensions(lhs.formatDescription)
+            let r = CMVideoFormatDescriptionGetDimensions(rhs.formatDescription)
+            let lArea = Int(l.width) * Int(l.height)
+            let rArea = Int(r.width) * Int(r.height)
+            return abs(lArea - target) < abs(rArea - target)
+        }) ?? formats.last
+        guard let chosen = format else { return }
+        let maxFps = chosen.videoSupportedFrameRateRanges.map { $0.maxFrameRate }.max() ?? 30
+        let fps = Int(min(30, maxFps))
+        cameraPosition = position
+        capturer.startCapture(with: device, format: chosen, fps: fps)
+    }
+
+    /// Flip between front and back cameras (P2 control).
+    func switchCamera() {
+        startCapture(position: cameraPosition == .front ? .back : .front)
+    }
+
+    /// Enable / disable the local video track (camera on/off toggle).
+    func setVideoEnabled(_ enabled: Bool) {
+        localVideoTrack?.isEnabled = enabled
     }
 
     // MARK: CallKit audio gating
@@ -122,9 +189,13 @@ final class CallPeerConnection: NSObject {
     }
 
     func close() {
+        videoCapturer?.stopCapture()
+        videoCapturer = nil
         pc?.close()
         pc = nil
         localAudioTrack = nil
+        localVideoTrack = nil
+        remoteVideoTrack = nil
         RTCAudioSession.sharedInstance().isAudioEnabled = false
     }
 
@@ -166,6 +237,16 @@ extension CallPeerConnection: RTCPeerConnectionDelegate {
             self.delegate?.callPeer(self, didChangeState: newState)
         }
     }
+    // Unified-plan remote track arrival → surface remote video to the renderer.
+    func peerConnection(_ pc: RTCPeerConnection, didAdd rtpReceiver: RTCRtpReceiver, streams: [RTCMediaStream]) {
+        guard let videoTrack = rtpReceiver.track as? RTCVideoTrack else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.remoteVideoTrack = videoTrack
+            self.delegate?.callPeer(self, didReceiveRemoteVideoTrack: videoTrack)
+        }
+    }
+
     // Unused delegate methods (required by protocol).
     func peerConnection(_ pc: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {}
     func peerConnection(_ pc: RTCPeerConnection, didAdd stream: RTCMediaStream) {}
