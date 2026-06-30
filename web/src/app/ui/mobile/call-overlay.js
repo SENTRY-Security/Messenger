@@ -201,9 +201,19 @@ function ensureStyles() {
       margin-top: 22px;
       display: flex;
       gap: 20px;
+      row-gap: 16px;
       justify-content: center;
       align-items: center;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
+    }
+    /* In-call controls auto-hide: fade out after inactivity, reveal on tap. */
+    .call-overlay .call-controls.auto-hide {
+      transition: opacity 250ms ease, transform 250ms ease;
+    }
+    .call-overlay .call-controls.auto-hide.controls-hidden {
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
     }
     .call-overlay .call-controls.hidden,
     .call-overlay .call-actions.hidden {
@@ -293,6 +303,21 @@ function ensureStyles() {
     }
     .call-overlay .call-controls .call-btn span {
       display: none;
+    }
+    /* Hangup sits on its own (second) row: centered red pill with a label. */
+    .call-overlay .call-controls .call-btn.hangup {
+      flex: 0 0 100%;
+      width: auto;
+      max-width: 200px;
+      height: 48px;
+      margin: 2px auto 0;
+      padding: 0 24px;
+      border-radius: 999px;
+    }
+    .call-overlay .call-controls .call-btn.hangup span {
+      display: inline;
+      margin-left: 8px;
+      font-size: 14px;
     }
     .call-overlay .call-minify-btn {
       position: absolute;
@@ -618,14 +643,14 @@ function ensureOverlayElements() {
         <button type="button" class="call-btn toggle" data-call-action="speaker" aria-pressed="false" style="display:none">
           <svg class="icon"><use href="#i-volume-2"/></svg><span>${t('calls.speaker')}</span>
         </button>
-        <button type="button" class="call-btn hangup" data-call-action="hangup">
-          <svg class="icon"><use href="#i-phone-off"/></svg><span>${t('calls.hangup')}</span>
-        </button>
         <button type="button" class="call-btn toggle" data-call-action="flip-camera" style="display:none">
           <svg class="icon"><use href="#i-switch-camera"/></svg><span>${t('calls.flipCamera')}</span>
         </button>
         <button type="button" class="call-btn toggle" data-call-action="info" aria-label="${t('calls.info')}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>${t('calls.info')}</span>
+        </button>
+        <button type="button" class="call-btn hangup" data-call-action="hangup">
+          <svg class="icon"><use href="#i-phone-off"/></svg><span>${t('calls.hangup')}</span>
         </button>
       </div>
       <button type="button" class="call-blur-mode-btn" data-call-action="blur-mode" data-blur-mode="face">
@@ -884,6 +909,7 @@ export function initCallOverlay({ showToast }) {
     ui.root.setAttribute('aria-hidden', visible ? 'false' : 'true');
     if (!visible) {
       stopTimer();
+      cancelControlsAutoHide();
       state.minimized = false;
       resetVideoSwap();
       resetPipPosition();
@@ -1269,6 +1295,23 @@ export function initCallOverlay({ showToast }) {
   // in-app (CallKit was skipped for it). Null unless such a call is ringing.
   let nativeInAppIncomingId = null;
 
+  // In-call controls auto-hide: reveal on tap, then fade out after a few seconds
+  // of inactivity (only while connected) to keep the call surface uncluttered.
+  let controlsHideTimer = null;
+  function revealControls() {
+    if (!ui.controlsRow) return;
+    ui.controlsRow.classList.remove('controls-hidden');
+    clearTimeout(controlsHideTimer);
+    controlsHideTimer = setTimeout(() => {
+      ui.controlsRow?.classList.add('controls-hidden');
+    }, 4000);
+  }
+  function cancelControlsAutoHide() {
+    clearTimeout(controlsHideTimer);
+    controlsHideTimer = null;
+    ui.controlsRow?.classList.remove('controls-hidden');
+  }
+
   function render(session = getCallSessionSnapshot()) {
     // iOS App incoming-call UI split:
     //  • Background / lock-screen wake → the system CallKit UI presents the call,
@@ -1315,6 +1358,12 @@ export function initCallOverlay({ showToast }) {
     const showControlsRow = [CALL_SESSION_STATUS.CONNECTING, CALL_SESSION_STATUS.IN_CALL].includes(session.status);
     ui.actionsRow?.classList.toggle('hidden', !showResponseRow);
     ui.controlsRow?.classList.toggle('hidden', !showControlsRow);
+    // Auto-hide the in-call controls only once connected; keep them pinned while
+    // connecting so the user always has them during setup.
+    const autoHideControls = session.status === CALL_SESSION_STATUS.IN_CALL;
+    ui.controlsRow?.classList.toggle('auto-hide', autoHideControls);
+    if (autoHideControls) revealControls();
+    else cancelControlsAutoHide();
     if (ui.acceptBtn) ui.acceptBtn.style.display = incoming ? 'flex' : 'none';
     if (ui.rejectBtn) ui.rejectBtn.style.display = incoming ? 'flex' : 'none';
     if (ui.cancelBtn) ui.cancelBtn.style.display = outgoing ? 'flex' : 'none';
@@ -1759,6 +1808,11 @@ export function initCallOverlay({ showToast }) {
   ui.blurModeBtn?.addEventListener('click', handleBlurModeCycle);
   ui.infoBtn?.addEventListener('click', () => showCallInfoOverlay());
   ui.minifyBtn?.addEventListener('click', minimizeOverlay);
+  // Tap anywhere on the call surface reveals the auto-hidden in-call controls
+  // (and resets the hide timer when tapping a control, keeping them up).
+  ui.card?.addEventListener('click', () => {
+    if (ui.controlsRow?.classList.contains('auto-hide')) revealControls();
+  });
   // Wire video elements to media-session
   if (ui.remoteVideo) setRemoteVideoElement(ui.remoteVideo);
   if (ui.localPipVideo) setLocalVideoElement(ui.localPipVideo);
