@@ -106,6 +106,7 @@ import { initPreviewBackfill } from '../features/messages/preview-backfill.js';
 import { LOCAL_SNAPSHOT_FLUSH_ON_EACH_EVENT } from '../features/restore-policy.js';
 import { wrapMKWithPasswordArgon2id, unwrapMKWithPasswordArgon2id } from '../crypto/kdf.js';
 import { opaqueRegister } from '../features/opaque.js';
+import { cacheClear } from '../features/native-cache.js';
 import { requestWsToken } from '../api/ws.js';
 import { initVersionInfoButton } from './version-info.js';
 import {
@@ -464,6 +465,9 @@ function clearSessionHandoff() {
 }
 
 function clearAllBrowserStorage(logoutMessage) {
+  // Native encrypted local cache (Tier 3): wipe on logout (no-op when disabled).
+  try { cacheClear(); } catch (err) { log({ secureLogoutNativeCacheClearError: err?.message || err }); }
+
   try {
     if (typeof caches !== 'undefined' && typeof caches.keys === 'function') {
       caches.keys()

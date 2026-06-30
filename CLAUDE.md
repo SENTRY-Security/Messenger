@@ -34,3 +34,4 @@
 - **金鑰不落地、每次重取**：MK 僅存記憶體；每次開啟以 `account_token` 向 `POST /api/v1/mk/fetch` 重新拉取 `wrapped_mk`（密文），於記憶體解封，不持久化明文金鑰。
 - **iOS 安全儲存**：解封用 KEK 與 `account_token` 存於 **Keychain**（`biometryCurrentSet` + `whenUnlockedThisDeviceOnly`，FaceID/Secure Enclave 綁定）；拉取資料以密文落地（Data Protection `.completeFileProtection`）。
 - **FaceID 解鎖**：使用者可於設定啟用；啟用後冷啟動與回前景需 FaceID，失敗則鎖定可重試、不登出。
+- **原生加密本地快取（旗標 `UseNativeLocalCache`，預設關）**：完整 App 可將**後端回傳的密文**快取於原生 Data Protection 儲存（`.completeFileProtection`），供離線讀取／加速啟動。**僅密文落地、明文一律不持久化**（解密仍在記憶體），**登出時清除**。屬「本地零持久化」之窄範圍 iOS 例外（同 secure-session 例外精神）；純 web／App Clip 不適用。詳見 `ios/docs/native-webrtc-migration-plan.md` 之 Tier 評估與 `ios/README.md`。

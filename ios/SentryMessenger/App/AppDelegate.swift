@@ -39,6 +39,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         NativeBridge.pushPreviewPublicKey = { PushPreviewKey.ensurePublicKeyB64u() }
         // Inject the full-app native background media downloader (nil in Clip).
         NativeBridge.backgroundDownload = BackgroundDownloadService.shared
+        // Inject the full-app native encrypted local cache (nil in Clip).
+        NativeBridge.localCache = LocalCacheService.shared
         return true
     }
 

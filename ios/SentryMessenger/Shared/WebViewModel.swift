@@ -52,6 +52,12 @@ final class WebViewModel: NSObject, ObservableObject {
         let nativeDlJS = "window.USE_NATIVE_MEDIA_DOWNLOAD = \(AppConfig.useNativeMediaDownload ? "true" : "false");"
         controller.addUserScript(WKUserScript(source: nativeDlJS, injectionTime: .atDocumentStart, forMainFrameOnly: true))
 
+        // Native encrypted local cache (Tier 3). When true the web caches encrypted
+        // backend responses via the native Data-Protection store for offline / faster
+        // launch. App Clip leaves the handler nil, so this stays false-effective.
+        let nativeCacheJS = "window.USE_NATIVE_LOCAL_CACHE = \(AppConfig.useNativeLocalCache ? "true" : "false");"
+        controller.addUserScript(WKUserScript(source: nativeCacheJS, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+
         webView = WKWebView(frame: .zero, configuration: config)
         super.init()
 

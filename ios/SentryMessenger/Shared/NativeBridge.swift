@@ -44,6 +44,11 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     /// become no-ops and the web downloads media itself).
     static var backgroundDownload: BackgroundDownloadHandler?
 
+    /// Native encrypted local cache, provided by the full app at launch
+    /// (`LocalCacheService`). Nil in the App Clip (the `cache*` actions are
+    /// no-ops and the web always fetches from network).
+    static var localCache: LocalCacheHandler?
+
     override init() {
         super.init()
         NotificationCenter.default.addObserver(
@@ -105,6 +110,10 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         }
         // Let the background downloader push bgDownloadDone back to web.
         NativeBridge.backgroundDownload?.sendToWeb = { [weak self] name, data in
+            self?.sendEvent(name, data: data)
+        }
+        // Let the local cache push cacheValue back to web.
+        NativeBridge.localCache?.sendToWeb = { [weak self] name, data in
             self?.sendEvent(name, data: data)
         }
         // CallKit audio gate: only render WebRTC audio while CallKit owns the
@@ -180,6 +189,10 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             // Native background media download (full app only; nil in App Clip).
             // Only exercised when `UseNativeMediaDownload` is on.
             NativeBridge.backgroundDownload?.handle(action: action, payload: payload)
+        case "cacheGet", "cachePut", "cacheDelete", "cacheClear":
+            // Native encrypted local cache (full app only; nil in App Clip).
+            // Only exercised when `UseNativeLocalCache` is on.
+            NativeBridge.localCache?.handle(action: action, payload: payload)
         default:
             print("[NativeBridge] unhandled action: \(action)")
         }
