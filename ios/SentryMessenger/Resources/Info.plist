@@ -54,7 +54,7 @@
 
 	<!-- Base URL of the hosted web messenger (override per scheme/UAT). -->
 	<key>WebBaseURL</key>
-	<string>https://message.sentry.red</string>
+	<string>https://app.message.sentry.red</string>
 
 	<!-- Embedded web bundle. Set UseBundledWeb=true to serve the UI from the
 	     app's WebApp/ folder over sentry-app://; ApiOrigin is the absolute
@@ -62,7 +62,7 @@
 	<key>UseBundledWeb</key>
 	<string>false</string>
 	<key>ApiOrigin</key>
-	<string>https://message.sentry.red</string>
+	<string>https://app.message.sentry.red</string>
 
 	<!-- Permission usage strings -->
 	<key>NFCReaderUsageDescription</key>
