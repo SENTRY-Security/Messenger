@@ -137,10 +137,15 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
   > **待實機驗證（PoC）**：WKWebView 內 WebRTC 音訊與 CallKit 主導的 `AVAudioSession`
   > 之協調需在實機確認；冷啟動「VoIP push → 接聽 → web 連線完成媒體」端到端時序亦需
   > 實機驗證。詳見 `docs/native-calls-plan.md`。
-  > **未來（mid-term）**：將通話媒體層由 WKWebView 內 WebRTC 改為原生
-  > WebRTC（`RTCPeerConnection`/`RTCAudioSession` + CallKit、沿用 signaling/TURN/
-  > E2EE），分階段、feature flag（`UseNativeCalls`）控制——規畫見
-  > `docs/native-webrtc-migration-plan.md`。
+  > **原生媒體（mid-term，P1 已實作、旗標關）**：通話媒體層可由 WKWebView 內 WebRTC
+  > 改為原生 WebRTC（`Calls/CallPeerConnection` + `NativeCallController` orchestrator
+  > ＋ `RTCAudioSession` manual audio ＋ CallKit 音訊閘門），沿用既有 signaling（web
+  > 帳號 WS）/TURN/E2EE（DTLS-SRTP）。web 端 `calls/native-media-bridge.js` 在
+  > `window.USE_NATIVE_CALLS=true` 時把 SDP/mute/teardown 交給原生。以 feature flag
+  > `UseNativeCalls`（Info.plist，預設 `false`）控制，關閉時完全走現有 WebView 路線。
+  > 解決 WKWebView↔CallKit `AVAudioSession` 互搶（前景通話無聲）的根因。分階段（P1
+  > 語音 ✅／P2 視訊／P3 原生 UI／P4 背景）與 signaling 放置決策見
+  > `docs/native-webrtc-migration-plan.md`。**待實機驗證後才開旗標。**
   > **需求**：Apple 付費帳號、Push Notifications 能力（含 VoIP）、`<bundleId>.voip`
   > APNs topic，以及後端 `APNS_*` 環境變數。
 - **檔案上傳**：`<input type=file>` 由 WKWebView 原生支援（相機/相簿需 Info.plist
