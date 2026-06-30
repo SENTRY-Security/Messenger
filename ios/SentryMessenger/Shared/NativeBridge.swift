@@ -20,6 +20,9 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     private let nfc = NFCLoginService()
     /// App Clips cannot use CallKit/PushKit; calls only run in the full app.
     private let isAppClip = (Bundle.main.bundleIdentifier ?? "").hasSuffix(".Clip")
+    /// App Clip only: remembers each call's video flag (the web's `callConnected`
+    /// carries no kind) so the audio session can re-configure with the right mode.
+    private var clipCallVideo: [String: Bool] = [:]
 
     /// Secure-session / app-lock handler, provided by the full app at launch
     /// (`SecureSessionController`). Stays nil in the App Clip, where the
@@ -123,13 +126,42 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     // MARK: Calls (CallKit bridge, P1/P2)
 
     /// JS → native call lifecycle. The web call layer emits these as the call
-    /// state machine advances; we mirror them into CallKit. No-op in the App Clip.
+    /// state machine advances. The full app mirrors them into CallKit; the App
+    /// Clip has no CallKit but still must drive the AVAudioSession itself.
     private func handleCallAction(_ action: String, payload: [String: Any]) {
-        guard !isAppClip else { return }
         let callId = payload["callId"] as? String ?? ""
         guard !callId.isEmpty else { return }
         let peerName = payload["peerName"] as? String ?? ""
         let hasVideo = (payload["kind"] as? String) == "video" || (payload["video"] as? Bool == true)
+
+        // App Clip: no CallKit/PushKit, so configure the shared AVAudioSession for
+        // the call here. Without `.playAndRecord`/`voiceChat` the WKWebView WebRTC
+        // has no record route → no call audio, and capture can fail → one-way video.
+        // Mirrors the CallKit audio lifecycle the full app gets for free.
+        if isAppClip {
+            DispatchQueue.main.async {
+                switch action {
+                case "callIncoming", "callStarted":
+                    self.clipCallVideo[callId] = hasVideo
+                    AudioSessionManager.configureForCall(video: hasVideo)
+                    AudioSessionManager.activate()
+                case "callConnected":
+                    let video = self.clipCallVideo[callId] ?? hasVideo
+                    AudioSessionManager.configureForCall(video: video)
+                    AudioSessionManager.activate()
+                    // Route is up → tell web to (re)start media (mirrors the full
+                    // app's CallKit didActivate → audioReady).
+                    self.sendEvent("audioReady", data: ["callId": callId])
+                case "callEnded":
+                    self.clipCallVideo[callId] = nil
+                    AudioSessionManager.deactivate()
+                default:
+                    break
+                }
+            }
+            return
+        }
+
         DispatchQueue.main.async {
             let callKit = CallKitController.shared
             switch action {

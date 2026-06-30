@@ -51,6 +51,9 @@ open SentryMessenger.xcodeproj
 - **帳號接力**：App Group `group.red.sentry.app.SENTRY-Messenger` + `SharedStore`
   傳遞非敏感旗標；敏感 token 不落地，由完整 App 重新登入（或日後改用 Keychain
   access group）。
+- **通話音訊**：Clip 無 CallKit，改由 `NativeBridge` 直接設定 `AVAudioSession`
+  （`playAndRecord` + `voiceChat`/`videoChat`），並於接通時回拋 `audioReady` 讓 web
+  （重）啟動媒體——否則 App↔Clip 通話會沒聲音、視訊單向。
 - 待辦：App Store Connect 的 App Clip 預設/進階體驗 URL 設定、ephemeral 通知。
 
 ## JS ↔ 原生橋接（`NativeBridge`）
