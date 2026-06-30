@@ -112,6 +112,9 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
   等系統 scheme 交給 OS。子資源/iframe（媒體、TURN）一律允許。
 - **WebRTC 權限**：第一方網域的相機/麥克風請求（`requestMediaCapturePermissionFor`）
   自動授權，避免雙重權限詢問。
+- **本地網路（WebRTC ICE）**：WKWebView 內 WebRTC 收集 host/mDNS ICE 候選需要 iOS
+  「本地網路」權限，故 Info.plist 宣告 `NSLocalNetworkUsageDescription`（App 與 Clip
+  皆有）。缺少時候選會為 0、通話無法建立（瀏覽器無此限制故 web 版正常）。
 - **通話原生整合（CallKit，P1）**：通話/視訊媒體仍在 WKWebView 內以 WebRTC 執行，
   原生層以 `CallKitController`（`CXProvider`/`CXCallController`）鏡射通話狀態到系統：
   撥出/來電顯示系統通話 UI、鎖屏接聽、靜音同步；系統來電 UI 顯示 App 圖示
