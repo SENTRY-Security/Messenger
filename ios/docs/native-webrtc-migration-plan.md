@@ -128,10 +128,30 @@
   名稱/狀態），由 `NativeCallController` 於**視訊**通話 present/dismiss；End/Mute 回灌 web
   狀態機（callEndedByUser/callMuteToggled），翻鏡頭/擴音/視訊開關走原生。**語音通話維持
   web overlay**（無渲染需求）。
-- **P4 背景/鎖屏/VoIP**：與 `VoipPushService` 整合，背景續通、鎖屏接聽。
+- **P4 背景/鎖屏/VoIP**（**需實機 + 安全決策，暫不盲做**）：現況分析見下。
 - **P5 收尾**：靜音/擴音/路由（`RTCAudioSession` + `overrideOutputAudioPort`）、
   錯誤/重連、與 web 狀態/通話紀錄一致、移除該情境對 WebView 媒體的依賴。
 - **P6 灰度**：旗標預設仍關 → 內測開 → 驗證穩定後預設開、web 媒體路徑退役（App）。
+
+### 4.1 P4 現況分析（為何暫停盲做，待實機/決策）
+
+**通話中切背景（mid-call background）— 預期已可運作，待實機驗證**：
+- 音訊：原生 `RTCAudioSession` manual audio + CallKit + `UIBackgroundModes: audio` →
+  進程於背景存活、音訊續播。
+- 信令：B2 原生 WS 擁有連線 + 25s 心跳 → WebView JS 被 throttle 時連線仍由 URLSession 維持。
+- 視訊：`RTCMTLVideoView` 背景暫停渲染、回前景恢復；CallKit 提供鎖屏 UI。
+- → P1+P2+P3+B2 組合理論上已覆蓋「通話中切背景續通」；**只需實機確認**，無明顯缺口。
+
+**冷啟動（App 被殺）VoIP 接聽 — 有根本性糾葛，需決策**：
+- VoIP push 喚醒須向 CallKit 報來電；但**通話金鑰/envelope 由 web 的 Double Ratchet 衍生**，
+  冷啟動時 WebView 尚未載入 → 仍需把 WebView 拉起做金鑰設定（與既有 web 路線同一限制）。
+- 若要原生在冷啟動「自取 WS token」需 `account_token` 落 Keychain；但本專案 iOS 安全模型
+  將解封用 KEK/`account_token` 以 **`biometryCurrentSet`** 存 Keychain（FaceID 綁定）→
+  **背景 VoIP 喚醒時無生物辨識上下文、讀不到**。故「Keychain account_token 背景冷啟動自取
+  token」與現行 FaceID-gated 模型**直接衝突**，非單純工程、屬安全決策（要不要為通話另存一份
+  較低保護等級的 token？由誰決定？）。
+- 結論：冷啟動背景接聽不宜盲做；待實機驗證「通話中切背景」後，再就金鑰/token 的背景可得性
+  做專門設計與決策。
 
 ## 5. 風險與緩解
 
