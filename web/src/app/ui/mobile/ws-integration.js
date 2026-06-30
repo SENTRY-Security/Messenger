@@ -127,8 +127,12 @@ export function createWsIntegration({ deps }) {
     const accountToken = (typeof getAccountToken === 'function') ? getAccountToken() : null;
     const deviceId = getDeviceId() || ensureDeviceId() || '';
     const sessionTs = (typeof getLoginSessionTs === 'function') ? getLoginSessionTs() : undefined;
-    const apiOrigin = (typeof globalThis !== 'undefined' && typeof globalThis.API_ORIGIN === 'string')
-      ? globalThis.API_ORIGIN : '';
+    // Absolute backend origin for native's token fetch (URLSession has no
+    // "same-origin"). Bundled mode injects window.API_ORIGIN; remote mode doesn't,
+    // so fall back to the page origin (which IS the backend in remote mode).
+    const apiOrigin = (typeof globalThis !== 'undefined' && typeof globalThis.API_ORIGIN === 'string' && globalThis.API_ORIGIN.trim())
+      ? globalThis.API_ORIGIN.trim()
+      : ((typeof location !== 'undefined' && location.origin && location.origin.startsWith('http')) ? location.origin : '');
 
     // Pseudo connection: readyState mirrors native auth state; send/close proxy
     // to native. The rest of ws-integration (send queue, isReady) is unchanged.
