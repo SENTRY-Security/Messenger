@@ -6,6 +6,7 @@
 
 import { getMicrophoneConstraintProfiles, isConstraintUnsatisfiedError, isAutomationEnvironment } from './browser-detection.js';
 import { t } from '/locales/index.js';
+import { nativePlaySound } from '../../features/native-bridge.js';
 
 export function createMediaPermissionManager({
   overlay,
@@ -174,6 +175,8 @@ export function createMediaPermissionManager({
   }
 
   function playChime({ volume = 0.3 } = {}) {
+    // Native app: play via the shell (AVAudioPlayer); fall through on the web.
+    if (nativePlaySound('click.mp3')) return;
     if (typeof Audio === 'undefined') return;
     try {
       const audio = new Audio('/assets/audio/click.mp3');

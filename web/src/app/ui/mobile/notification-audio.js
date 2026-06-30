@@ -1,4 +1,5 @@
 import { log } from '../../core/log.js';
+import { nativePlaySound } from '../../features/native-bridge.js';
 
 export function createNotificationAudioManager({ permissionKey }) {
   const permissionKeyInternal = permissionKey;
@@ -56,6 +57,9 @@ export function createNotificationAudioManager({ permissionKey }) {
   }
 
   async function play() {
+    // Native app: play the notification sound via the shell (reliable in
+    // WKWebView); fall through to WebAudio on the web.
+    if (nativePlaySound('notify.wav')) return;
     try {
       const ctx = await resume();
       if (!ctx) return;

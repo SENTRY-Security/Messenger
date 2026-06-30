@@ -70,6 +70,9 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `callStateChanged`| 狀態變更（payload: callId, muted） |
 | `callEnded`   | 通話結束（payload: callId, reason）    |
 | `setAudioRoute`| 切換擴音/聽筒（payload: `speaker: true/false`）；web 在 iOS 無法控制路由，故原生代為覆寫 |
+| `playSound`   | 原生播放內建音效（payload: `file` 基底檔名含副檔名、`loop`）；取代 WKWebView 的 HTML5/WebAudio |
+| `stopSound`   | 停止指定音效（payload: `file`） |
+| `stopAllSounds`| 停止所有音效 |
 | `secureStore` | 存入 Keychain（payload: kek, account_token, account_digest） |
 | `secureLoad`  | 解鎖後讀出 session（回 `secureSessionLoaded`） |
 | `clearSecureSession`| 清除 Keychain session（登出/被踢） |
