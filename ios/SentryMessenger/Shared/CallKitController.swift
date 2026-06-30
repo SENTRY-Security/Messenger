@@ -1,6 +1,7 @@
 import Foundation
 import CallKit
 import AVFoundation
+import UIKit
 
 /// Native CallKit integration (P1 — foreground).
 ///
@@ -82,6 +83,17 @@ final class CallKitController: NSObject {
         config.supportedHandleTypes = [.generic]
         // Privacy: don't surface peer identifiers into the system Recents list.
         config.includesCallsInRecents = false
+        // App glyph on the system call UI. CallKit uses it as a template (only the
+        // alpha channel matters). LogoMark is a vector; render it at a retina-
+        // friendly size so it stays crisp on the call screen.
+        if let logo = UIImage(named: "LogoMark") {
+            let side: CGFloat = 120
+            let renderer = UIGraphicsImageRenderer(size: CGSize(width: side, height: side))
+            let icon = renderer.image { _ in
+                logo.draw(in: CGRect(x: 0, y: 0, width: side, height: side))
+            }
+            config.iconTemplateImageData = icon.pngData()
+        }
         provider = CXProvider(configuration: config)
         super.init()
         provider.setDelegate(self, queue: nil)

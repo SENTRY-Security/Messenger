@@ -102,7 +102,8 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
   自動授權，避免雙重權限詢問。
 - **通話原生整合（CallKit，P1）**：通話/視訊媒體仍在 WKWebView 內以 WebRTC 執行，
   原生層以 `CallKitController`（`CXProvider`/`CXCallController`）鏡射通話狀態到系統：
-  撥出/來電顯示系統通話 UI、鎖屏接聽、靜音同步。web 端 `native-call-bridge.js` 於通話
+  撥出/來電顯示系統通話 UI、鎖屏接聽、靜音同步；系統來電 UI 顯示 App 圖示
+  （`CXProviderConfiguration.iconTemplateImageData`，以 `LogoMark` 向量 template 渲染）。web 端 `native-call-bridge.js` 於通話
   生命週期透過 bridge 通知原生（`callIncoming`/`callStarted`/…），並監聽 CallKit 動作
   （`callAnswered`/`callEndedByUser`/`callMuteToggled`）回灌既有 accept/hangup/mute 流程。
 - **背景續通（P0）**：`UIBackgroundModes` 加入 `audio`，`AudioSessionManager` 將
