@@ -21,26 +21,17 @@ final class SessionRouter: ObservableObject {
     func open(_ url: URL) {
         guard let host = url.host, AppConfig.allowedNavigationHosts.contains(host) else { return }
 
-        // Plain in-app navigation (no SDM params) loads directly.
-        guard SdmValidator.hasSdmParams(url) else {
-            sdmError = nil
-            sessionURL = url
-            return
-        }
-
-        // SDM tag-wake: verify the CMAC server-side BEFORE loading the web login.
+        // Load the tag URL directly and let the web complete login. The web's
+        // `/sdm/exchange` is the authoritative, CMAC-validated, counter-advancing
+        // auth gate and rejects forged/invalid tags itself.
+        //
+        // INCIDENT FIX: the previous native pre-check (`SdmValidator.verify` →
+        // `/sdm/verify`) was fail-CLOSED — any non-200 / network failure /
+        // `ok:false` left the user on the login screen with no navigation, which
+        // blocked ALL logins whenever that endpoint was unreachable. The pre-check
+        // is redundant with the web exchange, so it no longer gates navigation.
         sdmError = nil
-        validating = true
-        SdmValidator.verify(url) { [weak self] ok in
-            DispatchQueue.main.async {
-                guard let self else { return }
-                self.validating = false
-                if ok {
-                    self.sessionURL = url
-                } else {
-                    self.sdmError = "卡片驗證失敗，請重新感應有效的安全卡片。"
-                }
-            }
-        }
+        validating = false
+        sessionURL = url
     }
 }
