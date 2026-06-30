@@ -20,6 +20,7 @@
 import { isNativeApp, postNativeMessage, onNativeEvent } from './native-bridge.js';
 import { subscribeCallEvent, CALL_EVENT } from './calls/events.js';
 import { CALL_SESSION_STATUS, CALL_REQUEST_KIND } from './calls/state.js';
+import { recoverCallMediaOnResume } from './calls/media-session.js';
 
 let installed = false;
 
@@ -101,7 +102,11 @@ export function initNativeCallBridge() {
   onNativeEvent('callAnswered', ({ callId }) => handlers.answer?.(callId));
   onNativeEvent('callEndedByUser', ({ callId }) => handlers.end?.(callId));
   onNativeEvent('callMuteToggled', ({ muted }) => handlers.setMuted?.(!!muted));
-  // audioReady is currently informational; WebKit owns the WebRTC audio unit.
-  // Reserved for the PoC where web defers getUserMedia until the route is up.
-  onNativeEvent('audioReady', () => {});
+  // CallKit activated the audio route. WebKit may have started the WebRTC audio
+  // unit before the route was up (the answer action fires before didActivate),
+  // so re-attempt remote playback now that the session is live — otherwise the
+  // call can be silent on answer.
+  onNativeEvent('audioReady', () => {
+    try { recoverCallMediaOnResume(); } catch { /* ignore */ }
+  });
 }

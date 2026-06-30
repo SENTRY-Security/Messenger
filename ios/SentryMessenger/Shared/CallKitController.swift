@@ -234,6 +234,10 @@ extension CallKitController: CXProviderDelegate {
     }
 
     func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
+        // Set the audio category BEFORE CallKit activates the session (and before
+        // WebKit starts its WebRTC audio unit). Activation itself is left to
+        // CallKit → didActivate.
+        AudioSessionManager.configureForCall(video: videoFlags[action.callUUID] ?? false)
         // System accepted our outgoing call → mark connecting in the UI.
         provider.reportOutgoingCall(with: action.callUUID, startedConnectingAt: nil)
         action.fulfill()
@@ -243,6 +247,9 @@ extension CallKitController: CXProviderDelegate {
         guard let callId = uuidToId[action.callUUID] else { action.fail(); return }
         activeCallId = callId
         cancelIncomingTimer(action.callUUID)
+        // Configure the audio category before CallKit activates the session and
+        // before WebKit starts its WebRTC audio unit.
+        AudioSessionManager.configureForCall(video: videoFlags[action.callUUID] ?? false)
         if let onAnswer { onAnswer(callId) } else { pendingAnsweredCallId = callId }
         action.fulfill()
     }
@@ -261,12 +268,11 @@ extension CallKitController: CXProviderDelegate {
     }
 
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
-        // CallKit hands us the activated session; share config with the manager
-        // and let web (re)start media now that the route is up.
-        if let (uuid, _) = uuidToId.first, let video = videoFlags[uuid] {
-            AudioSessionManager.configureForCall(video: video)
-        }
-        AudioSessionManager.activate()
+        // CallKit has already activated the session; the category was set in the
+        // answer/start action. Do NOT reconfigure the category or re-activate here
+        // — WebKit's WebRTC audio unit runs on this session and re-setting the
+        // category mid-call interrupts it (a common cause of silent CallKit
+        // calls). Just tell web the route is up so it can (re)start playback.
         if let callId = uuidToId.values.first { onAudioReady?(callId) }
     }
 
