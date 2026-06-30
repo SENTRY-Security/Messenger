@@ -11,7 +11,8 @@
 //   ws.close();           // teardown on logout
 
 import { t } from '/locales/index.js';
-import { NativeWebSocket, isNativeAccountSocketMode } from './native-websocket.js';
+import { isNativeAccountSocketMode } from './native-websocket.js';
+import { postNativeMessage, onNativeEvent } from '../../features/native-bridge.js';
 
 export function createWsIntegration({ deps }) {
   const {
@@ -113,11 +114,84 @@ export function createWsIntegration({ deps }) {
     }, delay);
   }
 
+  // --- Native autonomous transport (Option B / B2) ---
+
+  let nativeAutoWired = false;
+  let nativeAutoReady = false;
+
+  // Hand the account-WS lifecycle to native. Native fetches the token, opens the
+  // socket, authenticates, heartbeats and reconnects; web only sends/receives
+  // application messages. A pseudo `wsConn` keeps send()/send.isReady() working
+  // unchanged. Connection state arrives as wsUp/wsDown, messages as wsMsg.
+  function connectViaNativeAutonomous(accountDigest) {
+    const accountToken = (typeof getAccountToken === 'function') ? getAccountToken() : null;
+    const deviceId = getDeviceId() || ensureDeviceId() || '';
+    const sessionTs = (typeof getLoginSessionTs === 'function') ? getLoginSessionTs() : undefined;
+    const apiOrigin = (typeof globalThis !== 'undefined' && typeof globalThis.API_ORIGIN === 'string')
+      ? globalThis.API_ORIGIN : '';
+
+    // Pseudo connection: readyState mirrors native auth state; send/close proxy
+    // to native. The rest of ws-integration (send queue, isReady) is unchanged.
+    wsConn = {
+      get readyState() { return nativeAutoReady ? 1 /* OPEN */ : 0 /* CONNECTING */; },
+      send(str) { postNativeMessage('wsSendApp', { data: str }); },
+      close() { nativeAutoReady = false; postNativeMessage('wsCloseNative', {}); },
+    };
+
+    if (!nativeAutoWired) {
+      nativeAutoWired = true;
+      onNativeEvent('wsUp', () => {
+        nativeAutoReady = true;
+        reconnectAttempts = 0;
+        connecting = false;
+        updateConnectionIndicator('online');
+        if (pendingMessages.length) {
+          for (const msg of pendingMessages.splice(0)) {
+            try { postNativeMessage('wsSendApp', { data: JSON.stringify(msg) }); }
+            catch (err) { log({ wsSendError: err?.message || err }); }
+          }
+        }
+      });
+      onNativeEvent('wsMsg', (d) => {
+        let msg;
+        try { msg = JSON.parse(d?.data); } catch { return; }
+        handleMessage(msg);
+      });
+      onNativeEvent('wsDown', (d) => {
+        nativeAutoReady = false;
+        updateConnectionIndicator('offline');
+        getPresenceManager()?.clearPresenceState?.();
+        // 4409 stale-session is terminal; native stops reconnecting and we force
+        // logout exactly as the browser-WS onclose path does.
+        if (d && d.code === 4409) {
+          showForcedLogoutModal(t('auth.accountLoggedInElsewhere'));
+          secureLogout(t('auth.accountLoggedInElsewhere'), { auto: true });
+        }
+        // Otherwise native owns reconnect; web takes no action.
+      });
+    }
+
+    postNativeMessage('wsConfigure', {
+      accountToken, accountDigest, deviceId, apiOrigin,
+      sessionTs: Number.isFinite(sessionTs) ? Math.floor(sessionTs) : undefined,
+    });
+    postNativeMessage('wsEnsureNative', {});
+    connecting = false;
+  }
+
   // --- Connect ---
 
   async function connect() {
     const accountDigest = getAccountDigest();
     if (!accountDigest) return;
+    // Native app (Option B): the native layer owns the whole account-WS lifecycle
+    // (token / auth / heartbeat / reconnect) so the connection survives mid-call
+    // backgrounding when the WebView JS is throttled. Web just sends / receives
+    // application messages. Pure web / App Clip keep the browser WebSocket below.
+    if (isNativeAccountSocketMode()) {
+      connectViaNativeAutonomous(accountDigest);
+      return;
+    }
     if (wsDebugEnabled) {
       log({ wsConnectStart: true, accountDigest });
     }
@@ -181,11 +255,7 @@ export function createWsIntegration({ deps }) {
       log({ wsConnectUrl: wsUrl });
     }
     connectStartedAt = Date.now();
-    // Native app (Option B): route the account WS through the native
-    // URLSession-backed transport, which mimics the WebSocket interface. Pure
-    // web / App Clip use the browser WebSocket. Only the byte transport differs;
-    // the auth / heartbeat / reconnect logic below is identical either way.
-    const ws = isNativeAccountSocketMode() ? new NativeWebSocket(wsUrl) : new WebSocket(wsUrl);
+    const ws = new WebSocket(wsUrl);
     wsConn = ws;
     updateConnectionIndicator('connecting');
 
@@ -348,6 +418,9 @@ export function createWsIntegration({ deps }) {
   // --- Heartbeat (application-level ping/pong) ---
 
   function startHeartbeat() {
+    // Native autonomous mode drives the heartbeat itself; running the web
+    // watchdog too would let a missed pong close the native-owned socket.
+    if (isNativeAccountSocketMode()) return;
     stopHeartbeat();
     lastPongAt = Date.now();
     heartbeatTimer = setInterval(() => {
