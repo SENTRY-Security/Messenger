@@ -160,10 +160,12 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             // exercised when `UseNativeCalls` is on — the web checks the injected
             // `window.USE_NATIVE_CALLS` before emitting these.
             NativeBridge.nativeCalls?.handle(action: action, payload: payload)
-        case "wsOpen", "wsSend", "wsClose":
+        case "wsOpen", "wsSend", "wsClose",
+             "wsConfigure", "wsEnsureNative", "wsSendApp", "wsCloseNative":
             // Native account WebSocket transport (full app only; nil in App Clip).
-            // Only exercised when `UseNativeAccountSocket` is on — the web's
-            // NativeWebSocket shim checks `window.USE_NATIVE_ACCOUNT_SOCKET`.
+            // Only exercised when `UseNativeAccountSocket` is on. B1 (wsOpen/Send/
+            // Close) is the web-driven shim; B2 (wsConfigure/EnsureNative/SendApp/
+            // CloseNative) is the native-autonomous lifecycle.
             NativeBridge.accountSocket?.handle(action: action, payload: payload)
         default:
             print("[NativeBridge] unhandled action: \(action)")

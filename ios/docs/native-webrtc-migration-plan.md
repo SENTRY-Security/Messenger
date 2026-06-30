@@ -91,9 +91,16 @@
   連線 URL/token 取得、auth、心跳、重連仍由 web 既有邏輯驅動（透過 shim）；**位元組傳輸
   由 WebKit 移到 URLSession**。旗標 `UseNativeAccountSocket`（Info.plist，預設 false）。
   bridge 動作 `wsOpen/wsSend/wsClose` ↔ 事件 `wsEvent{id,kind,...}`。
-- **B2（後續）**：將 token 取得（`/api/v1/ws/token`，需 `account_token`）、心跳、重連移入
-  原生，達成**背景自主**（WebView 被 suspend 時連線仍由 URLSession 維持、心跳不斷）；
-  通話信令可由原生 `NativeCallController` 直接處理，其餘訊息 best-effort 轉發 web。
+- **B2（已實作，旗標關）**：原生 `AccountSocketAutonomous` 自取 token（`/api/v1/ws/token`，
+  web 經 `wsConfigure` 交付 `account_token`/digest/deviceId/apiOrigin）、自開 socket、送 auth、
+  驅動 25s 心跳、backoff 重連。web `ws-integration.js` 在原生模式短路：以 pseudo `wsConn`
+  保留 send 佇列語意，連線狀態收 `wsUp`/`wsDown`、訊息收 `wsMsg`，自身心跳/重連停用
+  （`startHeartbeat` 在原生模式 no-op，避免誤關原生 socket）。4409/4401 終止並沿用
+  forced-logout。**背景自主**：通話切背景（audio mode 進程存活）時 URLSession + 原生計時器
+  續跑，信令不因 WebView throttle 而斷。bridge 動作 `wsConfigure/wsEnsureNative/wsSendApp/
+  wsCloseNative` ↔ 事件 `wsUp/wsMsg/wsDown`。
+  - 註：`account_token` 經 bridge 交付原生、僅存記憶體（登出即清）；後續可改 Keychain 以
+    支援背景冷啟動自取 token（P4）。通話信令由原生 `NativeCallController` 直接處理為後續優化。
 - 安全：shim/transport 不改變 auth 內容（仍送 `{type:'auth',accountDigest,token}`），
   自訂關閉碼 4401/4409 原樣回傳 web，沿用既有 forced-logout 處理；單裝置不變式不受影響。
 

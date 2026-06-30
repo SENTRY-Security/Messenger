@@ -21,7 +21,13 @@ import Foundation
 final class AccountSocketService: NSObject, AccountSocketHandler {
     static let shared = AccountSocketService()
 
-    var sendToWeb: ((String, [String: Any]) -> Void)?
+    var sendToWeb: ((String, [String: Any]) -> Void)? {
+        didSet { autonomous.sendToWeb = sendToWeb }
+    }
+
+    /// B2: native owns the full connection lifecycle (token / auth / heartbeat /
+    /// reconnect). Selected by the web when `UseNativeAccountSocket` is on.
+    private let autonomous = AccountSocketAutonomous()
 
     private var session: URLSession!
     /// id → live task. Mutated only on `queue`.
@@ -41,6 +47,28 @@ final class AccountSocketService: NSObject, AccountSocketHandler {
 
     func handle(action: String, payload: [String: Any]) {
         guard AppConfig.useNativeAccountSocket else { return }
+        // B2 autonomous lifecycle actions (no per-socket id).
+        switch action {
+        case "wsConfigure":
+            autonomous.configure(accountToken: payload["accountToken"] as? String,
+                                 accountDigest: payload["accountDigest"] as? String,
+                                 deviceId: payload["deviceId"] as? String,
+                                 apiOrigin: payload["apiOrigin"] as? String,
+                                 sessionTs: payload["sessionTs"] as? Int)
+            return
+        case "wsEnsureNative":
+            autonomous.ensure()
+            return
+        case "wsSendApp":
+            if let data = payload["data"] as? String { autonomous.sendApp(data) }
+            return
+        case "wsCloseNative":
+            autonomous.closeAndClear()
+            return
+        default:
+            break
+        }
+        // B1 dumb-pipe actions (web-driven lifecycle via NativeWebSocket shim).
         guard let id = payload["id"] as? String, !id.isEmpty else { return }
         switch action {
         case "wsOpen":
