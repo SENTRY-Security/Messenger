@@ -45,6 +45,14 @@ enum AppConfig {
         (Bundle.main.object(forInfoDictionaryKey: "UseBundledWeb") as? String)?.lowercased() == "true"
     }
 
+    /// Native WebRTC call path (mid-term migration). When false (default) calls
+    /// run inside the WKWebView as today. Toggle via Info.plist `UseNativeCalls`.
+    /// See `docs/native-webrtc-migration-plan.md`. App Clip ignores this (no
+    /// native call stack there).
+    static var useNativeCalls: Bool {
+        (Bundle.main.object(forInfoDictionaryKey: "UseNativeCalls") as? String)?.lowercased() == "true"
+    }
+
     static let bundleScheme = "sentry-app"
     static let bundleHost = "app"
     /// Entry HTML inside `WebApp/` (relative path).

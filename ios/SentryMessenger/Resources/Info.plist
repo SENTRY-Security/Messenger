@@ -81,5 +81,10 @@
 	     缺少此宣告會導致候選為 0、通話無法建立（音視訊全無）。 -->
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>用於建立點對點語音與視訊通話連線。</string>
+	<!-- Native WebRTC call path (mid-term migration). Default false = calls run
+	     in the WKWebView as today; flip to true only after device verification.
+	     See docs/native-webrtc-migration-plan.md. -->
+	<key>UseNativeCalls</key>
+	<string>false</string>
 </dict>
 </plist>

@@ -6,6 +6,16 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
 
+# Native WebRTC call path (mid-term migration — see
+# docs/native-webrtc-migration-plan.md). Linked into the FULL app only (not the
+# App Clip). Gated at runtime by Info.plist `UseNativeCalls` (default false).
+# NOTE: stasel/WebRTC publishes a major version per Chromium milestone; if SPM
+# resolution fails in Xcode, bump this to a version that resolves for you.
+packages:
+  WebRTC:
+    url: https://github.com/stasel/WebRTC
+    from: "120.0.0"
+
 settings:
   base:
     MARKETING_VERSION: "1.0.0"
@@ -31,6 +41,7 @@ targets:
     dependencies:
       - target: SentryMessengerClip
         embed: true             # "Embed App Clips" copy phase
+      - package: WebRTC         # native call media layer (full app only)
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: red.sentry.messenger
