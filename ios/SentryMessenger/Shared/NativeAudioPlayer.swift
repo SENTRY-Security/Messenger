@@ -28,14 +28,19 @@ final class NativeAudioPlayer: NSObject {
             print("[NativeAudio] missing sound: \(file)")
             return
         }
-        // Looping sounds are ringtones played before/around call connect; make
-        // sure the session permits playback. Short tones (accepted/ended) run
-        // while the call session is already `.playAndRecord`, and notify/click
-        // play on whatever category is current — so only ringtones reconfigure.
+        // Looping sounds are ringtones played before/around call connect. Give
+        // them a playable session ONLY when a call doesn't already own one:
+        // reconfiguring or re-activating an active `.playAndRecord` call session
+        // interrupts the WKWebView WebRTC audio unit (heard as "no call audio"),
+        // and must never downgrade it to `.playback` (which kills the mic).
+        // Short tones (accepted/ended) and notify/click play on the current
+        // session and never reconfigure.
         if loop {
             let session = AVAudioSession.sharedInstance()
-            try? session.setCategory(.playback, options: [])
-            try? session.setActive(true, options: [])
+            if session.category != .playAndRecord {
+                try? session.setCategory(.playback, options: [.mixWithOthers])
+                try? session.setActive(true, options: [])
+            }
         }
         stop(file: file)
         do {
