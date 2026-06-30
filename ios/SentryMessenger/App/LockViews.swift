@@ -18,10 +18,15 @@ struct LockOverlayView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 18) {
-                Image(systemName: lock.mode == .nfc ? "wave.3.right.circle.fill" : "lock.fill")
-                    .font(.system(size: 64))
+                // Brand mark, matching the native login/scan screen (LoginView).
+                Image("LogoMark")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 60, height: 60)
                     .foregroundStyle(.white)
                     .shadow(color: cyan.opacity(0.45), radius: 18)
+                    .shadow(color: indigo.opacity(0.30), radius: 40)
 
                 Text("SENTRY MESSENGER")
                     .font(.system(size: 16, weight: .bold))

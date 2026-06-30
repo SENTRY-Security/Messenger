@@ -56,6 +56,13 @@ final class AppLockManager: ObservableObject {
 
     private let nfc = NFCLoginService()
     private var unlocking = false
+    /// Set while our own unlock UI (NFC scan sheet / FaceID prompt) is presented.
+    /// That system UI backgrounds the app, which would otherwise re-arm the lock
+    /// (`.background` → `lockNow`) and re-lock on the following foreground
+    /// (`.active` → `evaluateLockOnForeground`) — re-locking right after a
+    /// successful unlock. Consumed by the first foreground evaluation after the
+    /// unlock UI is dismissed so a *genuine* later background still re-locks.
+    private var ignoreForegroundRelock = false
 
     func refreshMode() { mode = KeychainStore.lockMode }
 
@@ -67,6 +74,13 @@ final class AppLockManager: ObservableObject {
     /// Evaluate whether the UI should be locked right now (called on launch and
     /// on each foreground transition).
     func evaluateLockOnForeground() {
+        // This foreground was caused by dismissing our own unlock UI (NFC/FaceID),
+        // not a genuine return from background — don't re-lock; let the in-flight
+        // (or just-completed) unlock govern `isLocked`. One-shot.
+        if ignoreForegroundRelock {
+            ignoreForegroundRelock = false
+            return
+        }
         refreshMode()
         guard mode != .none, isLoggedIn() else { isLocked = false; return }
         isLocked = true
@@ -95,6 +109,9 @@ final class AppLockManager: ObservableObject {
             return
         }
         unlocking = true
+        // The biometric prompt backgrounds/inactivates the scene; don't let the
+        // resulting foreground transition re-lock right after a success.
+        ignoreForegroundRelock = true
         ctx.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "解鎖 SENTRY Messenger") { [weak self] ok, error in
             Task { @MainActor in
                 guard let self else { return }
@@ -110,6 +127,9 @@ final class AppLockManager: ObservableObject {
 
     private func unlockWithNFC() {
         unlocking = true
+        // The system NFC scan sheet backgrounds the app; don't let the resulting
+        // foreground transition re-lock right after a successful unlock.
+        ignoreForegroundRelock = true
         nfc.beginSession(prompt: "請感應您的安全卡片以解鎖") { [weak self] result in
             Task { @MainActor in
                 guard let self else { return }
@@ -141,6 +161,9 @@ final class AppLockManager: ObservableObject {
 
     /// Lock immediately (e.g. user tapped "lock now").
     func lockNow() {
+        // Our own unlock UI (NFC/FaceID) just backgrounded the app — that's not a
+        // genuine background, so don't re-arm the lock.
+        guard !ignoreForegroundRelock else { return }
         guard mode != .none, isLoggedIn() else { return }
         isLocked = true
     }
