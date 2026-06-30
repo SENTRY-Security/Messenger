@@ -128,10 +128,49 @@
   名稱/狀態），由 `NativeCallController` 於**視訊**通話 present/dismiss；End/Mute 回灌 web
   狀態機（callEndedByUser/callMuteToggled），翻鏡頭/擴音/視訊開關走原生。**語音通話維持
   web overlay**（無渲染需求）。
-- **P4 背景/鎖屏/VoIP**：與 `VoipPushService` 整合，背景續通、鎖屏接聽。
+- **P4 背景/鎖屏/VoIP**（**需實機 + 安全決策，暫不盲做**）：現況分析見下。
 - **P5 收尾**：靜音/擴音/路由（`RTCAudioSession` + `overrideOutputAudioPort`）、
   錯誤/重連、與 web 狀態/通話紀錄一致、移除該情境對 WebView 媒體的依賴。
 - **P6 灰度**：旗標預設仍關 → 內測開 → 驗證穩定後預設開、web 媒體路徑退役（App）。
+
+### 4.1 P4 現況分析（為何暫停盲做，待實機/決策）
+
+**通話中切背景（mid-call background）— 預期已可運作，待實機驗證**：
+- 音訊：原生 `RTCAudioSession` manual audio + CallKit + `UIBackgroundModes: audio` →
+  進程於背景存活、音訊續播。
+- 信令：B2 原生 WS 擁有連線 + 25s 心跳 → WebView JS 被 throttle 時連線仍由 URLSession 維持。
+- 視訊：`RTCMTLVideoView` 背景暫停渲染、回前景恢復；CallKit 提供鎖屏 UI。
+- → P1+P2+P3+B2 組合理論上已覆蓋「通話中切背景續通」；**只需實機確認**，無明顯缺口。
+
+**冷啟動（App 被殺）VoIP 接聽 — 分兩個獨立的牆，先釐清機制**：
+
+*牆 A：原生背景自取 WS token（Keychain 可讀性）* — 比想像可行：
+- `KeychainStore`（`App/KeychainStore.swift:49`）secret 實際以
+  `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` 儲存，**item 本身未加 biometry/access-control
+  flag**；生物辨識門是 **App 層鎖定畫面（`AppLockManager`）**負責，`secret(for:)` 讀取**不跳
+  FaceID**（見該檔 35–39 行註解）。故**FaceID 設定與背景可讀性無關**。
+- `account_token` 本就由 `SecureSessionController` secureStore 存於 Keychain
+  （`SecureSessionController.swift:31`）→ 原生可**自讀**、不必靠 web `wsConfigure` 交付。
+- 真正限制是 `WhenUnlocked`：**裝置解鎖中**才讀得到。
+  - 裝置**解鎖**時冷啟動：原生讀得到 token、可自取 WS token 自連 → **可行**（FaceID 開關皆然）。
+  - 裝置**鎖定**時冷啟動：`WhenUnlocked` 擋住 → 需把「通話用 token」降為 `afterFirstUnlock(ThisDeviceOnly)`
+    才讀得到（after first unlock since boot）。這是**安全決策**：是否為通話另存一份較低保護等級的
+    token（且僅供通話信令、非解封 MK 的 KEK）。
+
+*牆 B：端到端接聽仍需 web 金鑰* — 與 Keychain 無關：
+- 通話 envelope/金鑰由 **web 的 Double Ratchet 衍生**；即使原生 WS 在背景收到 call-offer，
+  解密/接聽仍須喚醒 WebView 做金鑰設定（**與既有 web 路線同一限制**，非原生引入）。
+
+**結論**：FaceID 不是阻礙；解鎖狀態的冷啟動其實可行（牆 A 過、牆 B 與 web 同限制）。
+
+**決策（使用者選定）：不降保護等級。** 關鍵事實——標準 CallKit 鎖屏接聽流程中，使用者**按
+接聽即解鎖裝置**（FaceID/passcode），App 進前景時裝置已解鎖 → `WhenUnlocked` 的
+account_token/KEK 與 web 金鑰全部可讀 → 正常接聽。故「鎖定冷啟動接不了」前提多半不成立；
+將 KEK/account_token 降為 `afterFirstUnlock` 只換來「按接聽前早幾百 ms 預連 WS」的邊際優化，
+卻讓本地 E2EE 金鑰於鎖定時可讀（實質安全退步），不值得。
+→ **P4 不需安全退步改動**：保持 `WhenUnlockedThisDeviceOnly`，倚賴接聽解鎖後的正常流程。
+剩餘 P4 屬**實機驗證**（通話中切背景續通、VoIP 鎖屏接聽走既有 CallKit→web accept→原生媒體
+鏈），無新增必要程式。
 
 ## 5. 風險與緩解
 
