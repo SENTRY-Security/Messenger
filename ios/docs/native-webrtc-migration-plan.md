@@ -161,9 +161,16 @@
 - 通話 envelope/金鑰由 **web 的 Double Ratchet 衍生**；即使原生 WS 在背景收到 call-offer，
   解密/接聽仍須喚醒 WebView 做金鑰設定（**與既有 web 路線同一限制**，非原生引入）。
 
-**結論**：FaceID 不是阻礙；解鎖狀態的冷啟動其實可行（牆 A 過、牆 B 與 web 同限制）。只剩
-「鎖定狀態冷啟動」需就 token 保護等級（`afterFirstUnlock`）做安全決策。建議先實機驗證「通話中
-切背景」與「解鎖冷啟動」，再決定是否處理鎖定冷啟動。
+**結論**：FaceID 不是阻礙；解鎖狀態的冷啟動其實可行（牆 A 過、牆 B 與 web 同限制）。
+
+**決策（使用者選定）：不降保護等級。** 關鍵事實——標準 CallKit 鎖屏接聽流程中，使用者**按
+接聽即解鎖裝置**（FaceID/passcode），App 進前景時裝置已解鎖 → `WhenUnlocked` 的
+account_token/KEK 與 web 金鑰全部可讀 → 正常接聽。故「鎖定冷啟動接不了」前提多半不成立；
+將 KEK/account_token 降為 `afterFirstUnlock` 只換來「按接聽前早幾百 ms 預連 WS」的邊際優化，
+卻讓本地 E2EE 金鑰於鎖定時可讀（實質安全退步），不值得。
+→ **P4 不需安全退步改動**：保持 `WhenUnlockedThisDeviceOnly`，倚賴接聽解鎖後的正常流程。
+剩餘 P4 屬**實機驗證**（通話中切背景續通、VoIP 鎖屏接聽走既有 CallKit→web accept→原生媒體
+鏈），無新增必要程式。
 
 ## 5. 風險與緩解
 
