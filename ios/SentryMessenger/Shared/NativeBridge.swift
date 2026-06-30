@@ -114,6 +114,18 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             let speaker = (payload["speaker"] as? Bool) ?? ((payload["route"] as? String) == "speaker")
             AudioSessionManager.setSpeaker(speaker)
             sendEvent("audioRouteChanged", data: ["speaker": AudioSessionManager.isSpeakerOn])
+        case "playSound":
+            // Native playback of bundled in-app sounds (call tones, notify, click)
+            // instead of WKWebView HTML5/WebAudio. `file` = basename incl. ext.
+            if let file = payload["file"] as? String, !file.isEmpty {
+                NativeAudioPlayer.shared.play(file: file, loop: (payload["loop"] as? Bool) ?? false)
+            }
+        case "stopSound":
+            if let file = payload["file"] as? String, !file.isEmpty {
+                NativeAudioPlayer.shared.stop(file: file)
+            }
+        case "stopAllSounds":
+            NativeAudioPlayer.shared.stopAll()
         case "secureStore", "secureLoad", "clearSecureSession",
              "getLockMode", "setLockMode", "openLockSettings", "lockNow", "nfcUnlockResult":
             // Routed to the full app's secure-session handler (nil in App Clip).

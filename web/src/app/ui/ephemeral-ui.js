@@ -19,6 +19,7 @@ import {
   setCallTokenGate
 } from '../features/calls/ephemeral-call-adapter.js';
 import { setContactSecret } from '../core/contact-secrets.js';
+import { isNativeApp } from '../features/native-bridge.js';
 import { bytesToB64Url } from '../../shared/utils/base64.js';
 import { initCallOverlay } from './mobile/call-overlay.js';
 import {
@@ -924,12 +925,15 @@ function _initCallSystem() {
 
 /** Play short audio to unlock Web Audio via user gesture, then pre-cache media permissions. */
 function _gestureUnlockMedia() {
-  // 1) Unlock Web Audio API with a short sound
-  try {
-    const audio = new Audio('/assets/audio/click.mp3');
-    audio.volume = 0.01; // nearly silent
-    audio.play().catch(() => {});
-  } catch {}
+  // 1) Unlock Web Audio API with a short sound. Native app plays sounds through
+  //    the shell (AVAudioPlayer), so the WebAudio-unlock hack is unneeded there.
+  if (!isNativeApp()) {
+    try {
+      const audio = new Audio('/assets/audio/click.mp3');
+      audio.volume = 0.01; // nearly silent
+      audio.play().catch(() => {});
+    } catch {}
+  }
   // 2) Pre-request mic + camera so permissions are cached for call setup
   navigator.mediaDevices?.getUserMedia?.({ audio: true, video: true })
     .then(stream => {

@@ -50,6 +50,31 @@ export function requestNativePush() {
   postNative('registerPush');
 }
 
+// ── Native in-app sound playback ────────────────────────────────────────────
+// In the native app, route sounds (call tones, notification, click) to the
+// shell's AVAudioPlayer instead of HTML5 Audio / WebAudio, which is unreliable
+// in WKWebView (autoplay gating, mute/route handling, suspension). Each helper
+// returns true when the native shell will handle playback (caller skips the web
+// fallback), false otherwise. `file` is the bundled basename incl. extension.
+
+export function nativePlaySound(file, { loop = false } = {}) {
+  if (!isNativeApp() || !file) return false;
+  postNative('playSound', { file, loop: !!loop });
+  return true;
+}
+
+export function nativeStopSound(file) {
+  if (!isNativeApp() || !file) return false;
+  postNative('stopSound', { file });
+  return true;
+}
+
+export function nativeStopAllSounds() {
+  if (!isNativeApp()) return false;
+  postNative('stopAllSounds', {});
+  return true;
+}
+
 async function registerApnsToken(token) {
   const accountDigest = getAccountDigest();
   if (!accountDigest || !token) return;

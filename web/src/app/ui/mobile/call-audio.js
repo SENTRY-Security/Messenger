@@ -1,4 +1,5 @@
 import { log } from '../../core/log.js';
+import { nativePlaySound, nativeStopSound, nativeStopAllSounds } from '../../features/native-bridge.js';
 
 const SOUND_SOURCES = {
   outgoing: '/assets/audio/call-out.mp3',
@@ -6,6 +7,12 @@ const SOUND_SOURCES = {
   accepted: '/assets/audio/accept.mp3',
   ended: '/assets/audio/end-call.mp3'
 };
+
+/** Bundled sound basename (incl. extension) the native shell plays for a key. */
+function nativeFileFor(key) {
+  const src = SOUND_SOURCES[key];
+  return src ? src.split('/').pop() : null;
+}
 
 function createAudioElement(src, { loop = false } = {}) {
   if (typeof Audio === 'undefined') return null;
@@ -63,9 +70,12 @@ export function createCallAudioManager() {
   function playLoop(key) {
     if (currentLoop === key) return;
     stopLoop();
-    const audio = ensurePlayer(key, { loop: true });
-    if (!audio) return;
     currentLoop = key;
+    // Native app: play the ringtone via the shell's AVAudioPlayer (reliable when
+    // backgrounded / screen-locked). Falls through to HTML Audio on the web.
+    if (nativePlaySound(nativeFileFor(key), { loop: true })) return;
+    const audio = ensurePlayer(key, { loop: true });
+    if (!audio) { currentLoop = null; return; }
     audio.loop = true;
     try {
       audio.currentTime = 0;
@@ -86,12 +96,15 @@ export function createCallAudioManager() {
 
   function stopLoop() {
     if (!currentLoop) return;
+    nativeStopSound(nativeFileFor(currentLoop));
     const audio = players.get(currentLoop);
     safePause(audio);
     currentLoop = null;
   }
 
   function playOnce(key) {
+    // Native app: play the one-shot tone natively; fall through on the web.
+    if (nativePlaySound(nativeFileFor(key), { loop: false })) return;
     const audio = ensurePlayer(key, { loop: false });
     if (!audio) return;
     audio.loop = false;
@@ -108,6 +121,7 @@ export function createCallAudioManager() {
 
   function stopAll() {
     stopLoop();
+    nativeStopAllSounds();
     for (const audio of players.values()) {
       safePause(audio);
     }
