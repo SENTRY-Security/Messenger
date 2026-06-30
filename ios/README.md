@@ -54,6 +54,9 @@ open SentryMessenger.xcodeproj
 - **通話音訊**：Clip 無 CallKit，改由 `NativeBridge` 直接設定 `AVAudioSession`
   （`playAndRecord` + `voiceChat`/`videoChat`），並於接通時回拋 `audioReady` 讓 web
   （重）啟動媒體——否則 App↔Clip 通話會沒聲音、視訊單向。
+- **來電卡**：Clip 無 CallKit，`callIncoming` 時 `NativeBridge` 自行回拋
+  `incomingCallPresentation`，讓 web 顯示自家漂浮來電卡（否則 Clip 收到來電卻不顯示
+  接聽/拒接 UI）。
 - 待辦：App Store Connect 的 App Clip 預設/進階體驗 URL 設定、ephemeral 通知。
 
 ## JS ↔ 原生橋接（`NativeBridge`）

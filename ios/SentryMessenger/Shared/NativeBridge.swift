@@ -153,7 +153,16 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         if isAppClip {
             DispatchQueue.main.async {
                 switch action {
-                case "callIncoming", "callStarted":
+                case "callIncoming":
+                    self.clipCallVideo[callId] = hasVideo
+                    AudioSessionManager.configureForCall(video: hasVideo)
+                    AudioSessionManager.activate()
+                    // No CallKit in the Clip → tell web to show its in-app incoming
+                    // card; otherwise the callee receives the call but sees no
+                    // accept/reject UI (the web suppresses native incoming cards by
+                    // default, expecting CallKit to present them).
+                    self.sendEvent("incomingCallPresentation", data: ["callId": callId, "mode": "in-app"])
+                case "callStarted":
                     self.clipCallVideo[callId] = hasVideo
                     AudioSessionManager.configureForCall(video: hasVideo)
                     AudioSessionManager.activate()
