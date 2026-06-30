@@ -168,6 +168,12 @@ P4 已實作的原生邊界處理（`CallKitController`）：
 ## 6. 風險與待驗證項
 
 - **WKWebView WebRTC 與 CallKit 音訊 session 的相容性**：這是最大不確定點。原生 CallKit 期望由 `provider(didActivate:)` 提供音訊 session，但 WebRTC 在 WKWebView 內由 WebKit 管理音訊。需先做 PoC 驗證能否協調（可能需要在 audio 啟用後再讓 JS 開始媒體，或接受 WebKit 自管音訊而 CallKit 僅作 UI/記錄層）。
+  - **修正（待實機重測）**：實測「接聽後沒聲音」。已調整為 Apple 標準時序——音訊
+    `setCategory` 移至 `CXAnswerCallAction`/`CXStartCallAction`（CallKit 啟用 session
+    前），`provider(didActivate:)` **不再重設 category／重新 activate**（避免打斷 WebKit
+    音訊單元）；並讓 web 的 `audioReady` 呼叫 `recoverCallMediaOnResume()` 在路由就緒後
+    重啟遠端播放。若仍無聲，下一步改採「WebKit 完全自管音訊、移除所有 `AudioSessionManager`
+    的 category/activate 呼叫，CallKit 僅作 UI/記錄」。
 - **VoIP push 嚴格規範**：iOS 13+ 要求收到即報來電，違反會被停送。後端只在「確有來電」時發送。
 - **App Clip 限制**：App Clip 不支援 PushKit/背景續通；通話原生整合僅適用完整 App，Clip 維持現狀（或引導安裝完整 App）。
 - **隱私/E2E**：VoIP push payload 不得帶明文訊息或可識別個資，沿用「敏感資料不落地」原則，只帶 `callId` 等最小資訊。
