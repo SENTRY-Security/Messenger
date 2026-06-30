@@ -91,6 +91,7 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 | `callMuteToggled` | `{ callId, muted }` — 系統 UI 靜音切換   |
 | `audioRouteChanged` | `{ speaker }` — 目前是否為擴音（系統路由變更/切換時回報，同步通話 UI 喇叭鈕） |
 | `audioReady`      | `{ callId }` — CallKit 啟用音訊 session |
+| `incomingCallPresentation` | `{ callId, mode: 'in-app' }` — 前景來電未走 CallKit，通知 web 顯示自家漂浮來電卡（否則前景來電兩邊都不顯示、無法接聽） |
 | `secureSessionLoaded` | `{ hasSession, account_token?, account_digest?, kek? }` — 解鎖後送出 |
 | `lockMode`        | `{ mode }` — 目前鎖定模式 |
 | `nfcUnlockScanned`| `{ url }` — NFC 解鎖感應到卡片，web 驗證後回 `nfcUnlockResult` |

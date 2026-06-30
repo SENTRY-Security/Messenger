@@ -1265,16 +1265,31 @@ export function initCallOverlay({ showToast }) {
     }
   }
 
+  // callId of a foreground incoming call the native shell asked us to present
+  // in-app (CallKit was skipped for it). Null unless such a call is ringing.
+  let nativeInAppIncomingId = null;
+
   function render(session = getCallSessionSnapshot()) {
-    // iOS App: CallKit shows the system incoming-call UI (and plays its own
-    // ringtone), so suppress the web floating accept/reject overlay for incoming
-    // calls to avoid a duplicate UI. Once answered (CONNECTING/IN_CALL) the web
-    // in-call controls render normally.
-    if (session && isNativeApp() && session.status === CALL_SESSION_STATUS.INCOMING) {
+    // iOS App incoming-call UI split:
+    //  • Background / lock-screen wake → the system CallKit UI presents the call,
+    //    so suppress the web floating card to avoid a duplicate.
+    //  • Foreground → the native shell intentionally does NOT ring CallKit and
+    //    signals `incomingCallPresentation {mode:'in-app'}`; the web card is then
+    //    the ONLY incoming UI and MUST render, otherwise the callee can't
+    //    answer/reject and the caller rings until timeout.
+    // Once answered (CONNECTING/IN_CALL) the in-call controls render normally either way.
+    if (session && isNativeApp() && session.status === CALL_SESSION_STATUS.INCOMING
+        && session.callId !== nativeInAppIncomingId) {
       setVisibility(false);
       updateBubbleDetails(null);
       state.actionBusy = false;
       return;
+    }
+    // Drop the in-app-incoming marker once this call stops ringing (answered/ended).
+    if (nativeInAppIncomingId && (!session
+        || session.callId !== nativeInAppIncomingId
+        || session.status !== CALL_SESSION_STATUS.INCOMING)) {
+      nativeInAppIncomingId = null;
     }
     ensureToneContext(session);
     syncAudio(session);
@@ -1727,6 +1742,17 @@ export function initCallOverlay({ showToast }) {
         setToggleState(ui.speakerBtn, speakerOn);
       });
     }
+  }
+  // A foreground incoming call is NOT rung through CallKit; the native shell tells
+  // us to show the in-app card for it. Mark the callId so render() stops
+  // suppressing it, then re-render to surface the accept/reject UI immediately.
+  if (isNativeApp()) {
+    onNativeEvent('incomingCallPresentation', ({ callId, mode } = {}) => {
+      if (mode === 'in-app' && callId) {
+        nativeInAppIncomingId = callId;
+        render();
+      }
+    });
   }
   ui.cameraBtn?.addEventListener('click', handleCameraToggle);
   ui.flipCameraBtn?.addEventListener('click', handleFlipCamera);
