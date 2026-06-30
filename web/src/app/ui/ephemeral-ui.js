@@ -20,6 +20,7 @@ import {
 } from '../features/calls/ephemeral-call-adapter.js';
 import { setContactSecret } from '../core/contact-secrets.js';
 import { isNativeApp } from '../features/native-bridge.js';
+import { isNativeCallMode } from '../features/calls/native-media-bridge.js';
 import { bytesToB64Url } from '../../shared/utils/base64.js';
 import { initCallOverlay } from './mobile/call-overlay.js';
 import {
@@ -934,7 +935,10 @@ function _gestureUnlockMedia() {
       audio.play().catch(() => {});
     } catch {}
   }
-  // 2) Pre-request mic + camera so permissions are cached for call setup
+  // 2) Pre-request mic + camera so permissions are cached for call setup.
+  //    NATIVE CALL MODE: skip — native owns capture/permission; a held WebView
+  //    stream (kept alive 60s) would fight the native audio session → silent call.
+  if (isNativeCallMode()) return;
   navigator.mediaDevices?.getUserMedia?.({ audio: true, video: true })
     .then(stream => {
       // Cache the stream reference for first call, stop tracks after a brief moment
