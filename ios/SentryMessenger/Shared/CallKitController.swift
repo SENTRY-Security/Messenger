@@ -55,6 +55,11 @@ final class CallKitController: NSObject {
     var onMute: ((_ callId: String, _ muted: Bool) -> Void)?
     /// Emitted after CallKit activates the audio session — web may (re)start media.
     var onAudioReady: ((_ callId: String) -> Void)?
+    /// Emitted on CallKit audio-session activate (true) / deactivate (false).
+    /// The native WebRTC engine uses this to gate `RTCAudioSession` manual audio
+    /// so it renders only while CallKit owns the session. Kept WebRTC-agnostic so
+    /// `CallKitController` stays compilable in the (WebRTC-free) App Clip.
+    var onAudioSessionActive: ((_ active: Bool) -> Void)?
     /// Emitted when a foreground incoming call is intentionally NOT rung through
     /// CallKit (the in-app floating card is the incoming UI). The web suppresses
     /// its incoming card for native calls by default (to avoid duplicating the
@@ -316,10 +321,12 @@ extension CallKitController: CXProviderDelegate {
         // — WebKit's WebRTC audio unit runs on this session and re-setting the
         // category mid-call interrupts it (a common cause of silent CallKit
         // calls). Just tell web the route is up so it can (re)start playback.
+        onAudioSessionActive?(true)  // native engine: start rendering (manual audio)
         if let callId = uuidToId.values.first { onAudioReady?(callId) }
     }
 
     func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
+        onAudioSessionActive?(false)  // native engine: stop rendering before teardown
         AudioSessionManager.deactivate()
     }
 }

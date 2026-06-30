@@ -27,6 +27,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         voipPush.start()  // register for VoIP pushes (PushKit)
         // Inject the full-app secure-session / app-lock handler into the bridge.
         NativeBridge.secureSession = SecureSessionController.shared
+        // Inject the full-app native WebRTC call engine (nil in the App Clip).
+        // No-op unless `UseNativeCalls` is on; bootstrap only touches WebRTC then.
+        NativeBridge.nativeCalls = NativeCallController.shared
+        NativeCallController.shared.bootstrapIfEnabled()
         return true
     }
 
