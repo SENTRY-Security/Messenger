@@ -622,7 +622,7 @@ function ensureOverlayElements() {
           <svg class="icon"><use href="#i-phone-off"/></svg><span>${t('calls.hangup')}</span>
         </button>
         <button type="button" class="call-btn toggle" data-call-action="flip-camera" style="display:none">
-          <svg class="icon"><use href="#i-refresh-cw"/></svg><span>${t('calls.flipCamera')}</span>
+          <svg class="icon"><use href="#i-switch-camera"/></svg><span>${t('calls.flipCamera')}</span>
         </button>
         <button type="button" class="call-btn toggle" data-call-action="info" aria-label="${t('calls.info')}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>${t('calls.info')}</span>
