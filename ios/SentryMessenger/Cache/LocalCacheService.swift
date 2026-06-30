@@ -69,6 +69,22 @@ final class LocalCacheService: LocalCacheHandler {
         guard let data = value.data(using: .utf8) else { return }
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         try? data.write(to: file(for: key), options: [.atomic, .completeFileProtection])
+        evictIfNeeded()
+    }
+
+    /// Bound disk growth: keep at most `maxEntries`, dropping the least-recently
+    /// modified files first. Cheap and good enough for a cache (entries re-fetch).
+    private let maxEntries = 600
+    private func evictIfNeeded() {
+        let fm = FileManager.default
+        guard let urls = try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.contentModificationDateKey]),
+              urls.count > maxEntries else { return }
+        let sorted = urls.sorted {
+            let a = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+            let b = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+            return a < b
+        }
+        for url in sorted.prefix(urls.count - maxEntries) { try? fm.removeItem(at: url) }
     }
 
     private func remove(key: String) {

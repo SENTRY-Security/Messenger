@@ -7,6 +7,7 @@
 import { fetchWithTimeout, jsonReq } from '../core/http.js';
 import { buildAccountPayload, ensureDeviceId, normalizeAccountDigest } from '../core/store.js';
 import { logCapped, logForensicsEvent } from '../core/log.js';
+import { isNativeCacheMode, cacheGet, cachePut } from '../features/native-cache.js';
 export { createMessage } from './media.js'; // legacy POST /api/v1/messages wrapper
 
 export function buildAccountHeaders() {
@@ -308,20 +309,42 @@ export async function listSecureMessages({ conversationId, limit = 20, cursorTs,
   if (includeKeys) qs.set('include_keys', 'true');
   const url = `/api/v1/messages/secure?${qs.toString()}`;
   const headers = buildAccountHeaders();
-  const r = await fetchWithTimeout(url, { method: 'GET', headers }, 15000);
-  const text = await r.text();
-  let data; try { data = JSON.parse(text); } catch { data = text; }
+
+  // Native local cache (Tier 3): network-first, fall back to the cached ciphertext
+  // page when offline / on failure. Secure messages are append-only (immutable by
+  // counter), so a cached page never decrypts to stale content; only ciphertext is
+  // stored and the caller still decrypts in memory.
+  const cacheKey = isNativeCacheMode()
+    ? `secmsgs:${buildAccountPayload().account_digest || ''}:${conversationId}:${limit}:${cursorTs ?? ''}:${cursorId ?? ''}:${includeKeys ? 1 : 0}`
+    : null;
+
+  const finish = (r, text) => {
+    let data; try { data = JSON.parse(text); } catch { data = text; }
+    try {
+      const items = Array.isArray(data?.items) ? data.items : [];
+      const summary = summarizeMessageIds(items);
+      logForensicsEvent('FETCH_LIST', {
+        conversationId,
+        serverItemCount: Array.isArray(data?.items) ? items.length : null,
+        ...summary,
+        source: 'listSecureMessages'
+      });
+    } catch { }
+    return { r, data };
+  };
+
   try {
-    const items = Array.isArray(data?.items) ? data.items : [];
-    const summary = summarizeMessageIds(items);
-    logForensicsEvent('FETCH_LIST', {
-      conversationId,
-      serverItemCount: Array.isArray(data?.items) ? items.length : null,
-      ...summary,
-      source: 'listSecureMessages'
-    });
-  } catch { }
-  return { r, data };
+    const r = await fetchWithTimeout(url, { method: 'GET', headers }, 15000);
+    const text = await r.text();
+    if (cacheKey && r.ok && text) cachePut(cacheKey, text);
+    return finish(r, text);
+  } catch (err) {
+    if (cacheKey) {
+      const cached = await cacheGet(cacheKey);
+      if (cached) return finish({ ok: true, status: 200, fromCache: true }, cached);
+    }
+    throw err;
+  }
 }
 
 /**
