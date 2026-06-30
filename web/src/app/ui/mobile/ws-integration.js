@@ -11,6 +11,7 @@
 //   ws.close();           // teardown on logout
 
 import { t } from '/locales/index.js';
+import { NativeWebSocket, isNativeAccountSocketMode } from './native-websocket.js';
 
 export function createWsIntegration({ deps }) {
   const {
@@ -180,7 +181,11 @@ export function createWsIntegration({ deps }) {
       log({ wsConnectUrl: wsUrl });
     }
     connectStartedAt = Date.now();
-    const ws = new WebSocket(wsUrl);
+    // Native app (Option B): route the account WS through the native
+    // URLSession-backed transport, which mimics the WebSocket interface. Pure
+    // web / App Clip use the browser WebSocket. Only the byte transport differs;
+    // the auth / heartbeat / reconnect logic below is identical either way.
+    const ws = isNativeAccountSocketMode() ? new NativeWebSocket(wsUrl) : new WebSocket(wsUrl);
     wsConn = ws;
     updateConnectionIndicator('connecting');
 

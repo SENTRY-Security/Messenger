@@ -34,6 +34,11 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     /// `nativeCall*` actions are no-ops (calls run inside the WKWebView).
     static var nativeCalls: NativeCallHandler?
 
+    /// Native account WebSocket transport, provided by the full app at launch
+    /// (`AccountSocketService`). Stays nil in the App Clip, where the web keeps
+    /// opening its own WebSocket (the `ws*` actions become no-ops).
+    static var accountSocket: AccountSocketHandler?
+
     override init() {
         super.init()
         NotificationCenter.default.addObserver(
@@ -87,6 +92,10 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         }
         // Let the native call engine push SDP / state back to web.
         NativeBridge.nativeCalls?.sendToWeb = { [weak self] name, data in
+            self?.sendEvent(name, data: data)
+        }
+        // Let the native account socket push wsEvent frames back to web.
+        NativeBridge.accountSocket?.sendToWeb = { [weak self] name, data in
             self?.sendEvent(name, data: data)
         }
         // CallKit audio gate: only render WebRTC audio while CallKit owns the
@@ -151,6 +160,11 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
             // exercised when `UseNativeCalls` is on — the web checks the injected
             // `window.USE_NATIVE_CALLS` before emitting these.
             NativeBridge.nativeCalls?.handle(action: action, payload: payload)
+        case "wsOpen", "wsSend", "wsClose":
+            // Native account WebSocket transport (full app only; nil in App Clip).
+            // Only exercised when `UseNativeAccountSocket` is on — the web's
+            // NativeWebSocket shim checks `window.USE_NATIVE_ACCOUNT_SOCKET`.
+            NativeBridge.accountSocket?.handle(action: action, payload: payload)
         default:
             print("[NativeBridge] unhandled action: \(action)")
         }

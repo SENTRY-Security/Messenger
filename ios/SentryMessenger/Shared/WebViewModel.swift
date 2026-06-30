@@ -38,6 +38,13 @@ final class WebViewModel: NSObject, ObservableObject {
         let nativeCallsJS = "window.USE_NATIVE_CALLS = \(AppConfig.useNativeCalls ? "true" : "false");"
         controller.addUserScript(WKUserScript(source: nativeCallsJS, injectionTime: .atDocumentStart, forMainFrameOnly: true))
 
+        // Native account WebSocket transport flag (Info.plist `UseNativeAccountSocket`).
+        // When true, ws-integration.js routes through the NativeWebSocket shim so
+        // the account WS bytes are owned by URLSession (AccountSocketService) instead
+        // of WebKit. App Clip leaves the handler nil, so this stays false-effective.
+        let nativeWsJS = "window.USE_NATIVE_ACCOUNT_SOCKET = \(AppConfig.useNativeAccountSocket ? "true" : "false");"
+        controller.addUserScript(WKUserScript(source: nativeWsJS, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+
         webView = WKWebView(frame: .zero, configuration: config)
         super.init()
 

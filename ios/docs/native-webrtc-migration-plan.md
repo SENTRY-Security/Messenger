@@ -75,6 +75,28 @@
   金鑰衍生與 DR 仍留 web，Swift 只碰通話信令、碰不到帳號協定全貌 → 背景續通與低維護
   成本兼得，避免重做 DR/驗證。
 
+### 2.1 WS 原生化最終決策（使用者選定 Option B：原生接管整條帳號 WS）
+
+> 背景：後端 `account-ws.js`（Durable Object）採**帳號層單一活躍連線**——任何新 socket
+> 通過驗證即以 `sessionTs` 比較關閉其餘連線（不分 device）。故「原生另開一條平行帳號
+> WS」會踢掉 WebView 的 WS（反之亦然），naive 做法不可行。Call token / E2EE envelope 由
+> Double Ratchet 衍生、**不經 WS、後端不驗證**，故金鑰一律留 web，只有媒體 signaling
+> 是搬遷對象。
+
+**決策（使用者選 B）**：原生擁有那條唯一的帳號 WS，web 改走 bridge transport。分階段：
+
+- **B1（已實作，旗標關）**：原生 `AccountSocketService`（`URLSessionWebSocketTask`）擁有
+  實際連線；web 端 `NativeWebSocket` shim 模擬瀏覽器 `WebSocket` 介面（onopen/onmessage/
+  onclose/onerror/send/close/readyState），`ws-integration.js` 僅換 `new WebSocket` 一行。
+  連線 URL/token 取得、auth、心跳、重連仍由 web 既有邏輯驅動（透過 shim）；**位元組傳輸
+  由 WebKit 移到 URLSession**。旗標 `UseNativeAccountSocket`（Info.plist，預設 false）。
+  bridge 動作 `wsOpen/wsSend/wsClose` ↔ 事件 `wsEvent{id,kind,...}`。
+- **B2（後續）**：將 token 取得（`/api/v1/ws/token`，需 `account_token`）、心跳、重連移入
+  原生，達成**背景自主**（WebView 被 suspend 時連線仍由 URLSession 維持、心跳不斷）；
+  通話信令可由原生 `NativeCallController` 直接處理，其餘訊息 best-effort 轉發 web。
+- 安全：shim/transport 不改變 auth 內容（仍送 `{type:'auth',accountDigest,token}`），
+  自訂關閉碼 4401/4409 原樣回傳 web，沿用既有 forced-logout 處理；單裝置不變式不受影響。
+
 ## 3. 依賴
 
 - **WebRTC framework**：採用維護中的 SPM 套件 `stasel/WebRTC`（binaryTarget，
