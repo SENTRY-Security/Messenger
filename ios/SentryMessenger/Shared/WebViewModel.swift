@@ -29,6 +29,15 @@ final class WebViewModel: NSObject, ObservableObject {
             controller.addUserScript(WKUserScript(source: js, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         }
 
+        // Native call path feature flag (Info.plist `UseNativeCalls`). The web
+        // call layer reads `window.USE_NATIVE_CALLS`: when true it hands media to
+        // the native WebRTC engine via the bridge (`nativeCall*`) and keeps only
+        // signaling/E2EE in JS; when false it runs WebRTC inside the WKWebView as
+        // before. Injected for both bundled and remote web. App Clip leaves the
+        // engine nil, so this stays false-effective there regardless.
+        let nativeCallsJS = "window.USE_NATIVE_CALLS = \(AppConfig.useNativeCalls ? "true" : "false");"
+        controller.addUserScript(WKUserScript(source: nativeCallsJS, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+
         webView = WKWebView(frame: .zero, configuration: config)
         super.init()
 

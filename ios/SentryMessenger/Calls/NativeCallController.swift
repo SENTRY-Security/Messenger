@@ -3,21 +3,34 @@ import Foundation
 import WebRTC
 #endif
 
-/// Native WebRTC call controller — mid-term migration **P0 skeleton**.
+/// Native WebRTC call orchestrator — mid-term migration **P1**.
 ///
-/// Gated by `AppConfig.useNativeCalls` (Info.plist `UseNativeCalls`, default
-/// false). When disabled, calls run inside the WKWebView exactly as today; this
-/// type does nothing. Subsequent phases wire the signaling client, peer
-/// connection, CallKit and native UI. See
-/// `ios/docs/native-webrtc-migration-plan.md`.
+/// Owns the per-call `CallPeerConnection`(s) and is the full app's
+/// implementation of `NativeCallHandler`. Gated by `AppConfig.useNativeCalls`
+/// (Info.plist `UseNativeCalls`, default false): when disabled, calls run inside
+/// the WKWebView exactly as today and this type does nothing.
+///
+/// Responsibilities (the media half of the hybrid architecture — see
+/// `ios/docs/native-webrtc-migration-plan.md`):
+///   - web→native: build / tear down peer connections, produce SDP offers,
+///     consume remote offers/answers, mute. Signaling stays in the web layer
+///     (relayed over the existing account WebSocket); this layer only handles
+///     media + SDP.
+///   - native→web: hand back local SDP (`nativeCallLocalSDP`) for the web to
+///     relay, and aggregate connection state (`nativeCallState`).
+///   - CallKit audio gate: `setCallAudio(active:)` flips `RTCAudioSession`
+///     manual audio so WebRTC renders only while CallKit owns the session.
 ///
 /// Full app only — not compiled into the App Clip (this file lives outside
 /// `Shared/`, and the Clip does not link the WebRTC package).
-final class NativeCallController {
+final class NativeCallController: NativeCallHandler {
     static let shared = NativeCallController()
 
     /// Whether the native call path is enabled for this build.
     var isEnabled: Bool { AppConfig.useNativeCalls }
+
+    /// Native→web channel, wired by `NativeBridge` (see `NativeBridge.nativeCalls`).
+    var sendToWeb: ((String, [String: Any]) -> Void)?
 
     #if canImport(WebRTC)
     /// Lazily created so the (heavy) WebRTC stack only initialises when the
@@ -29,20 +42,134 @@ final class NativeCallController {
         return RTCPeerConnectionFactory(encoderFactory: encoderFactory,
                                         decoderFactory: decoderFactory)
     }()
+
+    /// Active peer connections keyed by the web's string `callId`. Single-call
+    /// app, but a map keeps lifecycle robust against overlapping teardown.
+    private var peers: [String: CallPeerConnection] = [:]
     #endif
 
     private init() {}
 
-    /// Called once at launch. P0: verifies the WebRTC dependency links and is
-    /// otherwise a no-op. Real call setup arrives in P1 (signaling + peer
-    /// connection + CallKit).
+    /// Called once at launch. Verifies the WebRTC dependency links; real call
+    /// setup is driven by `handle(action:)` from the web layer.
     func bootstrapIfEnabled() {
         guard isEnabled else { return }
         #if canImport(WebRTC)
         _ = factory  // touch the factory so the WebRTC framework link is exercised.
-        print("[NativeCall] P0 skeleton enabled — WebRTC RTCPeerConnectionFactory ready")
+        print("[NativeCall] P1 orchestrator enabled — WebRTC factory ready")
         #else
         print("[NativeCall] enabled but WebRTC framework not linked — check SPM package")
         #endif
     }
+
+    // MARK: NativeCallHandler
+
+    func handle(action: String, payload: [String: Any]) {
+        guard isEnabled else { return }
+        let callId = payload["callId"] as? String ?? ""
+        guard !callId.isEmpty else { return }
+
+        #if canImport(WebRTC)
+        let hasVideo = (payload["kind"] as? String) == "video" || (payload["video"] as? Bool == true)
+        switch action {
+        case "nativeCallStart":
+            // Outgoing: build the peer and create an offer for the web to relay.
+            let peer = makePeer(callId: callId, hasVideo: hasVideo, payload: payload)
+            peer.createOffer()
+        case "nativeCallReceiveOffer":
+            // Incoming: build the peer, apply the remote offer, create an answer.
+            let peer = makePeer(callId: callId, hasVideo: hasVideo, payload: payload)
+            if let sdp = payload["sdp"] as? String { peer.receiveOffer(sdp: sdp) }
+        case "nativeCallReceiveAnswer":
+            // Caller: apply the remote answer to the in-flight outgoing peer.
+            if let sdp = payload["sdp"] as? String { peers[callId]?.receiveAnswer(sdp: sdp) }
+        case "nativeCallMute":
+            peers[callId]?.setMuted((payload["muted"] as? Bool) ?? false)
+        case "nativeCallEnd":
+            tearDown(callId: callId)
+        default:
+            print("[NativeCall] unhandled action: \(action)")
+        }
+        #endif
+    }
+
+    func setCallAudio(active: Bool) {
+        guard isEnabled else { return }
+        #if canImport(WebRTC)
+        CallPeerConnection.setAudioSessionActive(active)
+        #endif
+    }
+
+    // MARK: peer lifecycle
+
+    #if canImport(WebRTC)
+    /// Build (or replace) the peer connection for a call. Single-call app, so any
+    /// existing peer for the id is torn down first.
+    private func makePeer(callId: String, hasVideo: Bool, payload: [String: Any]) -> CallPeerConnection {
+        if let existing = peers[callId] { existing.close() }
+        let peer = CallPeerConnection(callId: callId,
+                                      hasVideo: hasVideo,
+                                      factory: factory,
+                                      iceServers: iceServers(from: payload))
+        peer.delegate = self
+        peers[callId] = peer
+        return peer
+    }
+
+    private func tearDown(callId: String) {
+        peers.removeValue(forKey: callId)?.close()
+    }
+
+    /// Map the web's `iceServers` (Cloudflare STUN + TURN credentials it already
+    /// fetched) into `RTCIceServer`. Falls back to Cloudflare STUN if absent.
+    private func iceServers(from payload: [String: Any]) -> [RTCIceServer] {
+        guard let raw = payload["iceServers"] as? [[String: Any]], !raw.isEmpty else {
+            return [RTCIceServer(urlStrings: ["stun:stun.cloudflare.com:3478"])]
+        }
+        return raw.compactMap { dict in
+            let urls: [String]
+            if let arr = dict["urls"] as? [String] { urls = arr }
+            else if let one = dict["urls"] as? String { urls = [one] }
+            else if let one = dict["url"] as? String { urls = [one] }
+            else { return nil }
+            if let username = dict["username"] as? String,
+               let credential = dict["credential"] as? String {
+                return RTCIceServer(urlStrings: urls, username: username, credential: credential)
+            }
+            return RTCIceServer(urlStrings: urls)
+        }
+    }
+    #endif
 }
+
+#if canImport(WebRTC)
+extension NativeCallController: CallPeerConnectionDelegate {
+    func callPeer(_ peer: CallPeerConnection, didProduceLocalSDP sdp: String, type: String) {
+        // Hand the full SDP (candidates embedded, non-trickle) back to the web to
+        // relay over the account WS as a call-offer / call-answer.
+        DispatchQueue.main.async { [weak self] in
+            self?.sendToWeb?("nativeCallLocalSDP",
+                             ["callId": peer.callId, "sdp": sdp, "type": type])
+        }
+    }
+
+    func callPeer(_ peer: CallPeerConnection, didChangeState state: RTCPeerConnectionState) {
+        let name: String
+        switch state {
+        case .new: name = "new"
+        case .connecting: name = "connecting"
+        case .connected: name = "connected"
+        case .disconnected: name = "disconnected"
+        case .failed: name = "failed"
+        case .closed: name = "closed"
+        @unknown default: name = "unknown"
+        }
+        DispatchQueue.main.async { [weak self] in
+            self?.sendToWeb?("nativeCallState", ["callId": peer.callId, "state": name])
+            if state == .closed || state == .failed {
+                self?.peers.removeValue(forKey: peer.callId)
+            }
+        }
+    }
+}
+#endif

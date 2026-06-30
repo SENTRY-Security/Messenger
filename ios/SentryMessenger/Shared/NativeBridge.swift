@@ -29,6 +29,11 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     /// secure-session actions are no-ops.
     static var secureSession: SecureSessionBridge?
 
+    /// Native WebRTC call engine, provided by the full app at launch
+    /// (`NativeCallController`). Stays nil in the App Clip, where the native
+    /// `nativeCall*` actions are no-ops (calls run inside the WKWebView).
+    static var nativeCalls: NativeCallHandler?
+
     override init() {
         super.init()
         NotificationCenter.default.addObserver(
@@ -80,6 +85,16 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         NativeBridge.secureSession?.sendToWeb = { [weak self] name, data in
             self?.sendEvent(name, data: data)
         }
+        // Let the native call engine push SDP / state back to web.
+        NativeBridge.nativeCalls?.sendToWeb = { [weak self] name, data in
+            self?.sendEvent(name, data: data)
+        }
+        // CallKit audio gate: only render WebRTC audio while CallKit owns the
+        // session (manual-audio handoff). Decoupled so CallKitController stays
+        // Clip-safe / WebRTC-agnostic.
+        callKit.onAudioSessionActive = { active in
+            NativeBridge.nativeCalls?.setCallAudio(active: active)
+        }
     }
 
     deinit { NotificationCenter.default.removeObserver(self) }
@@ -130,6 +145,12 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
              "getLockMode", "setLockMode", "openLockSettings", "lockNow", "nfcUnlockResult":
             // Routed to the full app's secure-session handler (nil in App Clip).
             NativeBridge.secureSession?.handle(action: action, payload: payload)
+        case "nativeCallStart", "nativeCallReceiveOffer", "nativeCallReceiveAnswer",
+             "nativeCallMute", "nativeCallEnd":
+            // Native WebRTC media engine (full app only; nil in App Clip). Only
+            // exercised when `UseNativeCalls` is on — the web checks the injected
+            // `window.USE_NATIVE_CALLS` before emitting these.
+            NativeBridge.nativeCalls?.handle(action: action, payload: payload)
         default:
             print("[NativeBridge] unhandled action: \(action)")
         }
