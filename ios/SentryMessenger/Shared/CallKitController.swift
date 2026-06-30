@@ -212,6 +212,17 @@ final class CallKitController: NSObject {
 
     /// Outgoing call → register it so it appears as an active system call.
     func reportOutgoing(callId: String, peerName: String, hasVideo: Bool) {
+        // FOREGROUND calls do NOT use CallKit. CallKit takes over the shared
+        // AVAudioSession (activate on connect / deactivate on end) and that fight
+        // with WKWebView's WebRTC audio unit causes repeated
+        // `AudioSession::beginInterruption` → silent call. In the foreground the
+        // in-app card is the call UI anyway, so let WebKit own audio (works like
+        // Safari); the `audio` UIBackgroundMode keeps it alive across backgrounding.
+        // CallKit is reserved for background / lock-screen (VoIP-woken) calls.
+        if UIApplication.shared.applicationState == .active {
+            activeCallId = callId
+            return
+        }
         guard let id = uuid(for: callId) else { return }
         videoFlags[id] = hasVideo
         activeCallId = callId
@@ -227,13 +238,19 @@ final class CallKitController: NSObject {
 
     /// Call became fully connected (media flowing).
     func reportConnected(callId: String) {
-        // A call answered while foreground was deferred (no system ring). Register
-        // it with CallKit now — as an active call — so it survives backgrounding.
-        // Skip if it was already reported (e.g. a VoIP-push call rung in background).
-        if let pending = pendingForegroundCalls.removeValue(forKey: callId), idToUUID[callId] == nil {
-            reportOutgoing(callId: callId, peerName: pending.peerName, hasVideo: pending.hasVideo)
+        // Foreground in-app call (was stashed, never rung through CallKit): do NOT
+        // register it with CallKit. Doing so hands the audio session to CallKit and
+        // interrupts WKWebView's WebRTC audio (silent call). WebKit owns the audio;
+        // background continuity comes from the `audio` UIBackgroundMode.
+        if pendingForegroundCalls.removeValue(forKey: callId) != nil {
+            activeCallId = callId
+            return
         }
-        guard let id = uuid(for: callId, createIfMissing: false) else { return }
+        // Background / VoIP-rung call already registered with CallKit → mark connected.
+        guard let id = uuid(for: callId, createIfMissing: false) else {
+            activeCallId = callId
+            return
+        }
         activeCallId = callId
         cancelIncomingTimer(id)
         provider.reportOutgoingCall(with: id, connectedAt: nil)
@@ -253,6 +270,10 @@ final class CallKitController: NSObject {
     func reportEnded(callId: String, reason: String) {
         // Clear a foreground call that ended before it was answered/registered.
         pendingForegroundCalls[callId] = nil
+        // Foreground calls aren't registered with CallKit, so also clear the
+        // active-call marker here (used for busy detection) even when there's no
+        // CallKit id to tear down.
+        if activeCallId == callId { activeCallId = nil }
         guard let id = uuid(for: callId, createIfMissing: false) else { return }
         let cxReason: CXCallEndedReason
         switch reason {

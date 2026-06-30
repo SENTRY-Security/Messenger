@@ -121,11 +121,15 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
   （`CXProviderConfiguration.iconTemplateImageData`，以 `LogoMark` 向量 template 渲染）。web 端 `native-call-bridge.js` 於通話
   生命週期透過 bridge 通知原生（`callIncoming`/`callStarted`/…），並監聽 CallKit 動作
   （`callAnswered`/`callEndedByUser`/`callMuteToggled`）回灌既有 accept/hangup/mute 流程。
-- **前景/背景來電分流**：依大眾習慣，**App 前景**收到來電只顯示 web 的漂浮來電卡，
-  **不**跳系統 CallKit banner（`reportIncoming` 以 `UIApplication.applicationState == .active`
-  判斷前景則改 stash）；使用者**接通當下**才把通話以 active 註冊給 CallKit
-  （`reportConnected` → `reportOutgoing`），讓背景續通由 CallKit 接手。**背景/鎖屏**
-  則由 VoIP push 喚醒、走完整系統來電 UI（不變）。
+- **前景/背景來電分流**：依大眾習慣，**App 前景**的通話（撥出與來電）**完全不走
+  CallKit**，只顯示 web 的漂浮卡。原因：CallKit 會接管共用 `AVAudioSession`
+  （接通 activate、結束 deactivate），與 WKWebView 內 WebRTC 的音訊單元互搶，造成
+  反覆 `AudioSession::beginInterruption` → 通話沒聲音。故前景讓 **WebKit 自己擁有音訊**
+  （如 Safari），背景續通靠 `audio` UIBackgroundMode。`reportIncoming`/`reportOutgoing`/
+  `reportConnected` 以 `UIApplication.applicationState == .active` 判斷前景即略過 CallKit。
+  **背景/鎖屏**才由 VoIP push 喚醒、走完整系統來電 UI。
+  > 治本為原生 WebRTC 路線（`RTCAudioSession`+CallKit 不再互搶）——見
+  > `docs/native-webrtc-migration-plan.md`。
 - **背景續通（P0）**：`UIBackgroundModes` 加入 `audio`，`AudioSessionManager` 將
   `AVAudioSession` 設為 `playAndRecord` + `voiceChat`/`videoChat`，使通話切背景/鎖屏
   不中斷。
