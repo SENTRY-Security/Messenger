@@ -10,7 +10,7 @@ enum AppConfig {
            let url = URL(string: raw) {
             return url
         }
-        return URL(string: "https://message.sentry.red")!
+        return URL(string: "https://app.message.sentry.red")!
     }
 
     /// Name registered for the JS → native message handler:
@@ -56,7 +56,7 @@ enum AppConfig {
         if let raw = Bundle.main.object(forInfoDictionaryKey: "ApiOrigin") as? String, !raw.isEmpty {
             return raw.trimmingCharacters(in: .whitespaces)
         }
-        return "https://message.sentry.red"
+        return "https://app.message.sentry.red"
     }
 
     static var bundledStartURL: URL {

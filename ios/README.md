@@ -191,7 +191,9 @@ App Clip 則因容量限制維持遠端載入。
 ## 設定載入網址
 
 `Info.plist` 的 `WebBaseURL` 控制要載入的 web 站台（預設
-`https://message.sentry.red`）。可為 UAT 另建 scheme/configuration 覆寫。
+`https://app.message.sentry.red`，與 NTAG424 標籤／App Clip／AASA 同一 host）。
+可為 UAT 另建 scheme/configuration 覆寫。`ApiOrigin`（bundled 模式的後端）預設亦為
+`https://app.message.sentry.red`。
 
 ## 目錄結構
 
