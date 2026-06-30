@@ -23,7 +23,20 @@ final class BundledWebSchemeHandler: NSObject, WKURLSchemeHandler {
         if rel.hasPrefix("/") { rel.removeFirst() }
         if rel.isEmpty { rel = AppConfig.bundledEntryPath }
 
-        let fileURL = root.appendingPathComponent(rel)
+        var fileURL = root.appendingPathComponent(rel)
+        // Clean-URL resolution, mirroring Cloudflare Pages: an extensionless route
+        // like `/pages/login` (the NTAG/SDM login URL) maps to `pages/login.html`,
+        // and a directory maps to its `index.html`. Without this those routes 404
+        // → black screen in bundled mode.
+        let fm = FileManager.default
+        var isDir: ObjCBool = false
+        let exists = fm.fileExists(atPath: fileURL.path, isDirectory: &isDir)
+        if exists && isDir.boolValue {
+            fileURL = fileURL.appendingPathComponent("index.html")
+        } else if !exists && fileURL.pathExtension.isEmpty {
+            let htmlURL = root.appendingPathComponent(rel + ".html")
+            if fm.fileExists(atPath: htmlURL.path) { fileURL = htmlURL }
+        }
         // Prevent path traversal outside the bundle root.
         guard fileURL.standardizedFileURL.path.hasPrefix(root.standardizedFileURL.path),
               let data = try? Data(contentsOf: fileURL) else {

@@ -133,6 +133,13 @@ extension WebViewModel: WKNavigationDelegate {
         if ["blob", "data", "about", "javascript"].contains(scheme) {
             decisionHandler(.allow); return
         }
+        // Bundled web is served in-app over a registered custom scheme
+        // (BundledWebSchemeHandler). Always load it in the web view — including
+        // NFC/SDM login URLs that `resolveLoadURL` maps onto this scheme — never
+        // hand it to the OS opener (which has no app for it → black screen).
+        if scheme == AppConfig.bundleScheme {
+            decisionHandler(.allow); return
+        }
         // Non-web schemes (tel/mailto/sms/maps…) → hand to the OS.
         if scheme != "http" && scheme != "https" {
             decisionHandler(.cancel)
@@ -173,9 +180,11 @@ extension WebViewModel: WKUIDelegate {
         windowFeatures: WKWindowFeatures
     ) -> WKWebView? {
         // Links opened with target=_blank have no target frame. Load first-party
-        // URLs in the same web view; send external ones to the browser.
+        // URLs (incl. the bundled custom scheme) in the same web view; send
+        // external ones to the browser.
         guard let url = navigationAction.request.url else { return nil }
-        if let host = url.host, AppConfig.allowedNavigationHosts.contains(host) {
+        let host = url.host ?? ""
+        if url.scheme?.lowercased() == AppConfig.bundleScheme || AppConfig.allowedNavigationHosts.contains(host) {
             webView.load(URLRequest(url: url))
         } else {
             ExternalLink.open(url)
