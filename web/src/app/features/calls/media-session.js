@@ -29,6 +29,15 @@ import { normalizeAccountDigest, normalizePeerDeviceId, ensureDeviceId, getAccou
 import { getCallAudioConstraints } from '../../ui/mobile/browser-detection.js';
 import { toU8Strict } from '/shared/utils/u8-strict.js';
 import { buildCallPeerIdentity } from './identity.js';
+import {
+  isNativeCallMode,
+  nativeCallStart,
+  nativeCallReceiveOffer,
+  nativeCallReceiveAnswer,
+  nativeCallMute,
+  nativeCallEnd,
+  onNativeEvent
+} from './native-call-bridge.js';
 import { t } from '/locales/index.js';
 
 // Flag set by ephemeral-call-adapter when ephemeral mode is active.
@@ -283,6 +292,44 @@ function promoteSessionToInCall(source = 'media') {
   log({ callSessionPromoted: source, callId: session.callId, prevStatus: session.status });
 }
 
+// ── Native call engine (iOS) ────────────────────────────────────────────────
+
+/**
+ * Native produced a complete local SDP (offer or answer, candidates embedded).
+ * Relay it over the existing account-WS signaling exactly like the WebView path
+ * would (call-offer / call-answer), so the peer is unaware of the media backend.
+ */
+function relayNativeLocalSDP({ callId, sdp, type } = {}) {
+  if (!isNativeCallMode() || !sendSignal || !sdp) return;
+  if (activeCallId && callId && callId !== activeCallId) return;
+  let identity;
+  try { identity = requirePeerIdentitySnapshot(); } catch (err) { failCall('peer-identity-missing', err); return; }
+  activePeerKey = identity.peerKey;
+  const isAnswer = type === 'answer';
+  if (isAnswer) awaitingOfferAfterAccept = false; else awaitingAnswer = true;
+  const sent = sendSignal(isAnswer ? 'call-answer' : 'call-offer', {
+    callId: callId || activeCallId,
+    targetAccountDigest: identity.digest,
+    senderDeviceId: requireLocalDeviceId(),
+    targetDeviceId: identity.deviceId,
+    description: { type: isAnswer ? 'answer' : 'offer', sdp }
+  });
+  if (!sent) failCall(isAnswer ? 'call-answer-send-failed' : 'call-offer-send-failed');
+}
+
+/** Native reported an aggregate RTCPeerConnectionState change. */
+function handleNativeCallState({ callId, state } = {}) {
+  if (!isNativeCallMode()) return;
+  if (activeCallId && callId && callId !== activeCallId) return;
+  log({ nativeCallState: state, callId: callId || activeCallId });
+  if (state === 'connected') {
+    promoteSessionToInCall('native');
+  } else if (state === 'failed') {
+    try { failCall('native-connection-failed', new Error('native call failed')); } catch { /* marked */ }
+  }
+  // 'disconnected' may self-recover; 'closed' follows our own teardown — no action.
+}
+
 export function initCallMediaSession({ sendSignalFn, showToastFn }) {
   sendSignal = typeof sendSignalFn === 'function' ? sendSignalFn : null;
   showToast = typeof showToastFn === 'function' ? showToastFn : () => { };
@@ -294,6 +341,11 @@ export function initCallMediaSession({ sendSignalFn, showToastFn }) {
   unsubscribers = [
     subscribeCallEvent(CALL_EVENT.SIGNAL, ({ signal }) => handleSignal(signal)),
     subscribeCallEvent(CALL_EVENT.STATE, ({ session }) => handleSessionState(session)),
+    // Native call engine (iOS, UseNativeCalls): the native side produces SDP and
+    // reports connection state; relay SDP over the existing signaling and mirror
+    // state into the session machine. No-ops in pure web (events never fire).
+    onNativeEvent('nativeCallLocalSDP', (data) => relayNativeLocalSDP(data)),
+    onNativeEvent('nativeCallState', (data) => handleNativeCallState(data)),
     // Rekey ScriptTransform workers when call key context changes (key rotation)
     // Also retroactively apply transforms for receivers/senders that were skipped
     // because keyContext wasn't ready at ontrack time (race condition fix).
@@ -312,7 +364,9 @@ export function disposeCallMediaSession() {
 }
 
 export async function startOutgoingCallMedia({ callId } = {}) {
-  if (!supportsInsertableStreams() && !_ephemeralModeActive) {
+  // Native mode: media (incl. E2EE via DTLS-SRTP) runs natively, so the WebView
+  // insertable-streams capability is irrelevant.
+  if (!isNativeCallMode() && !supportsInsertableStreams() && !_ephemeralModeActive) {
     failCall('e2ee-not-supported', new Error(t('callKeys.e2eeNotSupported')));
     return;
   }
@@ -321,6 +375,18 @@ export async function startOutgoingCallMedia({ callId } = {}) {
   activePeerKey = identity.peerKey;
   direction = 'outgoing';
   awaitingAnswer = true;
+  if (isNativeCallMode()) {
+    // Hand media to native: fetch TURN/STUN, then ask native to create the offer.
+    // The offer comes back asynchronously via the nativeCallLocalSDP event, which
+    // relayNativeLocalSDP() forwards as a call-offer.
+    try {
+      const { iceServers } = await buildRtcConfiguration();
+      nativeCallStart({ callId, iceServers, video: isVideoCall() });
+    } catch (err) {
+      if (!err?.__callFail) failCall('outgoing-media-setup-failed', err);
+    }
+    return;
+  }
   try {
     await ensurePeerConnection();
     await createAndSendOffer();
@@ -332,7 +398,9 @@ export async function startOutgoingCallMedia({ callId } = {}) {
 }
 
 export async function acceptIncomingCallMedia({ callId } = {}) {
-  if (!supportsInsertableStreams() && !_ephemeralModeActive) {
+  // Native mode: media + E2EE (DTLS-SRTP) are native — skip the WebView
+  // insertable-streams gate (frame encryption is not used natively).
+  if (!isNativeCallMode() && !supportsInsertableStreams() && !_ephemeralModeActive) {
     failCall('e2ee-not-supported', new Error(t('callKeys.e2eeNotSupported')));
     return;
   }
@@ -341,6 +409,22 @@ export async function acceptIncomingCallMedia({ callId } = {}) {
   activePeerKey = identity.peerKey;
   direction = 'incoming';
   awaitingOfferAfterAccept = true;
+  if (isNativeCallMode()) {
+    // Hand the buffered remote offer to native; it builds the peer and produces
+    // an answer (returned via nativeCallLocalSDP → relayNativeLocalSDP). If the
+    // offer hasn't arrived yet, handleIncomingOffer applies it on arrival.
+    if (pendingOffer && pendingOffer.callId === callId && pendingOffer.description?.sdp) {
+      try {
+        const { iceServers } = await buildRtcConfiguration();
+        nativeCallReceiveOffer({ callId, sdp: pendingOffer.description.sdp, iceServers, video: isVideoCall() });
+        pendingOffer = null;
+        awaitingOfferAfterAccept = false;
+      } catch (err) {
+        if (!err?.__callFail) failCall('incoming-media-setup-failed', err);
+      }
+    }
+    return;
+  }
   // Defensive: kick off a derive attempt if keyContext isn't set yet.
   // In normal flow this is a no-op — call-overlay disables the accept button
   // while isKeyDerivationPending() is true, so by the time the user can click
@@ -412,6 +496,11 @@ export function isLocalAudioMuted() {
 
 export function setLocalAudioMuted(muted = false) {
   localAudioMuted = !!muted;
+  if (isNativeCallMode()) {
+    // Native owns the audio track; mute there instead of on a WebView sender.
+    if (activeCallId) nativeCallMute({ callId: activeCallId, muted: localAudioMuted });
+    return;
+  }
   applyLocalAudioMuteState();
 }
 
@@ -1240,6 +1329,19 @@ async function handleIncomingOffer(msg) {
     }
   }
   if (awaitingOfferAfterAccept) {
+    if (isNativeCallMode()) {
+      // Already accepted, offer just arrived → hand it to native for the answer.
+      try {
+        const { iceServers } = await buildRtcConfiguration();
+        if (msg?.description?.sdp) {
+          nativeCallReceiveOffer({ callId: activeCallId, sdp: msg.description.sdp, iceServers, video: isVideoCall() });
+        }
+        awaitingOfferAfterAccept = false;
+      } catch (err) {
+        if (!err?.__callFail) failCall('incoming-media-setup-failed', err);
+      }
+      return;
+    }
     pendingOffer = msg;
     await applyRemoteOfferAndAnswer(msg);
     awaitingOfferAfterAccept = false;
@@ -1249,6 +1351,13 @@ async function handleIncomingOffer(msg) {
 }
 
 async function handleIncomingAnswer(msg) {
+  if (isNativeCallMode()) {
+    // Native owns the peer; hand it the remote answer to finish negotiation.
+    if (!awaitingAnswer || !msg?.description?.sdp) return;
+    awaitingAnswer = false;
+    nativeCallReceiveAnswer({ callId: activeCallId, sdp: msg.description.sdp });
+    return;
+  }
   if (!peerConnection) return;
   if (!awaitingAnswer) return;
   if (!msg?.description) return;
@@ -1289,6 +1398,9 @@ async function handleIncomingAnswer(msg) {
 }
 
 async function handleIncomingCandidate(msg) {
+  // Native mode is non-trickle: all candidates are embedded in the SDP, so
+  // standalone candidate signals are unused (and there is no WebView peer).
+  if (isNativeCallMode()) return;
   if (!peerConnection) return;
   const candidate = msg.candidate;
   if (!candidate) return;
@@ -1376,6 +1488,11 @@ function handleSessionState(session) {
 }
 
 function cleanupPeerConnection(reason) {
+  // Native mode: tear down the native peer (there is no WebView RTCPeerConnection
+  // to close). Capture the id before the state below is reset.
+  if (isNativeCallMode() && activeCallId) {
+    try { nativeCallEnd({ callId: activeCallId }); } catch { /* best-effort */ }
+  }
   if (audioPlayRetryTimer) {
     clearTimeout(audioPlayRetryTimer);
     audioPlayRetryTimer = null;
