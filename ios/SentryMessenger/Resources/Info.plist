@@ -77,5 +77,10 @@
 	<string>用於將收到的媒體儲存到您的相簿。</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>用於以生物辨識保護您的帳號。</string>
+	<!-- Native WebRTC call path (mid-term migration). Default false = calls run
+	     in the WKWebView as today; flip to true only after device verification.
+	     See docs/native-webrtc-migration-plan.md. -->
+	<key>UseNativeCalls</key>
+	<string>false</string>
 </dict>
 </plist>
