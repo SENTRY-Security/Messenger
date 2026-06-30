@@ -77,6 +77,10 @@
 	<string>用於將收到的媒體儲存到您的相簿。</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>用於以生物辨識保護您的帳號。</string>
+	<!-- WKWebView 內 WebRTC 需要本地網路權限以收集 ICE host/mDNS 候選；
+	     缺少此宣告會導致候選為 0、通話無法建立（音視訊全無）。 -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>用於建立點對點語音與視訊通話連線。</string>
 	<!-- Native WebRTC call path (mid-term migration). Default false = calls run
 	     in the WKWebView as today; flip to true only after device verification.
 	     See docs/native-webrtc-migration-plan.md. -->

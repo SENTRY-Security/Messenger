@@ -21,6 +21,14 @@ enum AudioSessionManager {
     /// - Parameter video: use `.videoChat` (speaker-default) vs `.voiceChat` (earpiece-default).
     static func configureForCall(video: Bool) {
         let session = AVAudioSession.sharedInstance()
+        // For a FOREGROUND WKWebView call, WebKit's WebRTC has already put the
+        // shared session into `.playAndRecord` and activated it. Calling
+        // `setCategory` again on that live session *interrupts* WebKit's audio
+        // unit (the repeated `AudioSession::beginInterruption` → silent call). So
+        // only set the category when it isn't already `.playAndRecord` — i.e. the
+        // background / cold-launch VoIP path where CallKit must establish it before
+        // WebKit starts. A WebKit-owned foreground session is left intact.
+        guard session.category != .playAndRecord else { return }
         do {
             // No `.defaultToSpeaker`: let the mode pick the natural route (voiceChat
             // → earpiece, videoChat → speaker) so the in-app speaker toggle can
