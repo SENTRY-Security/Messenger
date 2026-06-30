@@ -1258,6 +1258,10 @@ export function initCallOverlay({ showToast }) {
   // First checks sessionStore for a stream already cached by the composer.
   // Falls back to a fresh getUserMedia when nothing is cached.
   async function requestWaitingCameraPreview() {
+    // Native call mode: local/remote video is rendered natively (NativeCallVideoView)
+    // and the mic is owned by the native audio session. A WebView getUserMedia here
+    // would grab the camera/mic and fight the native session → silent call.
+    if (isNativeCallMode()) return;
     if (state._waitingPreviewLoading || state._waitingPreview) return;
     state._waitingPreviewLoading = true;
     log({ waitingPreview: 'requesting' });
