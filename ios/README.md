@@ -165,14 +165,33 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
 iOS 的 WKWebView **不支援 Web Push**，因此原生 App 走 **APNs**：
 
 1. web 呼叫 bridge `registerPush` → 原生顯示權限詢問並向 APNs 註冊。
-2. 取得 device token 後，原生以 `pushToken` 事件回拋給 web（`{ token, platform: 'ios' }`）。
-3. web/後端需把此 APNs token 與帳號 `digest` 綁定儲存。
+2. 取得 device token 後，原生以 `pushToken` 事件回拋給 web（`{ token, platform: 'ios',
+   previewPublicKey }`）。`previewPublicKey` 為本機推播預覽公鑰（見下）。
+3. web/後端需把此 APNs token（與 `previewPublicKey`）與帳號 `digest` 綁定儲存。
 4. 點擊通知：payload 的 `aps` 之外可帶第一方 `url`，原生會就地導航既有 web view
    到該 URL（深連結到對話），不重置 shell。
 
-⚠️ **後端缺口（需 data-worker 配合，非 iOS 範圍）**：目前 `push_subscriptions`
-為 Web Push（VAPID）。原生 APNs 需要新增 APNs sender（APNs key/p8、topic =
-bundle id）與 token 儲存/發送路徑。iOS 端已備妥註冊與 token 上拋，待後端對接。
+### E2E 推播預覽（Notification Service Extension）
+
+訊息內容為 E2E，後端看不到明文，故 APNs 預設只送通用標題「SENTRY MESSENGER」。
+`SentryMessengerNotify`（Notification Service Extension）在背景/鎖屏/被殺時**原生解密**
+推播預覽，顯示真正的寄件者與內文——這是 WKWebView（App 沒在跑）做不到的。
+
+- **金鑰**：本機 P-256 推播預覽**金鑰對**由原生 `PushPreviewKey` 產生、私鑰**不出原生**，
+  存於**共享 Keychain group**（`$(AppIdentifierPrefix)red.sentry.shared`）；公鑰經
+  `pushToken` 事件交 web 註冊（`/d1/push/apns/subscribe` 的 `previewPublicKey`）。
+- **密文**：寄件者以收件裝置公鑰加密 `{title,body,msgType}`（P-256 ECDH + HKDF-SHA256 +
+  AES-256-GCM，格式同 web `crypto/push-preview.js`），後端僅中繼 `encrypted_preview` 密文。
+- **NSE 觸發**：後端在帶 `encrypted_preview` 時設 `aps.mutable-content=1`；NSE 以 CryptoKit
+  解密、替換通知標題/內文，失敗則維持通用提示。
+- **保護等級**：預覽私鑰用 `afterFirstUnlockThisDeviceOnly`（鎖屏到達的推播也能解）。
+  此鑰**僅能解預覽**（寄件者名＋短文），**解不了訊息內容、碰不到 MK/KEK**（後者維持
+  `whenUnlockedThisDeviceOnly`），屬窄範圍、可接受的放寬。登出時 `PushPreviewKey.clear()` 清除。
+- 需求：App ID 啟用 **Keychain Sharing**（group `red.sentry.shared`）；NSE target 已含。
+
+後端已具備 APNs sender（`data-worker/src/apns.js`，APNs key/p8、topic = bundle id）
+與 `apns_tokens` 儲存/發送路徑；`apns_tokens.preview_public_key`（migration 0023）支援
+上述 E2E 推播預覽。`/d1/push/preview-keys` 會 union web-push 與 APNs 裝置的預覽公鑰。
 
 > entitlement `aps-environment` 上架/TestFlight 請改為 `production`。
 

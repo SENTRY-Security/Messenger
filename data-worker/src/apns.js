@@ -102,7 +102,13 @@ export function createAPNs({ teamId, keyId, p8, topic, environment, fetchImpl } 
     const body = { aps };
     if (notification.url) body.url = notification.url;
     if (notification.type) body.type = notification.type;
-    if (notification.encrypted_preview) body.encrypted_preview = notification.encrypted_preview;
+    if (notification.encrypted_preview) {
+      body.encrypted_preview = notification.encrypted_preview;
+      // Wake the Notification Service Extension so it can decrypt the preview and
+      // replace the generic alert with the real sender + text. Only set when a
+      // preview is present (no NSE work to do otherwise).
+      aps['mutable-content'] = 1;
+    }
 
     let jwt;
     try {

@@ -75,7 +75,7 @@ export function nativeStopAllSounds() {
   return true;
 }
 
-async function registerApnsToken(token) {
+async function registerApnsToken(token, previewPublicKey) {
   const accountDigest = getAccountDigest();
   if (!accountDigest || !token) return;
   let deviceId;
@@ -84,7 +84,9 @@ async function registerApnsToken(token) {
     await fetch('/d1/push/apns/subscribe', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ accountDigest, deviceId, token }),
+      // previewPublicKey (native-owned P-256 key) lets senders encrypt a per-device
+      // notification preview the iOS Notification Service Extension decrypts.
+      body: JSON.stringify({ accountDigest, deviceId, token, previewPublicKey: previewPublicKey || undefined }),
     });
   } catch { /* best-effort */ }
 }
@@ -131,7 +133,7 @@ export function initNativeBridge() {
     ...prev,
     onEvent(name, data) {
       try {
-        if (name === 'pushToken' && data && data.token) registerApnsToken(data.token);
+        if (name === 'pushToken' && data && data.token) registerApnsToken(data.token, data.previewPublicKey);
         if (name === 'voipToken' && data && data.token) registerVoipToken(data.token, data.environment);
       } catch { /* ignore */ }
       // Fan out to feature listeners (calls, …).

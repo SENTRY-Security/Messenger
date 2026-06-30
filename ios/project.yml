@@ -31,6 +31,9 @@ targets:
     platform: iOS
     sources:
       - path: SentryMessenger
+      # SharedKeychain is also compiled into the Notification Service Extension
+      # (the app writes the push-preview key, the NSE reads it). Single source.
+      - path: SentryMessengerNotify/SharedKeychain.swift
       # Embedded web bundle (folder reference preserves nested structure).
       # Populated by scripts/bundle-web.sh; optional so an empty/absent folder
       # doesn't fail generation when building in remote (non-bundled) mode.
@@ -41,6 +44,8 @@ targets:
     dependencies:
       - target: SentryMessengerClip
         embed: true             # "Embed App Clips" copy phase
+      - target: SentryMessengerNotify
+        embed: true             # "Embed App Extensions" (PlugIns)
       - package: WebRTC         # native call media layer (full app only)
     settings:
       base:
@@ -52,6 +57,27 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+    scheme: {}
+
+  # ── Notification Service Extension (decrypt E2E push previews) ─────
+  # Decrypts the `encrypted_preview` ciphertext in APNs payloads (P-256 ECDH +
+  # HKDF-SHA256 + AES-256-GCM via CryptoKit) so message notifications show the
+  # real sender + text while the app isn't running. Reads the device's
+  # push-preview private key from the shared Keychain group. Full app only.
+  SentryMessengerNotify:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: SentryMessengerNotify
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: red.sentry.messenger.Notify
+        PRODUCT_NAME: SentryMessengerNotify
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: SentryMessengerNotify/Info.plist
+        CODE_SIGN_ENTITLEMENTS: SentryMessengerNotify/SentryMessengerNotify.entitlements
+        TARGETED_DEVICE_FAMILY: "1,2"
         ENABLE_USER_SCRIPT_SANDBOXING: YES
     scheme: {}
 

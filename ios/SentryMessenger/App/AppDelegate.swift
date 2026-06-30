@@ -34,6 +34,9 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         // Inject the full-app native account WebSocket transport (nil in Clip).
         // No-op unless `UseNativeAccountSocket` is on (web routes through it then).
         NativeBridge.accountSocket = AccountSocketService.shared
+        // Provide this device's push-preview public key for APNs registration
+        // (enables the Notification Service Extension to decrypt previews).
+        NativeBridge.pushPreviewPublicKey = { PushPreviewKey.ensurePublicKeyB64u() }
         return true
     }
 

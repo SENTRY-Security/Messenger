@@ -26,5 +26,12 @@
 	<array>
 		<string>group.red.sentry.app.SENTRY-Messenger</string>
 	</array>
+
+	<!-- Shared Keychain group: lets the Notification Service Extension read the
+	     push-preview private key the app stores (to decrypt notification previews). -->
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)red.sentry.shared</string>
+	</array>
 </dict>
 </plist>
