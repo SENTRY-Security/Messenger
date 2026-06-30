@@ -10075,8 +10075,12 @@ async function handlePushRoutes(req, env) {
       return json({ error: 'BadRequest', message: 'accountDigest required' }, { status: 400 });
     }
     try {
+      // Union web-push subscriptions and native APNs tokens so senders can
+      // encrypt previews for either delivery channel.
       const rows = await env.DB.prepare(
-        `SELECT device_id, preview_public_key FROM push_subscriptions WHERE account_digest = ?1 AND preview_public_key IS NOT NULL`
+        `SELECT device_id, preview_public_key FROM push_subscriptions WHERE account_digest = ?1 AND preview_public_key IS NOT NULL
+         UNION
+         SELECT device_id, preview_public_key FROM apns_tokens WHERE account_digest = ?1 AND preview_public_key IS NOT NULL`
       ).bind(accountDigest).all();
       return json({ ok: true, keys: (rows?.results || []).map(r => ({ deviceId: r.device_id, previewPublicKey: r.preview_public_key })) });
     } catch (err) {
@@ -10142,20 +10146,24 @@ async function handlePushRoutes(req, env) {
     const deviceId = normalizeDeviceId(body?.deviceId || body?.device_id);
     const token = String(body?.token || '').trim();
     const environment = body?.environment === 'sandbox' ? 'sandbox' : 'production';
+    // Optional E2E push-preview public key (P-256 raw, base64url): lets senders
+    // encrypt a per-device preview the Notification Service Extension decrypts.
+    const previewPublicKey = body?.previewPublicKey || body?.preview_public_key || null;
     if (!accountDigest || !token) {
       return json({ error: 'BadRequest', message: 'accountDigest and token required' }, { status: 400 });
     }
     try {
       await env.DB.prepare(
-        `INSERT INTO apns_tokens (account_digest, device_id, token, topic, environment, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, strftime('%s','now'), strftime('%s','now'))
+        `INSERT INTO apns_tokens (account_digest, device_id, token, topic, environment, preview_public_key, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, strftime('%s','now'), strftime('%s','now'))
          ON CONFLICT(token) DO UPDATE SET
            account_digest=excluded.account_digest,
            device_id=excluded.device_id,
            topic=excluded.topic,
            environment=excluded.environment,
+           preview_public_key=COALESCE(excluded.preview_public_key, apns_tokens.preview_public_key),
            updated_at=strftime('%s','now')`
-      ).bind(accountDigest, deviceId || null, token, env.APNS_TOPIC || null, environment).run();
+      ).bind(accountDigest, deviceId || null, token, env.APNS_TOPIC || null, environment, previewPublicKey).run();
       return json({ ok: true });
     } catch (err) {
       console.error('apns_subscribe_failed', err?.message || err);

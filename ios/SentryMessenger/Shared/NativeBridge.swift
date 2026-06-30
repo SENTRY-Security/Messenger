@@ -274,8 +274,17 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
     }
 
     func sendPushToken(_ token: String) {
-        sendEvent("pushToken", data: ["token": token, "platform": "ios"])
+        var data: [String: Any] = ["token": token, "platform": "ios"]
+        // Include this device's push-preview public key so the web layer can
+        // register it (enables the NSE to decrypt previews). Full app only; nil
+        // in the App Clip, where PushPreviewKey isn't linked.
+        if let pub = NativeBridge.pushPreviewPublicKey?() { data["previewPublicKey"] = pub }
+        sendEvent("pushToken", data: data)
     }
+
+    /// Supplies the push-preview public key (base64url). Set by the full app
+    /// (`PushPreviewKey.ensurePublicKeyB64u`); nil in the App Clip.
+    static var pushPreviewPublicKey: (() -> String?)?
 
     @objc private func handlePushToken(_ note: Notification) {
         guard let token = note.object as? String else { return }

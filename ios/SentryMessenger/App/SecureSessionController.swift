@@ -42,6 +42,9 @@ final class SecureSessionController: SecureSessionBridge {
 
         case "clearSecureSession":
             KeychainStore.clearSession()
+            // Drop the push-preview keypair too; a fresh one is generated and
+            // re-registered on next login.
+            PushPreviewKey.clear()
 
         case "getLockMode":
             Task { @MainActor [weak self] in
