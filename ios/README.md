@@ -148,6 +148,13 @@ JS → 原生：`window.webkit.messageHandlers.sentryNative.postMessage({ action
   > `docs/native-webrtc-migration-plan.md`。**待實機驗證後才開旗標。**
   > **需求**：Apple 付費帳號、Push Notifications 能力（含 VoIP）、`<bundleId>.voip`
   > APNs topic，以及後端 `APNS_*` 環境變數。
+  > **原生帳號 WebSocket（Option B，B1 已實作、旗標關）**：帳號 WS 的位元組傳輸可由
+  > WebKit 移到原生 `URLSession`（`Net/AccountSocketService`），web 端以
+  > `NativeWebSocket` shim 模擬 `WebSocket` 介面，`ws-integration.js` 僅換建構一行；
+  > auth/心跳/重連邏輯不變。bridge 動作 `wsOpen/wsSend/wsClose`、事件 `wsEvent`。
+  > 旗標 `UseNativeAccountSocket`（Info.plist，預設 `false`）。動機：後端帳號層**單一
+  > 活躍連線**，原生另開平行 WS 會踢掉 WebView 連線，故由原生擁有唯一連線；背景自主
+  > （token/心跳/重連入原生）為 B2。詳見 migration plan §2.1。
 - **檔案上傳**：`<input type=file>` 由 WKWebView 原生支援（相機/相簿需 Info.plist
   權限字串，已具備）。
 - **其他**：pull-to-refresh、載入錯誤重試、`target=_blank` 依白名單內外分流、

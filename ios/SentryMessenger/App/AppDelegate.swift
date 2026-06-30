@@ -31,6 +31,9 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         // No-op unless `UseNativeCalls` is on; bootstrap only touches WebRTC then.
         NativeBridge.nativeCalls = NativeCallController.shared
         NativeCallController.shared.bootstrapIfEnabled()
+        // Inject the full-app native account WebSocket transport (nil in Clip).
+        // No-op unless `UseNativeAccountSocket` is on (web routes through it then).
+        NativeBridge.accountSocket = AccountSocketService.shared
         return true
     }
 

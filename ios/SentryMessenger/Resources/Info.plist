@@ -86,5 +86,10 @@
 	     See docs/native-webrtc-migration-plan.md. -->
 	<key>UseNativeCalls</key>
 	<string>false</string>
+	<!-- Native account WebSocket transport (Option B). When "true", the web routes
+	     the account WS through the native URLSession-backed AccountSocketService
+	     instead of WebKit's WebSocket. Default off; flip only after device test. -->
+	<key>UseNativeAccountSocket</key>
+	<string>false</string>
 </dict>
 </plist>

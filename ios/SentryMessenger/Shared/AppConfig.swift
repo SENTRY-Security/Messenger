@@ -53,6 +53,15 @@ enum AppConfig {
         (Bundle.main.object(forInfoDictionaryKey: "UseNativeCalls") as? String)?.lowercased() == "true"
     }
 
+    /// Native account WebSocket transport (mid-term migration, Option B). When
+    /// false (default) the web opens its own `WebSocket` as today. When true the
+    /// native layer owns the single account WS (`AccountSocketService`) and the
+    /// web routes through it via a `NativeWebSocket` shim. Toggle via Info.plist
+    /// `UseNativeAccountSocket`. Full app only (App Clip keeps the WebView WS).
+    static var useNativeAccountSocket: Bool {
+        (Bundle.main.object(forInfoDictionaryKey: "UseNativeAccountSocket") as? String)?.lowercased() == "true"
+    }
+
     static let bundleScheme = "sentry-app"
     static let bundleHost = "app"
     /// Entry HTML inside `WebApp/` (relative path).
