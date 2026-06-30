@@ -142,16 +142,28 @@
 - 視訊：`RTCMTLVideoView` 背景暫停渲染、回前景恢復；CallKit 提供鎖屏 UI。
 - → P1+P2+P3+B2 組合理論上已覆蓋「通話中切背景續通」；**只需實機確認**，無明顯缺口。
 
-**冷啟動（App 被殺）VoIP 接聽 — 有根本性糾葛，需決策**：
-- VoIP push 喚醒須向 CallKit 報來電；但**通話金鑰/envelope 由 web 的 Double Ratchet 衍生**，
-  冷啟動時 WebView 尚未載入 → 仍需把 WebView 拉起做金鑰設定（與既有 web 路線同一限制）。
-- 若要原生在冷啟動「自取 WS token」需 `account_token` 落 Keychain；但本專案 iOS 安全模型
-  將解封用 KEK/`account_token` 以 **`biometryCurrentSet`** 存 Keychain（FaceID 綁定）→
-  **背景 VoIP 喚醒時無生物辨識上下文、讀不到**。故「Keychain account_token 背景冷啟動自取
-  token」與現行 FaceID-gated 模型**直接衝突**，非單純工程、屬安全決策（要不要為通話另存一份
-  較低保護等級的 token？由誰決定？）。
-- 結論：冷啟動背景接聽不宜盲做；待實機驗證「通話中切背景」後，再就金鑰/token 的背景可得性
-  做專門設計與決策。
+**冷啟動（App 被殺）VoIP 接聽 — 分兩個獨立的牆，先釐清機制**：
+
+*牆 A：原生背景自取 WS token（Keychain 可讀性）* — 比想像可行：
+- `KeychainStore`（`App/KeychainStore.swift:49`）secret 實際以
+  `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` 儲存，**item 本身未加 biometry/access-control
+  flag**；生物辨識門是 **App 層鎖定畫面（`AppLockManager`）**負責，`secret(for:)` 讀取**不跳
+  FaceID**（見該檔 35–39 行註解）。故**FaceID 設定與背景可讀性無關**。
+- `account_token` 本就由 `SecureSessionController` secureStore 存於 Keychain
+  （`SecureSessionController.swift:31`）→ 原生可**自讀**、不必靠 web `wsConfigure` 交付。
+- 真正限制是 `WhenUnlocked`：**裝置解鎖中**才讀得到。
+  - 裝置**解鎖**時冷啟動：原生讀得到 token、可自取 WS token 自連 → **可行**（FaceID 開關皆然）。
+  - 裝置**鎖定**時冷啟動：`WhenUnlocked` 擋住 → 需把「通話用 token」降為 `afterFirstUnlock(ThisDeviceOnly)`
+    才讀得到（after first unlock since boot）。這是**安全決策**：是否為通話另存一份較低保護等級的
+    token（且僅供通話信令、非解封 MK 的 KEK）。
+
+*牆 B：端到端接聽仍需 web 金鑰* — 與 Keychain 無關：
+- 通話 envelope/金鑰由 **web 的 Double Ratchet 衍生**；即使原生 WS 在背景收到 call-offer，
+  解密/接聽仍須喚醒 WebView 做金鑰設定（**與既有 web 路線同一限制**，非原生引入）。
+
+**結論**：FaceID 不是阻礙；解鎖狀態的冷啟動其實可行（牆 A 過、牆 B 與 web 同限制）。只剩
+「鎖定狀態冷啟動」需就 token 保護等級（`afterFirstUnlock`）做安全決策。建議先實機驗證「通話中
+切背景」與「解鎖冷啟動」，再決定是否處理鎖定冷啟動。
 
 ## 5. 風險與緩解
 
