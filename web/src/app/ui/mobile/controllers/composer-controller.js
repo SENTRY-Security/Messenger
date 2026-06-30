@@ -19,6 +19,7 @@ import {
 import { CALL_MEDIA_STATE_STATUS } from '../../../../shared/calls/schemas.js';
 import { sendCallInviteSignal } from '../../../features/calls/signaling.js';
 import { startOutgoingCallMedia } from '../../../features/calls/media-session.js';
+import { isNativeCallMode } from '../../../features/calls/native-media-bridge.js';
 import { prepareCallKeyEnvelope } from '../../../features/calls/key-manager.js';
 import { buildCallPeerIdentity } from '../../../features/calls/identity.js';
 import { getCallAudioConstraints } from '../browser-detection.js';
@@ -311,7 +312,13 @@ export class ComposerController extends BaseController {
         // Calling getUserMedia() here also preserves the user gesture context
         // on iOS Safari 26.3+ (which revokes it after async operations),
         // and caches the stream so attachLocalMedia() can reuse it.
-        try {
+        //
+        // NATIVE CALL MODE: skip entirely. Native owns audio/video capture via
+        // AVAudioSession/RTCAudioSession (mic permission is the native
+        // NSMicrophoneUsageDescription prompt). Opening a WebView getUserMedia
+        // stream here would spin up WebKit's own AVAudioSession and fight the
+        // native one → the AudioSession interruption war → silent call.
+        if (!isNativeCallMode()) try {
             const wantVideo = actionType === 'video';
             const audioConstraints = getCallAudioConstraints();
             const constraints = {
@@ -328,7 +335,7 @@ export class ComposerController extends BaseController {
             // Video call: fall back to audio-only (camera denied is tolerable)
             if (actionType === 'video') {
                 try {
-                    const audioOnly = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints, video: false });
+                    const audioOnly = await navigator.mediaDevices.getUserMedia({ audio: getCallAudioConstraints(), video: false });
                     if (this.sessionStore) {
                         this.sessionStore.cachedMicrophoneStream = audioOnly;
                     }
