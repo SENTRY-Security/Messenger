@@ -372,6 +372,8 @@ export function disposeCallMediaSession() {
 }
 
 export async function startOutgoingCallMedia({ callId } = {}) {
+  log({ callMediaPath: isNativeCallMode() ? 'native' : 'webview', dir: 'outgoing', callId,
+        useNativeCalls: (typeof window !== 'undefined' ? window.USE_NATIVE_CALLS : undefined) });
   // Native mode: media (incl. E2EE via DTLS-SRTP) runs natively, so the WebView
   // insertable-streams capability is irrelevant.
   if (!isNativeCallMode() && !supportsInsertableStreams() && !_ephemeralModeActive) {
@@ -406,6 +408,8 @@ export async function startOutgoingCallMedia({ callId } = {}) {
 }
 
 export async function acceptIncomingCallMedia({ callId } = {}) {
+  log({ callMediaPath: isNativeCallMode() ? 'native' : 'webview', dir: 'incoming', callId,
+        useNativeCalls: (typeof window !== 'undefined' ? window.USE_NATIVE_CALLS : undefined) });
   // Native mode: media + E2EE (DTLS-SRTP) are native — skip the WebView
   // insertable-streams gate (frame encryption is not used natively).
   if (!isNativeCallMode() && !supportsInsertableStreams() && !_ephemeralModeActive) {
