@@ -52,5 +52,9 @@
 	<string>用於掃描 QR 憑證。</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>用於語音與視訊通話。</string>
+	<!-- WKWebView 內 WebRTC 需要本地網路權限以收集 ICE host/mDNS 候選；
+	     缺少此宣告會導致候選為 0、通話無法建立（音視訊全無）。 -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>用於建立點對點語音與視訊通話連線。</string>
 </dict>
 </plist>
