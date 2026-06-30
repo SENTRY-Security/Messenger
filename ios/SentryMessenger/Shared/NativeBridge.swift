@@ -64,6 +64,11 @@ final class NativeBridge: NSObject, WKScriptMessageHandler {
         callKit.onAudioReady = { [weak self] callId in
             self?.sendEvent("audioReady", data: ["callId": callId])
         }
+        callKit.onPresentInApp = { [weak self] callId in
+            // Foreground incoming: CallKit was skipped, so tell the web to show
+            // its in-app floating incoming card for this call.
+            self?.sendEvent("incomingCallPresentation", data: ["callId": callId, "mode": "in-app"])
+        }
         // Assign onAnswer last: its didSet replays a queued cold-launch answer.
         callKit.onAnswer = { [weak self] callId in
             self?.sendEvent("callAnswered", data: ["callId": callId])

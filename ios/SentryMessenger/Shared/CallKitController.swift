@@ -55,6 +55,11 @@ final class CallKitController: NSObject {
     var onMute: ((_ callId: String, _ muted: Bool) -> Void)?
     /// Emitted after CallKit activates the audio session — web may (re)start media.
     var onAudioReady: ((_ callId: String) -> Void)?
+    /// Emitted when a foreground incoming call is intentionally NOT rung through
+    /// CallKit (the in-app floating card is the incoming UI). The web suppresses
+    /// its incoming card for native calls by default (to avoid duplicating the
+    /// system UI); this tells it to show the card for THIS call instead.
+    var onPresentInApp: ((_ callId: String) -> Void)?
 
     /// The call currently occupying the device (answered/connected or outgoing).
     /// Used to reject concurrent incoming calls as busy (single-call app).
@@ -156,6 +161,9 @@ final class CallKitController: NSObject {
         // so we fall through and present the required system incoming UI.
         if UIApplication.shared.applicationState == .active {
             pendingForegroundCalls[callId] = (peerName, hasVideo)
+            // CallKit is skipped, so the web must show its in-app incoming card —
+            // otherwise the callee gets NO incoming UI and can't answer/reject.
+            onPresentInApp?(callId)
             return
         }
         guard let id = uuid(for: callId) else { return }
