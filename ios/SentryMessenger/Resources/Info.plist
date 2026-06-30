@@ -96,5 +96,10 @@
 	     sentry-dl:// scheme. Default off; web falls back on failure. -->
 	<key>UseNativeMediaDownload</key>
 	<string>false</string>
+	<!-- Native encrypted local cache (Tier 3). When "true", the web caches
+	     encrypted backend responses in a native Data-Protection store for offline
+	     reads / faster launch. Ciphertext only; wiped on logout. Default off. -->
+	<key>UseNativeLocalCache</key>
+	<string>false</string>
 </dict>
 </plist>

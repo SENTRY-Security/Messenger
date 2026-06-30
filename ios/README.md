@@ -255,6 +255,21 @@ App Clip 則因容量限制維持遠端載入。
 > ⚠️ 上傳與視訊串流的背景化與分塊/bridge 架構衝突（大檔位元組無法過 bridge），暫不納入；
 > 見評估 Tier 2 說明。
 
+## 原生加密本地快取（Tier 3，旗標控制）
+
+完整 App 可把**後端回傳的密文**快取於原生 Data Protection 儲存，供**離線讀取／加速啟動**；
+解密仍在記憶體（E2EE 不變），**僅密文落地、登出清除**。屬「本地零持久化」之窄範圍 iOS 例外
+（見 `CLAUDE.md`）。
+
+- **開關**：Info.plist `UseNativeLocalCache`（預設 `false`）。
+- **儲存**：`LocalCacheService` 寫 `<App Support>/sentrycache/`，`.completeFileProtection`。
+- **第一個接入點（分階）**：contact-secrets 備份（最大單筆注水）採 **network-first、離線
+  fallback 快取**；線上行為不變、離線可讀。後續可擴到逐對話訊息，並評估 cache-first 秒開。
+- bridge 動作 `cacheGet`/`cachePut`/`cacheDelete`/`cacheClear`，事件 `cacheValue`；登出
+  於 `clearAllBrowserStorage` 呼叫 `cacheClear`。
+
+> ⚠️ 持久化行為需實機驗證（離線啟動、登出清除、Data Protection 鎖定行為）。
+
 ## 設定載入網址
 
 `Info.plist` 的 `WebBaseURL` 控制要載入的 web 站台（預設

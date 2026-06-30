@@ -71,6 +71,15 @@ enum AppConfig {
         (Bundle.main.object(forInfoDictionaryKey: "UseNativeMediaDownload") as? String)?.lowercased() == "true"
     }
 
+    /// Native encrypted local cache (mid-term migration Tier 3). When true the web
+    /// caches encrypted backend responses via a native Data-Protection store
+    /// (`LocalCacheService`) for offline reads / faster launches. Toggle via
+    /// Info.plist `UseNativeLocalCache`. Full app only; ciphertext only; wiped on
+    /// logout.
+    static var useNativeLocalCache: Bool {
+        (Bundle.main.object(forInfoDictionaryKey: "UseNativeLocalCache") as? String)?.lowercased() == "true"
+    }
+
     static let bundleScheme = "sentry-app"
     static let bundleHost = "app"
     /// Entry HTML inside `WebApp/` (relative path).

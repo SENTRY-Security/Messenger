@@ -1,6 +1,7 @@
 import { fetchWithTimeout, jsonReq } from '../core/http.js';
 import { buildAccountPayload } from '../core/store.js';
 import { log } from '../core/log.js';
+import { isNativeCacheMode, cacheGet, cachePut } from '../features/native-cache.js';
 
 function buildAccountHeaders() {
   const payload = buildAccountPayload();
@@ -55,8 +56,29 @@ export async function fetchContactSecretsBackup({ limit = 1, version } = {}) {
   if (limit) qs.set('limit', String(limit));
   if (version) qs.set('version', String(version));
   const url = `/api/v1/contact-secrets/backup?${qs.toString()}`;
-  const r = await fetchWithTimeout(url, { method: 'GET', headers }, 20000);
-  const data = safeParse(await r.text());
-  log({ contactSecretsBackupFetch: { status: r.status, ok: r.ok } });
-  return { r, data };
+
+  // Native local cache (Tier 3): network-first, fall back to the cached ciphertext
+  // when offline / on failure. The cached value is the encrypted backup payload —
+  // the caller still decrypts in memory, so only ciphertext lives on disk.
+  const cacheKey = isNativeCacheMode()
+    ? `cs-backup:${buildAccountPayload().account_digest || ''}:${limit}:${version || ''}`
+    : null;
+
+  try {
+    const r = await fetchWithTimeout(url, { method: 'GET', headers }, 20000);
+    const text = await r.text();
+    const data = safeParse(text);
+    log({ contactSecretsBackupFetch: { status: r.status, ok: r.ok } });
+    if (cacheKey && r.ok && text) cachePut(cacheKey, text);
+    return { r, data };
+  } catch (err) {
+    if (cacheKey) {
+      const cached = await cacheGet(cacheKey);
+      if (cached) {
+        log({ contactSecretsBackupFetch: { fromCache: true } });
+        return { r: { ok: true, status: 200, fromCache: true }, data: safeParse(cached) };
+      }
+    }
+    throw err;
+  }
 }
