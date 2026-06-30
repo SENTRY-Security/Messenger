@@ -36,13 +36,13 @@ export function isNativeCallMode() {
 }
 
 /** Outgoing: ask native to build the peer and produce an offer. */
-export function nativeCallStart({ callId, iceServers, video }) {
-  postNativeMessage('nativeCallStart', { callId, iceServers: iceServers || [], video: !!video });
+export function nativeCallStart({ callId, iceServers, video, peerName }) {
+  postNativeMessage('nativeCallStart', { callId, iceServers: iceServers || [], video: !!video, peerName: peerName || '' });
 }
 
 /** Incoming: hand native the remote offer; it produces an answer. */
-export function nativeCallReceiveOffer({ callId, sdp, iceServers, video }) {
-  postNativeMessage('nativeCallReceiveOffer', { callId, sdp, iceServers: iceServers || [], video: !!video });
+export function nativeCallReceiveOffer({ callId, sdp, iceServers, video, peerName }) {
+  postNativeMessage('nativeCallReceiveOffer', { callId, sdp, iceServers: iceServers || [], video: !!video, peerName: peerName || '' });
 }
 
 /** Caller: hand native the remote answer to finish negotiation. */

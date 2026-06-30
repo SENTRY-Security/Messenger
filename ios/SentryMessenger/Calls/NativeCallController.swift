@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 #if canImport(WebRTC)
 import WebRTC
 #endif
@@ -46,6 +47,11 @@ final class NativeCallController: NativeCallHandler {
     /// Active peer connections keyed by the web's string `callId`. Single-call
     /// app, but a map keeps lifecycle robust against overlapping teardown.
     private var peers: [String: CallPeerConnection] = [:]
+
+    /// Presented native call UI (video calls only). Audio-only native calls keep
+    /// the web overlay.
+    private var callVC: NativeCallViewController?
+    private var callVCCallId: String?
     #endif
 
     private init() {}
@@ -71,14 +77,17 @@ final class NativeCallController: NativeCallHandler {
 
         #if canImport(WebRTC)
         let hasVideo = (payload["kind"] as? String) == "video" || (payload["video"] as? Bool == true)
+        let peerName = (payload["peerName"] as? String) ?? ""
         switch action {
         case "nativeCallStart":
             // Outgoing: build the peer and create an offer for the web to relay.
             let peer = makePeer(callId: callId, hasVideo: hasVideo, payload: payload)
+            if hasVideo { presentCallUI(callId: callId, peerName: peerName, peer: peer) }
             peer.createOffer()
         case "nativeCallReceiveOffer":
             // Incoming: build the peer, apply the remote offer, create an answer.
             let peer = makePeer(callId: callId, hasVideo: hasVideo, payload: payload)
+            if hasVideo { presentCallUI(callId: callId, peerName: peerName, peer: peer) }
             if let sdp = payload["sdp"] as? String { peer.receiveOffer(sdp: sdp) }
         case "nativeCallReceiveAnswer":
             // Caller: apply the remote answer to the in-flight outgoing peer.
@@ -122,6 +131,42 @@ final class NativeCallController: NativeCallHandler {
 
     private func tearDown(callId: String) {
         peers.removeValue(forKey: callId)?.close()
+        dismissCallUI(callId: callId)
+    }
+
+    // MARK: native call UI (video)
+
+    private func presentCallUI(callId: String, peerName: String, peer: CallPeerConnection) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            // Single-call app: replace any stale UI.
+            if let existing = self.callVC { existing.dismiss(animated: false) }
+            let vc = NativeCallViewController(peerName: peerName)
+            vc.delegate = self
+            self.callVC = vc
+            self.callVCCallId = callId
+            UIApplication.shared.topViewController?.present(vc, animated: true) {
+                vc.videoView.setLocalTrack(peer.localVideoTrackForRender)
+                if let remote = peer.remoteVideoTrack { vc.videoView.setRemoteTrack(remote) }
+                vc.updateStatus("連線中…")
+            }
+        }
+    }
+
+    private func dismissCallUI(callId: String) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.callVCCallId == callId, let vc = self.callVC else { return }
+            vc.videoView.detach()
+            vc.dismiss(animated: true)
+            self.callVC = nil
+            self.callVCCallId = nil
+        }
+    }
+
+    /// Resolve the peer for the currently presented call UI (UI actions).
+    private var activeUIPeer: CallPeerConnection? {
+        guard let id = callVCCallId else { return nil }
+        return peers[id]
     }
 
     /// Map the web's `iceServers` (Cloudflare STUN + TURN credentials it already
@@ -169,11 +214,56 @@ extension NativeCallController: CallPeerConnectionDelegate {
         @unknown default: name = "unknown"
         }
         DispatchQueue.main.async { [weak self] in
-            self?.sendToWeb?("nativeCallState", ["callId": peer.callId, "state": name])
+            guard let self else { return }
+            self.sendToWeb?("nativeCallState", ["callId": peer.callId, "state": name])
+            if self.callVCCallId == peer.callId {
+                switch state {
+                case .connecting: self.callVC?.updateStatus("連線中…")
+                case .connected: self.callVC?.updateStatus("通話中")
+                case .disconnected: self.callVC?.updateStatus("連線中斷，重連中…")
+                default: break
+                }
+            }
             if state == .closed || state == .failed {
-                self?.peers.removeValue(forKey: peer.callId)
+                self.peers.removeValue(forKey: peer.callId)
+                self.dismissCallUI(callId: peer.callId)
             }
         }
+    }
+
+    func callPeer(_ peer: CallPeerConnection, didReceiveRemoteVideoTrack track: RTCVideoTrack?) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.callVCCallId == peer.callId else { return }
+            self.callVC?.videoView.setRemoteTrack(track)
+        }
+    }
+}
+
+extension NativeCallController: NativeCallViewControllerDelegate {
+    func callUIDidTapEnd() {
+        guard let callId = callVCCallId else { return }
+        // Relay to the web call state machine (it runs the real hangup, which
+        // loops back as nativeCallEnd → tearDown → dismiss).
+        sendToWeb?("callEndedByUser", ["callId": callId])
+    }
+
+    func callUIDidToggleMute(_ muted: Bool) {
+        guard let callId = callVCCallId else { return }
+        activeUIPeer?.setMuted(muted)
+        sendToWeb?("callMuteToggled", ["callId": callId, "muted": muted])
+    }
+
+    func callUIDidToggleSpeaker(_ on: Bool) {
+        AudioSessionManager.setSpeaker(on)
+        sendToWeb?("audioRouteChanged", ["speaker": AudioSessionManager.isSpeakerOn])
+    }
+
+    func callUIDidTapFlipCamera() {
+        activeUIPeer?.switchCamera()
+    }
+
+    func callUIDidToggleVideo(_ enabled: Bool) {
+        activeUIPeer?.setVideoEnabled(enabled)
     }
 }
 #endif

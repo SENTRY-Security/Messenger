@@ -296,6 +296,12 @@ function promoteSessionToInCall(source = 'media') {
 
 // ── Native call engine (iOS) ────────────────────────────────────────────────
 
+/** Display name for the native call UI top bar (best-effort). */
+function callPeerDisplayName() {
+  const s = getCallSessionSnapshot();
+  return s?.peerDisplayName || s?.remoteDisplayName || s?.peerName || '';
+}
+
 /**
  * Native produced a complete local SDP (offer or answer, candidates embedded).
  * Relay it over the existing account-WS signaling exactly like the WebView path
@@ -383,7 +389,7 @@ export async function startOutgoingCallMedia({ callId } = {}) {
     // relayNativeLocalSDP() forwards as a call-offer.
     try {
       const { iceServers } = await buildRtcConfiguration();
-      nativeCallStart({ callId, iceServers, video: isVideoCall() });
+      nativeCallStart({ callId, iceServers, video: isVideoCall(), peerName: callPeerDisplayName() });
     } catch (err) {
       if (!err?.__callFail) failCall('outgoing-media-setup-failed', err);
     }
@@ -418,7 +424,7 @@ export async function acceptIncomingCallMedia({ callId } = {}) {
     if (pendingOffer && pendingOffer.callId === callId && pendingOffer.description?.sdp) {
       try {
         const { iceServers } = await buildRtcConfiguration();
-        nativeCallReceiveOffer({ callId, sdp: pendingOffer.description.sdp, iceServers, video: isVideoCall() });
+        nativeCallReceiveOffer({ callId, sdp: pendingOffer.description.sdp, iceServers, video: isVideoCall(), peerName: callPeerDisplayName() });
         pendingOffer = null;
         awaitingOfferAfterAccept = false;
       } catch (err) {
@@ -1349,7 +1355,7 @@ async function handleIncomingOffer(msg) {
       try {
         const { iceServers } = await buildRtcConfiguration();
         if (msg?.description?.sdp) {
-          nativeCallReceiveOffer({ callId: activeCallId, sdp: msg.description.sdp, iceServers, video: isVideoCall() });
+          nativeCallReceiveOffer({ callId: activeCallId, sdp: msg.description.sdp, iceServers, video: isVideoCall(), peerName: callPeerDisplayName() });
         }
         awaitingOfferAfterAccept = false;
       } catch (err) {
