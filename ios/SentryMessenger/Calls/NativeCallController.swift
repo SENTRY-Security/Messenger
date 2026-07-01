@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import AVFoundation
 #if canImport(WebRTC)
 import WebRTC
 #endif
@@ -69,9 +70,22 @@ final class NativeCallController: NativeCallHandler {
         // (the peer is built after CallKit already activated the session).
         RTCAudioSession.sharedInstance().useManualAudio = true
         print("[NativeCall] P1 orchestrator enabled — WebRTC factory ready, manual audio on")
-        #else
-        print("[NativeCall] enabled but WebRTC framework not linked — check SPM package")
+        // Request mic + camera permission up front (at app launch) so the prompt
+        // never appears mid-call — an in-call camera prompt can stall video capture
+        // and negotiation. No-op if already decided.
+        requestCapturePermissions()
         #endif
+    }
+
+    /// Prompt for microphone + camera access once, early. Results are handled by
+    /// the OS; capture just works later if granted.
+    func requestCapturePermissions() {
+        if AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined {
+            AVCaptureDevice.requestAccess(for: .audio) { _ in }
+        }
+        if AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined {
+            AVCaptureDevice.requestAccess(for: .video) { _ in }
+        }
     }
 
     // MARK: NativeCallHandler
