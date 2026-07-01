@@ -13,6 +13,8 @@ protocol NativeCallViewControllerDelegate: AnyObject {
     func callUIDidToggleSpeaker(_ on: Bool)
     func callUIDidTapFlipCamera()
     func callUIDidToggleVideo(_ enabled: Bool)
+    /// Face-blur mode changed ("off" / "face" / "background").
+    func callUIDidSetBlur(_ mode: String)
 }
 
 /// Full-screen native call surface (mid-term migration P3): native video render
@@ -34,10 +36,14 @@ final class NativeCallViewController: UIViewController {
     private var muteButton: UIButton!
     private var speakerButton: UIButton!
     private var videoButton: UIButton!
+    private var blurButton: UIButton!
 
     private var muted = false
     private var speakerOn = false
     private var videoEnabled = true
+    /// Face-blur cycle: 0=off, 1=face, 2=background.
+    private let blurModes = ["off", "face", "background"]
+    private var blurIndex = 0
     private var controlsHideWork: DispatchWorkItem?
 
     private let peerName: String
@@ -122,10 +128,11 @@ final class NativeCallViewController: UIViewController {
         speakerButton = makeButton(systemName: "speaker.wave.2.fill", action: #selector(tapSpeaker))
         let flipButton = makeButton(systemName: "arrow.triangle.2.circlepath.camera.fill", action: #selector(tapFlip))
         videoButton = makeButton(systemName: "video.fill", action: #selector(tapVideo))
+        blurButton = makeButton(systemName: "face.dashed", action: #selector(tapBlur))
         let endButton = makeButton(systemName: "phone.down.fill", action: #selector(tapEnd), tint: .white, background: UIColor.systemRed)
 
         // Row 1: media toggles. Row 2: end.
-        let row1 = UIStackView(arrangedSubviews: [muteButton, speakerButton, flipButton, videoButton])
+        let row1 = UIStackView(arrangedSubviews: [muteButton, speakerButton, flipButton, videoButton, blurButton])
         row1.axis = .horizontal
         row1.distribution = .equalSpacing
         row1.alignment = .center
@@ -183,6 +190,19 @@ final class NativeCallViewController: UIViewController {
         speakerButton.backgroundColor = speakerOn ? UIColor(white: 1, alpha: 0.9) : UIColor(white: 1, alpha: 0.18)
         speakerButton.tintColor = speakerOn ? .black : .white
         delegate?.callUIDidToggleSpeaker(speakerOn)
+        revealControls()
+    }
+
+    /// Cycle face-blur: off → face (blur faces) → background (blur all but faces).
+    @objc private func tapBlur() {
+        blurIndex = (blurIndex + 1) % blurModes.count
+        let mode = blurModes[blurIndex]
+        let cfg = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+        blurButton.setImage(UIImage(systemName: mode == "off" ? "face.dashed" : "face.dashed.fill", withConfiguration: cfg), for: .normal)
+        let active = mode != "off"
+        blurButton.backgroundColor = active ? UIColor(white: 1, alpha: 0.9) : UIColor(white: 1, alpha: 0.18)
+        blurButton.tintColor = active ? .black : .white
+        delegate?.callUIDidSetBlur(mode)
         revealControls()
     }
 

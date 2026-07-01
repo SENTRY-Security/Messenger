@@ -288,5 +288,9 @@ extension NativeCallController: NativeCallViewControllerDelegate {
     func callUIDidToggleVideo(_ enabled: Bool) {
         activeUIPeer?.setVideoEnabled(enabled)
     }
+
+    func callUIDidSetBlur(_ mode: String) {
+        activeUIPeer?.setBlurMode(mode)
+    }
 }
 #endif
