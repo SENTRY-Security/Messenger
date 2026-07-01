@@ -52,6 +52,8 @@ final class CallPeerConnection: NSObject {
     private var videoCapturer: RTCCameraVideoCapturer?
     private(set) var remoteVideoTrack: RTCVideoTrack?
     private var cameraPosition: AVCaptureDevice.Position = .front
+    /// Face-blur frame processor between the camera and the WebRTC source.
+    private var videoProcessor: CallVideoProcessor?
 
     /// Exposed so the native video layer can render the local self-preview.
     var localVideoTrackForRender: RTCVideoTrack? { localVideoTrack }
@@ -105,15 +107,28 @@ final class CallPeerConnection: NSObject {
     // MARK: video (P2)
 
     /// Create the local camera video track and start capture (front camera).
+    /// Camera frames flow through `CallVideoProcessor` (face blur) before entering
+    /// the WebRTC source, so the peer receives the processed (optionally blurred)
+    /// video.
     private func addLocalVideo() {
         let source = factory.videoSource()
-        let capturer = RTCCameraVideoCapturer(delegate: source)
+        let processor = CallVideoProcessor(source: source)
+        videoProcessor = processor
+        let capturer = RTCCameraVideoCapturer(delegate: processor)
         let track = factory.videoTrack(with: source, trackId: "video0")
         localVideoTrack = track
         videoCapturer = capturer
         pc?.add(track, streamIds: ["stream0"])
         startCapture(position: cameraPosition)
     }
+
+    /// Set the face-blur mode ("off" / "face" / "background").
+    func setBlurMode(_ mode: String) {
+        videoProcessor?.mode = CallVideoProcessor.Mode(rawValue: mode) ?? .off
+    }
+
+    /// Current blur mode (for UI state).
+    var blurMode: String { videoProcessor?.mode.rawValue ?? "off" }
 
     /// Pick the best capture format for `position` (target ~720p / 30fps) and
     /// start the camera. No-op where the device/format is unavailable (e.g. the
