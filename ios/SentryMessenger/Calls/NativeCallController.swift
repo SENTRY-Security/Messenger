@@ -150,6 +150,7 @@ final class NativeCallController: NativeCallHandler {
     }
 
     private func tearDown(callId: String) {
+        print("[NativeCall] tearDown callId=\(callId) hadPeer=\(peers[callId] != nil)")
         peers.removeValue(forKey: callId)?.close()
         dismissCallUI(callId: callId)
     }
@@ -175,7 +176,9 @@ final class NativeCallController: NativeCallHandler {
 
     private func dismissCallUI(callId: String) {
         DispatchQueue.main.async { [weak self] in
-            guard let self, self.callVCCallId == callId, let vc = self.callVC else { return }
+            guard let self else { return }
+            print("[NativeCall] dismissCallUI callId=\(callId) vcCallId=\(self.callVCCallId ?? "nil") hasVC=\(self.callVC != nil)")
+            guard self.callVCCallId == callId, let vc = self.callVC else { return }
             vc.videoView.detach()
             vc.dismiss(animated: true)
             self.callVC = nil
