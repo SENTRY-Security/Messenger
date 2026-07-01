@@ -68,11 +68,17 @@ final class CallPeerConnection: NSObject {
         self.factory = factory
         super.init()
 
-        // CallKit owns audio session activation: use manual mode so WebRTC does
-        // not activate the session itself (CallKit does, in `didActivate`).
-        let rtcAudio = RTCAudioSession.sharedInstance()
-        rtcAudio.useManualAudio = true
-        rtcAudio.isAudioEnabled = false
+        // CallKit owns audio session activation: manual mode so WebRTC does not
+        // activate the session itself (CallKit does, in `didActivate`). Manual
+        // mode is enabled once at launch (NativeCallController.bootstrap) so it is
+        // already set before any CallKit activation; re-assert defensively here.
+        //
+        // Do NOT set `isAudioEnabled = false` here: for an outgoing call the peer
+        // is created AFTER CallKit's `didActivate` has already fired (which set it
+        // true), so forcing false would clobber the enabled audio and it would
+        // never re-enable → silent call. `isAudioEnabled` is driven solely by
+        // CallKit `didActivate`(true) / `didDeactivate`(false) and `close()`.
+        RTCAudioSession.sharedInstance().useManualAudio = true
 
         let config = RTCConfiguration()
         config.iceServers = iceServers

@@ -62,7 +62,13 @@ final class NativeCallController: NativeCallHandler {
         guard isEnabled else { return }
         #if canImport(WebRTC)
         _ = factory  // touch the factory so the WebRTC framework link is exercised.
-        print("[NativeCall] P1 orchestrator enabled — WebRTC factory ready")
+        // Enable manual audio NOW (before any call / CallKit activation) so the
+        // CallKit-driven audio handoff works: WebRTC never activates the session
+        // itself; CallKit's didActivate/didDeactivate drive RTCAudioSession
+        // isAudioEnabled. Setting this only when a peer is created can be too late
+        // (the peer is built after CallKit already activated the session).
+        RTCAudioSession.sharedInstance().useManualAudio = true
+        print("[NativeCall] P1 orchestrator enabled — WebRTC factory ready, manual audio on")
         #else
         print("[NativeCall] enabled but WebRTC framework not linked — check SPM package")
         #endif
