@@ -162,8 +162,11 @@ final class CallPeerConnection: NSObject {
     func createOffer() {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         pc?.offer(for: constraints) { [weak self] sdp, error in
-            guard let self, let sdp, error == nil else { return }
-            self.pc?.setLocalDescription(sdp) { _ in
+            guard let self else { return }
+            if let error { print("[NativeCall] createOffer error=\(error.localizedDescription) callId=\(self.callId)"); return }
+            guard let sdp else { return }
+            self.pc?.setLocalDescription(sdp) { err in
+                if let err { print("[NativeCall] setLocal(offer) error=\(err.localizedDescription) callId=\(self.callId)") }
                 self.waitForGatheringThenEmit(type: "offer")
             }
         }
@@ -173,11 +176,14 @@ final class CallPeerConnection: NSObject {
     func receiveOffer(sdp: String) {
         let remote = RTCSessionDescription(type: .offer, sdp: sdp)
         pc?.setRemoteDescription(remote) { [weak self] error in
-            guard let self, error == nil else { return }
+            guard let self else { return }
+            if let error { print("[NativeCall] setRemote(offer) error=\(error.localizedDescription) callId=\(self.callId)"); return }
             let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
             self.pc?.answer(for: constraints) { sdp, error in
-                guard let sdp, error == nil else { return }
-                self.pc?.setLocalDescription(sdp) { _ in
+                if let error { print("[NativeCall] createAnswer error=\(error.localizedDescription) callId=\(self.callId)"); return }
+                guard let sdp else { return }
+                self.pc?.setLocalDescription(sdp) { err in
+                    if let err { print("[NativeCall] setLocal(answer) error=\(err.localizedDescription) callId=\(self.callId)") }
                     self.waitForGatheringThenEmit(type: "answer")
                 }
             }
@@ -187,7 +193,9 @@ final class CallPeerConnection: NSObject {
     /// Outgoing caller: apply the remote answer.
     func receiveAnswer(sdp: String) {
         let remote = RTCSessionDescription(type: .answer, sdp: sdp)
-        pc?.setRemoteDescription(remote) { _ in }
+        pc?.setRemoteDescription(remote) { [weak self] error in
+            if let error { print("[NativeCall] setRemote(answer) error=\(error.localizedDescription) callId=\(self?.callId ?? "")") }
+        }
     }
 
     func setMuted(_ muted: Bool) {
@@ -227,6 +235,8 @@ final class CallPeerConnection: NSObject {
         guard !emitted, let sdp = pc?.localDescription?.sdp else { return }
         emitted = true
         pendingEmitType = nil
+        let candCount = sdp.components(separatedBy: "a=candidate").count - 1
+        print("[NativeCall] emit \(type) callId=\(callId) candidates=\(candCount) mVideo=\(sdp.contains("m=video")) wantVideo=\(hasVideo)")
         delegate?.callPeer(self, didProduceLocalSDP: sdp, type: type)
     }
 }
@@ -238,6 +248,7 @@ extension CallPeerConnection: RTCPeerConnectionDelegate {
         }
     }
     func peerConnection(_ pc: RTCPeerConnection, didChange newState: RTCPeerConnectionState) {
+        print("[NativeCall] pcState=\(newState.rawValue) callId=\(callId)")
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.delegate?.callPeer(self, didChangeState: newState)
@@ -245,6 +256,7 @@ extension CallPeerConnection: RTCPeerConnectionDelegate {
     }
     // Unified-plan remote track arrival → surface remote video to the renderer.
     func peerConnection(_ pc: RTCPeerConnection, didAdd rtpReceiver: RTCRtpReceiver, streams: [RTCMediaStream]) {
+        print("[NativeCall] remoteTrack kind=\(rtpReceiver.track?.kind ?? "nil") callId=\(callId)")
         guard let videoTrack = rtpReceiver.track as? RTCVideoTrack else { return }
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -258,7 +270,9 @@ extension CallPeerConnection: RTCPeerConnectionDelegate {
     func peerConnection(_ pc: RTCPeerConnection, didAdd stream: RTCMediaStream) {}
     func peerConnection(_ pc: RTCPeerConnection, didRemove stream: RTCMediaStream) {}
     func peerConnectionShouldNegotiate(_ pc: RTCPeerConnection) {}
-    func peerConnection(_ pc: RTCPeerConnection, didChange newState: RTCIceConnectionState) {}
+    func peerConnection(_ pc: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
+        print("[NativeCall] iceState=\(newState.rawValue) callId=\(callId)")
+    }
     func peerConnection(_ pc: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {}
     func peerConnection(_ pc: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {}
     func peerConnection(_ pc: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {}
