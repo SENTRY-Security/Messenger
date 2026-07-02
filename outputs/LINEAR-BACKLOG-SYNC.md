@@ -1,5 +1,13 @@
 # Linear Backlog Sync — 待辦交接（給下一個 Session）
 
+> ✅ **DONE（2026-07-02 重連後補做完成）**：Linear 重新授權後，§3 全部待辦已跑完。
+> - SEN-79 / SEN-81 / SEN-82：已補驗收紀錄 + commit/PR 連結，標明階段 Integrated 待 Verified（狀態維持「待審查」）。
+> - SEN-83：已補執行計畫 + blocked 說明（等未掛斷端 `[NativeCall]` log），關聯 PR #112。
+> - 治理決策已建 **SEN-137**（Messenger 專屬），與 **SEN-136**（NEXUS/FORGE 同治理）Related to，並關聯 SEN-78~91。
+> - 仍待「使用者實機驗證」的項目（§5）非 AI 可代完成，保留於各 issue，不阻擋本檔關閉。
+>
+> 本檔以下內容為當時交接快照，保留供追溯；待辦本體已回歸 Linear。
+
 > 用途：本 session（2026-07-02）建立 CLAUDE.md「Linear 開發治理規範（13 條）」並完成本輪原生遷移的 Linear 建檔，但 **session 後段 Linear MCP 斷線**，尚有 issue 回填未完成。此文件讓**全新 session 不依賴當時對話**即可接手。
 >
 > 依 `CLAUDE.md`「§11 Session 結束前完整同步」：待辦不得只留在對話，故落成此檔。**待辦本體仍以 Linear 為唯一真相來源**——本檔僅為交接索引，完成後即可刪除或標記 done。
