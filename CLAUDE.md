@@ -10,13 +10,75 @@
 - **單裝置架構**：每個帳號固定一個 deviceId，不支援多裝置、不支援多裝置同時登入。
 - **新登入踢舊連線**：同一帳號的新登入階段（session）會踢掉舊的登入階段，確保同時只有一個活躍連線。
 
-## Linear 進度追蹤
+## Linear 開發治理規範（Claude Code × Linear）
 
-- **單一事實來源**：所有開發進度一律以 Linear 追蹤（team `SENTRY 核心團隊`、initiative `SENTRY Messenger`）。iOS 完整 App 與 App Clip 的工作歸 project **`Messenger iOS`**；web（iOS Safari／PWA）的工作歸 project **`Messenger iOS Web`**。
-- **設計與議題自動建 issue**：所有設計（架構方案、安全機制、方案評估）與議題（新功能、bug、技術債、重構）在開工前必須自動建立對應的 Linear issue；重大架構／安全決策以「決策紀錄：…」形式的 issue 留檔（含決策理由與否決方案）。
-- **自動爬取與處理**：每次工作階段開始時，自動爬取（`list_issues`）相關 project 的 issue 現況，比對 repo 實際狀態，處理可處理的項目；發現 issue 與現況不符時主動更新。
-- **自動更新狀態**：工作進行中隨進度更新 issue 狀態（待辦清單 → 準備執行 → 進行中 → 待審查 → 已完成／已取消／已阻塞）。程式碼已合併但尚待實機驗證者用「待審查」；PR 合併後把 PR 連結附到 issue。
-- **不重複建檔**：建 issue 前先以 query 查詢避免重複；已存在者以更新（`save_issue` 帶 `id`）代替新建。
+> Linear 是本 repo 的**唯一工作真相來源**。以下規範適用於每一次 Claude Code session。
+>
+> **實際座標**：Team `SENTRY 核心團隊`（issue 前綴 `SEN`）、Initiative `SENTRY Messenger`。
+> iOS 完整 App 與 App Clip 的工作歸 project **`Messenger iOS`**；web（iOS Safari／PWA）的工作歸 project **`Messenger iOS Web`**；後端（data-worker / D1 / R2）沿用同 team，掛回對應功能 issue。
+
+### 1. Linear 是唯一工作真相來源
+
+- 所有**尚未完成、需追蹤、需決策、需驗收、或可能影響後續開發**的事項，都必須存在於 Linear issue。
+- 待辦**不得只**留在 session 對話、`TODO` 註解、commit message、PR 描述、個人記憶或臨時文件；這些位置可放補充資訊，但不能取代 Linear issue。
+
+### 2. 動工前先搜尋 Linear（禁止重複建檔）
+
+- 修改程式碼前，先以下列條件搜尋（`list_issues` / 關鍵字查詢）：repo 名、project 名、功能名、模組名、錯誤訊息、相關關鍵字、可能的舊名或同義詞。
+- 處理原則：**相同** issue → 直接更新原 issue；**高度重疊** → 更新原 issue，不得另建；**部分相關** → 先建立關聯再決定是否開子 issue；**完全無相符** → 才新建。
+- 已存在者一律以 `save_issue` 帶 `id` 更新，不得為求方便另開重複 issue。
+
+### 3. 新 issue 最低完整度
+
+新 issue 至少包含：可搜尋的具體標題、Team、Project、Assignee、Priority、正確狀態、問題背景、目標、範圍、**不包含的範圍**、驗收條件、技術／產品限制、相關檔案／模組／路徑、Parent 或相關 issue、關係（Blocks／Blocked by／Related to）、以及 Milestone（若該 project 已有適用者）。
+
+標題禁止只寫「修 Bug／優化／重構／處理問題／待確認」，須寫出**具體元件＋行為＋問題**，例如「Messenger iOS：掛斷視訊通話後未同步通知對端」。
+
+### 4. 父 issue 與可執行子 issue 分開
+
+- 父 issue 表示一個交付目標／MVP／大型範圍，**不承載大量細節實作**。
+- 實際工作拆成可驗收的子 issue，子 issue 必須設 Parent；父 issue 狀態依子 issue 與整體驗收更新。
+- 不得因父 issue 已存在就把所有衍生工作塞進同一描述，也不得把父 issue 與子 issue 當成同層級待辦。
+
+### 5. 開始實作前更新 issue
+
+正式改碼前：將處理中的 issue 設為**進行中**，並在 issue 留下本次**執行計畫**（預計修改的模組、預計驗證方式、已知風險或待確認事項）。計畫需精簡，但足以讓下一個 session 不依賴本次對話即可理解方向。
+
+### 6. 開發中發現衍生事項
+
+符合任一條件時**建立衍生 issue**：超出目前範圍／本 session 無法合理完成／需不同負責人／需產品或架構決策／會阻擋其他工作／是獨立缺陷或風險或技術債／需後續驗收部署觀察／為避免擴大變更而暫不處理。
+
+不需另開的情況：只是目前實作的小步驟、可在本 issue 範圍內直接完成、無獨立驗收價值、不需後續追蹤——此時仍把資訊更新回目前 issue。
+
+衍生 issue 建立後**必須設定至少一項關係**（Parent／Blocks／Blocked by／Related to），不得留下孤立 issue。
+
+### 7. 產品決策與技術實作分開
+
+遇未拍板的產品或架構選擇時，建立或更新**「決策：…」issue**：列出選項、各選項影響、建議方案、是否阻擋實作。未獲決策前不得把個人假設當成正式產品方向；可先做不影響決策結果的中立工作，但須在 issue 註明。
+
+### 8. 程式碼存在 ≠ issue 完成
+
+issue 需歷經 **Implemented → Integrated → Verified → Done** 四階段（本 team 無自訂狀態時，用現有狀態＋issue 留言明確標示階段；「程式碼已合併但尚待實機驗證」用**待審查**）。**禁止因「程式碼看起來已存在」就關閉 issue**。關閉前至少核對：實際入口可用、串接完成、測試通過、錯誤路徑已處理、權限與安全條件符合、驗收條件逐項達成、部署／migration 完成、文件是否需更新。
+
+### 9. 測試與驗收紀錄
+
+issue 完成前須在 Linear 記錄：執行了哪些測試、測試結果、未執行的測試及原因、已知限制、可能回歸風險、是否需人工驗收、是否需部署後觀察。不得只寫「已完成／測試正常」而無具體內容。
+
+### 10. Commit／PR 與 Linear 互相連結
+
+取得 commit／PR 資訊時更新回 issue，至少記錄：branch、commit SHA 或連結、PR 連結、主要變更、相關測試、部署／migration 注意事項。commit 與 PR 標題盡量包含 Linear issue ID（如 `SEN-83`）。
+
+### 11. Session 結束前完整同步
+
+每次 session 結束前對本次處理的所有 issue 做一次同步：更新狀態、寫入完成內容／主要檔案模組／測試結果／commit 或 PR／剩餘工作／阻擋事項；建立所有需後續追蹤的衍生 issue 並確認關係正確；確認沒有待辦只存在於本次 session；確認已完成 issue 符合驗收條件後才關閉。工作未完者，留言須足以讓全新 session 不依賴本次對話即可接手。
+
+### 12. 決策與設計留檔
+
+所有設計（架構方案、安全機制、方案評估）與重大架構／安全決策，以 issue 形式留檔（決策類用「決策：…」標題，含決策理由與否決方案），不得只留在對話或 commit。
+
+### 13. 每次 session 起始自動爬取
+
+session 開始時自動 `list_issues` 爬取 `Messenger iOS` / `Messenger iOS Web` 現況，比對 repo 實際狀態，處理可處理項目，發現 issue 與現況不符時主動更新。
 
 ## 資料庫
 
