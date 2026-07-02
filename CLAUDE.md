@@ -10,6 +10,14 @@
 - **單裝置架構**：每個帳號固定一個 deviceId，不支援多裝置、不支援多裝置同時登入。
 - **新登入踢舊連線**：同一帳號的新登入階段（session）會踢掉舊的登入階段，確保同時只有一個活躍連線。
 
+## Linear 進度追蹤
+
+- **單一事實來源**：所有開發進度一律以 Linear 追蹤（team `SENTRY 核心團隊`、initiative `SENTRY Messenger`）。iOS 完整 App 與 App Clip 的工作歸 project **`Messenger iOS`**；web（iOS Safari／PWA）的工作歸 project **`Messenger iOS Web`**。
+- **設計與議題自動建 issue**：所有設計（架構方案、安全機制、方案評估）與議題（新功能、bug、技術債、重構）在開工前必須自動建立對應的 Linear issue；重大架構／安全決策以「決策紀錄：…」形式的 issue 留檔（含決策理由與否決方案）。
+- **自動爬取與處理**：每次工作階段開始時，自動爬取（`list_issues`）相關 project 的 issue 現況，比對 repo 實際狀態，處理可處理的項目；發現 issue 與現況不符時主動更新。
+- **自動更新狀態**：工作進行中隨進度更新 issue 狀態（待辦清單 → 準備執行 → 進行中 → 待審查 → 已完成／已取消／已阻塞）。程式碼已合併但尚待實機驗證者用「待審查」；PR 合併後把 PR 連結附到 issue。
+- **不重複建檔**：建 issue 前先以 query 查詢避免重複；已存在者以更新（`save_issue` 帶 `id`）代替新建。
+
 ## 資料庫
 
 - **資料表異動一律使用 migration**：所有新增 / 修改 / 刪除 D1 資料表的操作，必須透過 `data-worker/migrations/` 下的 SQL migration 檔處理，不得在程式碼中使用 `CREATE TABLE IF NOT EXISTS` 進行隱式建表（`ensureDataTables` 的 auto-create 僅作為舊環境相容 fallback，不得用於新功能）。
