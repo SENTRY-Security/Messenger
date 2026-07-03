@@ -5,7 +5,7 @@
 
 ## 1. Token 洩漏：主線直接讀大檔、全量拉 Linear
 
-**症狀**：`web/js/` 有數千行大檔（如 `call-overlay.js`）；`mcp__Linear__list_issues` 不帶過濾會回整個 team 的肥 payload；主線自己掃 repo 把 context 塞爆，後半 session 品質下降。
+**症狀**：`web/src/` 下有近兩千行的大檔（如 `web/src/app/ui/mobile/call-overlay.js`，1999 行）；`mcp__Linear__list_issues` 不帶過濾會回整個 team 的肥 payload；主線自己掃 repo 把 context 塞爆，後半 session 品質下降。
 
 **修法（照做）**：
 - 讀碼一律 **先 Grep 定位行號，再 Read 帶 `offset`/`limit`（單次 ≤150 行）**。禁止對 >500 行的檔案做整檔 Read。

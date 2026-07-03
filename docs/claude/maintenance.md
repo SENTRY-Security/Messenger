@@ -12,7 +12,7 @@
 **動前先問使用者（或建 Linear「決策：…」issue 等拍板）**：
 - `CLAUDE.md` 本體（任何修改）。
 - `judgment-rubrics.md` §3 安全紅線（增删改皆是）。
-- `model-dispatch.md` §0 查證值與 §4 調度表原則（新增一列可以，改升降級規則要問）。
+- `model-dispatch.md` §4 調度表**原則**與升降級規則（新增一列不需問）。注意：§0 查證值的更新走本檔 §4 過期偵測例外——**以 harness 為準直接更新、不需問**，此處「先問」不含它。
 - `AGENTS.md`／`SKILL.md` 的廢存（現況：保留、優先序墊底，見 `diagnostics.md` §3）。
 - 本檔。
 

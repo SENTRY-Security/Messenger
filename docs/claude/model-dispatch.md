@@ -7,13 +7,13 @@
 
 - 模型 ID（session 級，`/model` 切換）：`claude-fable-5`（最高階）、`claude-opus-4-8`、`claude-sonnet-5`、`claude-haiku-4-5-20251001`。
 - `Agent` 工具 `model` 參數只接受：`sonnet` | `opus` | `haiku` | `fable`；**省略＝繼承主線模型**（預設建議：明確指定，避免無意間用高階模型跑雜活）。
-- `Workflow` 的 `agent()` 支援 `effort`：`low` | `medium` | `high` | `xhigh` | `max`；省略＝繼承 session。機械階段用 `low`，僅最難的 verify/judge 階段升高。
+- `Workflow` 的 `agent()` 支援 `effort`：`low` | `medium` | `high` | `xhigh` | `max`；省略＝繼承 session。機械階段用 `low`，僅最難的 verify/judge 階段升高。（**harness 相依**：`Workflow` 工具並非每個環境都暴露，使用前先確認當前 session 工具清單有它。）
 - subagent 類型（`subagent_type`）：`general-purpose`（可改檔）、`Explore`（唯讀搜索）、`Plan`（唯讀規劃）。
 - **未確認（不得當事實引用，待使用者至 usage 儀表板實測）**：各模型費率；Fable 訂閱制期限（傳聞 7/7 後改量計費，未查證）；被安全機制導向 Opus 的請求是否消耗 Fable 額度。
 
 ## 1. 指揮官不下場
 
-主對話**只做**：(a) 拍板與判斷、(b) Linear／git 收尾、(c) 涉及 ≤2 個檔案且 ≤50 行的小修。
+主對話**只做**：(a) 拍板與判斷、(b) Linear／git 操作（含 session 起手爬取 CLAUDE.md §13 與結尾同步 §11）、(c) 涉及 ≤2 個檔案且 ≤50 行的小修。
 以下一律派 subagent，主對話只收結論：
 - 跨 ≥3 檔的讀取／掃 repo／盤點 → `Explore`（model: `haiku`；範圍複雜才 `sonnet`）
 - 網頁研究、文件彙整 → `general-purpose`（model: `sonnet`）
@@ -53,6 +53,6 @@
 ## 5. 驗證不自驗
 
 - **檔案產出**：派 fresh-context agent read-back——只給檔案路徑與驗收條件，不給原始對話，回報「完整／缺漏清單」。
-- **程式碼**：能跑的測試就跑（`npm test`、`node --test`）；跑不了的（iOS 實機行為）標「需使用者實機」，不得宣稱已驗證。
+- **程式碼**：本 repo **沒有 `npm test` 腳本**（`package.json` scripts 僅 deploy 用）。web 改動可跑 `node web/build.mjs` 確認可編譯；iOS 實機行為（通話、推播、背景、Keychain）一律標「需使用者實機」，不得宣稱已驗證。
 - **高風險判斷**：第二意見——換一個 model 或換一個提問角度再問一次；兩答不一致時主線裁決或問使用者。
 - 驗證者發現問題 → 修 → **再驗**，直到乾淨；驗證通過才可在 Linear 寫驗收紀錄。
