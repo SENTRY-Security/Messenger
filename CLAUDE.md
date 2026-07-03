@@ -10,6 +10,18 @@
 - **單裝置架構**：每個帳號固定一個 deviceId，不支援多裝置、不支援多裝置同時登入。
 - **新登入踢舊連線**：同一帳號的新登入階段（session）會踢掉舊的登入階段，確保同時只有一個活躍連線。
 
+## AI 治理檔案索引（docs/claude/）
+
+> 規範優先序：**本檔（CLAUDE.md）＞ `docs/claude/*` ＞ `AGENTS.md`／`SKILL.md`**。
+> `AGENTS.md`／`SKILL.md` 為舊 messages-flow 重構時代規範，僅處理該範圍任務時參考；與本檔衝突一律以本檔為準。
+
+- `docs/claude/diagnostics.md` — 本 harness 三大失效模式與修法＋踩雷記錄。**每個 session 起手先讀**。
+- `docs/claude/model-dispatch.md` — 模型調度守則（派 subagent、model/effort 實際值、升降級、驗證不自驗）。派工前讀。
+- `docs/claude/judgment-rubrics.md` — 判斷 rubric：何時升級／何時算完成／**安全紅線（§3，動紅線前必問使用者）**／方向錯訊號／合併前 checklist。
+- `docs/claude/prompt-templates.md` — 交辦 subagent 的填空範本（搜尋／實作／重構／研究／審查）。
+- `docs/claude/maintenance.md` — 上述檔案的修改權限與精簡規則。
+- `docs/claude/letter-to-future-sessions.md` — 交接信：制度退化風險與低信心產出清單。
+
 ## Linear 開發治理規範（Claude Code × Linear）
 
 > Linear 是本 repo 的**唯一工作真相來源**。以下規範適用於每一次 Claude Code session。
