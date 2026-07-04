@@ -12,8 +12,8 @@
 
 ## AI 治理檔案索引（docs/claude/）
 
-> 規範優先序：**本檔（CLAUDE.md）＞ `docs/claude/*` ＞ `AGENTS.md`／`SKILL.md`**。
-> `AGENTS.md`／`SKILL.md` 為舊 messages-flow 重構時代規範，僅處理該範圍任務時參考；與本檔衝突一律以本檔為準。
+> 規範優先序：**本檔（CLAUDE.md）＞ `docs/claude/*`**。
+> 舊 `AGENTS.md`／`SKILL.md`（messages-flow 重構時代規範）已於 2026-07-04 經使用者拍板**廢除刪檔**；歷史文件或舊分支若仍引用它們，一律改以本檔與 `docs/claude/*` 為準。
 
 - `docs/claude/diagnostics.md` — 本 harness 三大失效模式與修法＋踩雷記錄。**每個 session 起手先讀**。
 - `docs/claude/model-dispatch.md` — 模型調度守則（派 subagent、model/effort 實際值、升降級、驗證不自驗）。派工前讀。

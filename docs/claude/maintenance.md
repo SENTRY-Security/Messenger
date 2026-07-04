@@ -13,7 +13,6 @@
 - `CLAUDE.md` 本體（任何修改）。
 - `judgment-rubrics.md` §3 安全紅線（增删改皆是）。
 - `model-dispatch.md` §4 調度表**原則**與升降級規則（新增一列不需問）。注意：§0 查證值的更新走本檔 §4 過期偵測例外——**以 harness 為準直接更新、不需問**，此處「先問」不含它。
-- `AGENTS.md`／`SKILL.md` 的廢存（現況：保留、優先序墊底，見 `diagnostics.md` §3）。
 - 本檔。
 
 ## 2. 踩雷記錄格式（寫入 `diagnostics.md` 附錄）

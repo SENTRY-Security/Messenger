@@ -23,10 +23,10 @@
 
 ## 3. 出錯：多份 AI 規範衝突＋治理步驟漏做
 
-**症狀**：repo 根目錄同時存在 `CLAUDE.md`、`AGENTS.md`、`SKILL.md`。後兩者是**舊 messages-flow 重構時代**寫給 Codex 的規範，內含與現況矛盾的敘述（如「不依賴測試自動化」「系統尚未上線允許不可用」）。弱模型撞到會隨機採信一份。另一常見錯誤：跳過 Linear 治理步驟直接改碼。
+**症狀**：歷史上 repo 根目錄曾存在 `AGENTS.md`、`SKILL.md`（舊 messages-flow 重構時代寫給 Codex 的規範，含與現況矛盾的敘述，如「不依賴測試自動化」），弱模型撞到會隨機採信。**已於 2026-07-04 經使用者拍板廢除刪檔**。另一常見錯誤：跳過 Linear 治理步驟直接改碼。
 
 **修法（照做）**：
-- **優先序：`CLAUDE.md` ＞ `docs/claude/*` ＞ `AGENTS.md`/`SKILL.md`**。後兩者僅在明確處理 messages-flow 重構任務時參考；衝突時一律以 CLAUDE.md 為準。
+- **優先序：`CLAUDE.md` ＞ `docs/claude/*`**。舊分支、git 歷史或既有文件（如 `plan.ephemeral-e2ee.md`）若引用 `AGENTS.md`/`SKILL.md`，其規範內容一律不再遵循；其中仍然成立的硬規則（不破壞 schema、不動加密協議）已收進 `judgment-rubrics.md` §3 安全紅線。
 - session 起手固定順序（缺步即補）：
   1. `list_issues`（Messenger iOS / Messenger iOS Web，帶 project 過濾）比對現況（§13）
   2. 動工前搜尋既有 issue，禁重複建檔（§2）
