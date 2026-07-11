@@ -6,6 +6,7 @@
 
 **弱模型 session 可自行修改（改完在 commit message 註明）**：
 - `diagnostics.md` 附錄「踩雷記錄」：只准**追加**，不准改寫正文。
+- `project-knowledge.md`：可更新現況段（§6-§9），**每項更新必須附程式碼／指令證據**；§1-§5 架構事實變更需同時附出處行號。
 - `prompt-templates.md`：可新增範本；修改既有範本需在該範本頂端註記日期與原因。
 - `letter-to-future-sessions.md`：可更新「低信心清單」與「未完成交接」段。
 
@@ -25,7 +26,7 @@
 ## 3. 精簡閾值
 
 - 單檔 >300 行，或踩雷記錄 >15 條 → 當班 session 負責歸納：可固化的併入 rubric／正文，其餘刪除，並在 commit message 說明。
-- `CLAUDE.md` 本體恆 ≤150 行；超過就把內容抽到 `docs/claude/` 或 `docs/`，本體只留索引一行。
+- `CLAUDE.md` 本體恆 ≤220 行（2026-07-11 依使用者指示加入 Project Identity／Architecture／Status／Decision Log 等章節後自 150 調升）；超過就把內容抽到 `docs/claude/project-knowledge.md` 或 `docs/`，本體只留摘要與索引。
 
 ## 4. 過期偵測
 

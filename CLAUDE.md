@@ -1,5 +1,18 @@
 # CLAUDE.md
 
+## Project Identity
+
+- **專案**：SENTRY Messenger — 零持久化、密文-only 的 E2EE 即時通訊產品。
+- **Repository**：`SENTRY-Security/Messenger`（GitHub）。
+- **所屬產品**：SENTRY Messenger（Linear Initiative 同名）；與 NEXUS／FORGE 為獨立產品線，僅共用 Claude Code × Linear 治理制度。
+- **組成**：`web/`（SPA，Cloudflare Pages）＋ `data-worker/`（Cloudflare Worker：D1/KV/DO/R2）＋ `ios/`（完整 App／App Clip／NSE 三 target，WKWebView 殼層）。
+- **成熟度**：pre-release（`package.json` 0.2.0；README 標 0.1.9，版本標示不一致→待確認）。**push main 即自動部署 prod**（`deploy.yml`）。
+- **主要使用者**：待確認（repo 未明載）。
+
+## Product Context
+
+瀏覽器即用（也可經 NFC 卡片喚起 App Clip）的安全通訊：本地零持久化、伺服器只存密文、單裝置強制、NFC 硬體＋OPAQUE 認證。明確邊界：不做多裝置同步、不做伺服器可讀訊息、加密失敗不 fallback（fail-closed）。權限、安全、稽核與可逆性優先於操作便利；高風險選擇先建「決策：…」issue 供審查（治理 §7／§12）。
+
 ## 語言
 
 - 一律使用繁體中文回覆，包含說明、commit message 摘要、錯誤訊息解釋等。
@@ -16,11 +29,67 @@
 > 舊 `AGENTS.md`／`SKILL.md`（messages-flow 重構時代規範）已於 2026-07-04 經使用者拍板**廢除刪檔**；歷史文件或舊分支若仍引用它們，一律改以本檔與 `docs/claude/*` 為準。
 
 - `docs/claude/diagnostics.md` — 本 harness 三大失效模式與修法＋踩雷記錄。**每個 session 起手先讀**。
+- `docs/claude/project-knowledge.md` — 架構／API／資料層／CI／旗標／技術債現況細節（本檔各摘要段的完整版）。改碼前讀。
 - `docs/claude/model-dispatch.md` — 模型調度守則（派 subagent、model/effort 實際值、升降級、驗證不自驗）。派工前讀。
 - `docs/claude/judgment-rubrics.md` — 判斷 rubric：何時升級／何時算完成／**安全紅線（§3，動紅線前必問使用者）**／方向錯訊號／合併前 checklist。
 - `docs/claude/prompt-templates.md` — 交辦 subagent 的填空範本（搜尋／實作／重構／研究／審查）。
 - `docs/claude/maintenance.md` — 上述檔案的修改權限與精簡規則。
 - `docs/claude/letter-to-future-sessions.md` — 交接信：制度退化風險與低信心產出清單。
+
+## Current Architecture（摘要，詳見 project-knowledge.md）
+
+- **後端**：單一 Cloudflare Worker（`data-worker/src/worker.js`）；D1（23 個 migrations）、KV `AUTH_KV`、DO（`AccountWebSocket` 含單裝置踢線 `account-ws.js:236-245`、`RateLimiter`、`BrowserSession`）、R2 `message-media`（S3 API，媒體密文）。
+- **認證**：NTAG424 NFC SDM ＋ OPAQUE。**E2EE**：X3DH + Double Ratchet（`web/src/shared/crypto/dr.js`，禁 fallback）；媒體分塊 AES-256-GCM 簽名直傳 R2。
+- **前端**：esbuild SPA；`web/src/app/{api,core,crypto,features,ui}` ＋ `web/src/shared/`（真加密實作所在）。
+- **iOS**：WKWebView 殼＋原生增強（通話 CallKit+WebRTC、帳號 WS、背景下載、加密快取、NSE 推播預覽），5 個旗標**全部預設關**（`Info.plist:62-103`）。
+
+## Repository Map
+
+- `data-worker/` — 後端 Worker＋`migrations/`（資料表異動唯一入口）
+- `web/src/app/` — 前端應用（`features/messages-flow/` 頂層含孤兒 stub，勿接線，見 project-knowledge §8）
+- `web/src/shared/crypto/` — E2EE 實作（安全紅線區）
+- `ios/SentryMessenger{,Clip,Notify}/` — 三個 iOS target；`ios/docs/` 遷移計畫
+- `docs/` — messages-flow 規格、security 文件（17 檔）、internal/business-conversation 草案
+- `docs/claude/` — AI 治理檔；`outputs/` — session 交接產物
+- `plan*.md` — 歷史 plan（已完成或過時，非待辦，見 project-knowledge §9）
+
+## Development Commands（已驗證存在）
+
+- **web build**：`cd web && npm run build`（=`node build.mjs`）；`npm run verify`（建置完整性）；`npm run preview`（wrangler pages dev）
+- **部署**：root `npm run deploy:uat` / `deploy:prod`（wrangler）；正式部署走 CI（main→prod、其他分支→UAT）
+- **migration**：新增 SQL 檔到 `data-worker/migrations/`，CI `wrangler d1 migrations apply --remote` 自動套用
+- **iOS**：`cd ios && xcodegen generate` → xcodebuild（同 `ios.yml`）
+- **不存在**：`npm test`／lint／typecheck script——全 repo 無自動化測試（見 project-knowledge §7），不得宣稱「測試通過」
+
+## Current Status（同步於 2026-07-11）
+
+- **已完成（Verified）**：原生通話 P0–P3（SEN-78）、NSE 推播預覽（SEN-80）、App Clip NFC（SEN-88）、web 原生模式整合（SEN-91）。
+- **待實機驗證（待審查）**：原生帳號 WS（SEN-79）、背景媒體下載（SEN-81）、加密本地快取（SEN-82）——旗標全關，開旗標實機驗證前不得關閉。
+- **進行中**：SEN-83 掛斷未同步（Urgent，等未掛斷端 log）、SEN-86 face-blur 微調（等實機回饋）。
+- **暫緩**：SEN-87 內嵌 web bundle（CORS 未解，Low）。
+- **技術債／風險**：messages-flow 孤兒 stub、無自動化測試安全網＋main 即 prod、文件落差（README 版本、PLAN-css-split、app-secure-session-plan）——皆已建 Linear issue 追蹤。
+
+## Decision Log（有效決策索引；正文在 Linear 決策 issue）
+
+- **ADR-001** 導入 Claude Code × Linear 治理 13 條 — SEN-137（PR #113/#114）。
+- **ADR-002** P4 背景/VoIP 不降 Keychain 保護（維持 `whenUnlockedThisDeviceOnly`）— SEN-89（#98）。
+- **ADR-003** cache-first 秒開判 UNSAFE 不做（刪除語意會回灌已刪訊息）；維持 network-first — SEN-82（#101/#102）。
+- **ADR-004** 帳號 WS 採 Option B 原生全接管（單裝置唯一連線）— SEN-79（#95/#96）。
+- **ADR-005** 廢除舊 AGENTS.md/SKILL.md，硬規則併入 judgment-rubrics §3 — SEN-153（`65fd68b`）。
+
+## Linear Synchronization
+
+- Workspace：`sentry-cybersecurity`；Team：`SENTRY 核心團隊`（`SEN`）；Initiative：`SENTRY Messenger`。
+- Projects：`Messenger iOS`（`ba80ded1-…`）＝App＋App Clip＋後端對應功能；`Messenger iOS Web`（`4da496b8-…`）＝web/PWA。
+- 本次知識同步：**2026-07-11**（branch `claude/linear-backlog-sync-98a7u1`）。同步原則＝下方治理 13 條；不在本檔累積流水帳。
+
+## Agent Operating Instructions（補充守則）
+
+- 修改前先讀 `docs/claude/project-knowledge.md` 與相關模組，理解現有實作後才動手；不得捏造需求。
+- **不得因 Linear 沒有 issue 就假定工作不存在**——以 repo 證據為準，發現未建檔工作依治理 §6 補建。
+- **不得因 Linear issue 標「已完成」就假定程式碼正確**——驗證一律回到 repo 與可執行證據。
+- 新功能先判定是既有能力的延伸還是新能力；重大架構／安全決策發生時，同步更新本檔 Decision Log ＋ Linear 決策 issue。
+- 本檔不記短期瑣事；Current Status 只在知識同步時整批更新。
 
 ## Linear 開發治理規範（Claude Code × Linear）
 
@@ -109,7 +178,7 @@ session 開始時自動 `list_issues` 爬取 `Messenger iOS` / `Messenger iOS We
 
 ## iOS App 模式例外（僅原生 App，web 版不適用）
 
-> 以下僅適用於 iOS 原生 App（以 `isNativeApp()` / bundle 守衛），純 web 版維持上述「本地零持久化／背景登出」原則不變。詳見 `ios/docs/app-secure-session-plan.md`。
+> 以下僅適用於 iOS 原生 App（以 `isNativeApp()` / bundle 守衛），純 web 版維持上述「本地零持久化／背景登出」原則不變。詳見 `ios/docs/app-secure-session-plan.md`（注意：該檔自述狀態落後於程式碼，以 repo 為準，見 project-knowledge §8）。
 
 - **保持登入**：iOS App **不做背景計時自動登出**，使用者切背景/鎖屏後仍保持登入。
 - **他處登入仍踢線**：單裝置原則不變——他處登入仍會 force-logout 踢掉本機（不在此例外範圍）。

@@ -1,5 +1,7 @@
 # 方案 B：app-inline.css 按功能拆分計畫
 
+> ⚠️ 歷史文件（2026-07-11 標注）：本計畫已執行且實況已演進（web/src/assets/ 現有 16 個 CSS 檔，超出本文 9 檔方案），內容不再反映現狀，僅供追溯。現況以 docs/claude/project-knowledge.md 為準。
+
 ## 現狀
 - `app-inline.css`：4,782 行，單一檔案包含所有元件樣式
 - 已有獨立 CSS：`styles.css`、`profile-extra.css`、`cropper.css`
