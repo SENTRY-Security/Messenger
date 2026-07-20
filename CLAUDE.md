@@ -115,6 +115,8 @@
 
 標題禁止只寫「修 Bug／優化／重構／處理問題／待確認」，須寫出**具體元件＋行為＋問題**，例如「Messenger iOS：掛斷視訊通話後未同步通知對端」。
 
+**Assignee 為必填**：建立 issue 時不得留空。開發類型（Engineering／程式碼相關）一律指派給**目前 Linear MCP 的登入身分**（`save_issue` 帶 `assignee: "me"`）；非開發類需明確指定實際負責人。發現既有開發 issue 缺 assignee 時，依 §13 主動補上。
+
 ### 4. 父 issue 與可執行子 issue 分開
 
 - 父 issue 表示一個交付目標／MVP／大型範圍，**不承載大量細節實作**。
