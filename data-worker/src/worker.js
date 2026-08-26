@@ -1769,7 +1769,8 @@ async function grantTrialSubscription(env, acctDigest) {
       ).bind(trialTokenId, acctDigest, now, TRIAL_DAYS),
       env.DB.prepare(
         `INSERT INTO extend_logs (token_id, digest, extend_days, expires_at_after, used_at, created_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?5)`
+         SELECT ?1, ?2, ?3, ?4, ?5, ?5
+          WHERE NOT EXISTS (SELECT 1 FROM extend_logs WHERE token_id=?1)`
       ).bind(trialTokenId, acctDigest, TRIAL_DAYS, trialExpires, now)
     ]);
     return true;
