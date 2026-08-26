@@ -21,6 +21,7 @@ data-worker bindings（`data-worker/wrangler.toml`）：D1 `message_db`（UAT：
 - **單裝置踢線**：`data-worker/src/account-ws.js:236-245`（DO 比較 `sessionTs`，舊連線 `close(4409,'replaced')`）。
 - **iOS 金鑰**：MK 僅記憶體，`POST /api/v1/mk/fetch`（`worker.js:~7736`）重取 wrapped MK；WS token `POST /api/v1/ws/token`（`:~8000`）→ `/ws` DO 升級。
 - **NSE 推播預覽**：ECDH P-256 + HKDF + AES-256-GCM，預覽私鑰經 App Group Keychain 共享，不觸碰 DR 主鑰（SEN-80）。
+- **30 天試用起算**（SEN-1428，2026-08-26 起）：於**密碼設定完成**（OPAQUE 註冊記錄寫入，`register-finish` 與 `/d1/opaque/store` 兩路徑）時一次性發放，**不在帳號建立（NFC exchange）時**。`grantTrialSubscription()` 冪等：`TRIAL-{digest}` token 或既有 `subscriptions` row 存在即跳過——密碼重設不重發不延長。儲值延展為 `max(expires_at, now) + days`（`docs/topup-system-spec.md`）。
 
 ## 3. API 面概覽（`data-worker/src/worker.js`）
 
