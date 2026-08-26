@@ -1328,30 +1328,9 @@ async function resolveAccount(env, { uidHex, accountToken, accountDigest } = {},
        VALUES (?1, ?2, ?3, ?4, 0, ?5, ?5)`
     ).bind(acctDigest, acctToken, acctTokenHash, acctUidDigest, now).run();
 
-    // Auto-grant 30-day trial subscription for newly created accounts
-    const TRIAL_DAYS = 30;
-    const trialExpires = now + TRIAL_DAYS * 86400;
-    const trialTokenId = `TRIAL-${acctDigest}`;
-    try {
-      await db.batch([
-        db.prepare(
-          `INSERT INTO subscriptions (digest, expires_at, updated_at, created_at)
-           VALUES (?1, ?2, ?3, ?3)
-           ON CONFLICT(digest) DO NOTHING`
-        ).bind(acctDigest, trialExpires, now),
-        db.prepare(
-          `INSERT INTO tokens (token_id, digest, issued_at, extend_days, nonce, key_id, signature_b64, status, used_at, used_by_digest, created_at)
-           VALUES (?1, ?2, ?3, ?4, NULL, 'system', '', 'used', ?3, ?2, ?3)
-           ON CONFLICT(token_id) DO NOTHING`
-        ).bind(trialTokenId, acctDigest, now, TRIAL_DAYS),
-        db.prepare(
-          `INSERT INTO extend_logs (token_id, digest, extend_days, expires_at_after, used_at, created_at)
-           VALUES (?1, ?2, ?3, ?4, ?5, ?5)`
-        ).bind(trialTokenId, acctDigest, TRIAL_DAYS, trialExpires, now)
-      ]);
-    } catch (err) {
-      console.warn('trial_subscription_grant_failed', err?.message || err);
-    }
+    // SEN-1428: the 30-day trial is intentionally NOT granted here at account
+    // creation. It starts only when password setup completes — see
+    // grantTrialSubscription(), called from the OPAQUE registration handlers.
 
     return {
       account_digest: acctDigest,
@@ -1751,6 +1730,56 @@ async function ensureDataTables(env) {
   }
 }
 
+// SEN-1428: one-time 30-day trial subscription. Granted when password setup
+// completes (OPAQUE registration record stored), NOT at account creation, so
+// the clock only starts once the user has finished onboarding credentials.
+// Idempotent: the TRIAL-<digest> token row is the permanent grant marker and an
+// existing subscriptions row also blocks the grant, so repeated calls
+// (password re-registration/reset) never re-grant, extend, or overwrite.
+async function grantTrialSubscription(env, acctDigest) {
+  const TRIAL_DAYS = 30;
+  const trialTokenId = `TRIAL-${acctDigest}`;
+  try {
+    const marker = await env.DB.prepare(
+      `SELECT 1 AS x FROM tokens WHERE token_id=?1`
+    ).bind(trialTokenId).first();
+    if (marker) return false;
+    const subscribed = await env.DB.prepare(
+      `SELECT 1 AS x FROM subscriptions WHERE digest=?1`
+    ).bind(acctDigest).first();
+    if (subscribed) return false;
+    // Guard against orphan grants: the registration handlers do not verify the
+    // account exists, so verify here before writing subscription rows.
+    const account = await env.DB.prepare(
+      `SELECT 1 AS x FROM accounts WHERE account_digest=?1`
+    ).bind(acctDigest).first();
+    if (!account) return false;
+    const now = Math.floor(Date.now() / 1000);
+    const trialExpires = now + TRIAL_DAYS * 86400;
+    await env.DB.batch([
+      env.DB.prepare(
+        `INSERT INTO subscriptions (digest, expires_at, updated_at, created_at)
+         VALUES (?1, ?2, ?3, ?3)
+         ON CONFLICT(digest) DO NOTHING`
+      ).bind(acctDigest, trialExpires, now),
+      env.DB.prepare(
+        `INSERT INTO tokens (token_id, digest, issued_at, extend_days, nonce, key_id, signature_b64, status, used_at, used_by_digest, created_at)
+         VALUES (?1, ?2, ?3, ?4, NULL, 'system', '', 'used', ?3, ?2, ?3)
+         ON CONFLICT(token_id) DO NOTHING`
+      ).bind(trialTokenId, acctDigest, now, TRIAL_DAYS),
+      env.DB.prepare(
+        `INSERT INTO extend_logs (token_id, digest, extend_days, expires_at_after, used_at, created_at)
+         SELECT ?1, ?2, ?3, ?4, ?5, ?5
+          WHERE NOT EXISTS (SELECT 1 FROM extend_logs WHERE token_id=?1)`
+      ).bind(trialTokenId, acctDigest, TRIAL_DAYS, trialExpires, now)
+    ]);
+    return true;
+  } catch (err) {
+    console.warn('trial_subscription_grant_failed', err?.message || err);
+    return false;
+  }
+}
+
 // ---- Tags / SDM / OPAQUE 路由（先搬）----
 async function handleTagsRoutes(req, env) {
   const url = new URL(req.url);
@@ -1951,6 +1980,8 @@ async function handleTagsRoutes(req, env) {
          VALUES (?1, ?2, ?3)
          ON CONFLICT(account_digest) DO UPDATE SET record_b64=excluded.record_b64, client_identity=excluded.client_identity, updated_at=strftime('%s','now')`
     ).bind(acct, record_b64, client_identity).run();
+    // SEN-1428: password setup completed — start the one-time 30-day trial now.
+    await grantTrialSubscription(env, acct);
     return new Response(null, { status: 204 });
   }
 
@@ -7834,6 +7865,8 @@ async function handleAuthRoutes(path, method, url, body, req, env, baseUrl) {
     } catch (e) {
       return json({ error: 'OpaqueStoreFailed', message: e?.message }, { status: 500 });
     }
+    // SEN-1428: password setup completed — start the one-time 30-day trial now.
+    await grantTrialSubscription(env, acct);
     return new Response(null, { status: 204 });
   }
 

@@ -57,8 +57,8 @@ Ephemeral **直接複用底層**，不經過上層：
 ## 設計原則
 
 1. **複用 `shared/crypto/` 全部加密原語**：與正常對話使用完全相同的 X3DH + DR 程式碼
-2. **不修改 DB schema**（AGENTS.md 禁止）
-3. **不修改加密演算法**（AGENTS.md 禁止）
+2. **不修改 DB schema**（安全紅線，見 `docs/claude/judgment-rubrics.md` §3；原出處 AGENTS.md 已廢除）
+3. **不修改加密演算法**（安全紅線，見 `docs/claude/judgment-rubrics.md` §3；原出處 AGENTS.md 已廢除）
 4. **DR state 僅存於記憶體**：Owner 側在 controller Map、Guest 側在模組變數
 5. **嚴格遵守 SECURITY POLICY**：無 fallback、無 retry、失敗即 fail
 
