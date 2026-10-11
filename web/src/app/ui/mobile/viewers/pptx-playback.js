@@ -148,8 +148,8 @@ function parseTimeNode(n, failures,depth=0,inSub=false,path=[]) {
   if(snd)model.mediaRelationshipId=relationshipId(snd,'embed');
   if (target && !sp && !snd) failure(failures, 'unsupported-animation-target', target, target.outerHTML);
   model.attributes = children(child(b, 'attrNameLst')).map(v => v.textContent.trim());
-  model.override=attr(b,'override','normal');
-  for (const key of ['additive','accumulate','override','transformType','rctx']) if (attr(b,key) != null && !(key==='override'&&n.localName==='animClr'&&model.attributes[0]==='style.color'&&['normal','childStyle'].includes(model.override))) failure(failures, 'unsupported-behavior-attribute', b, `${key}=${attr(b,key)}`);
+  model.override=attr(b,'override','normal');model.additive=attr(b,'additive');
+  for (const key of ['additive','accumulate','override','transformType','rctx']) if (attr(b,key) != null && !(key==='additive'&&model.additive==='base') && !(key==='override'&&n.localName==='animClr'&&model.attributes[0]==='style.color'&&['normal','childStyle'].includes(model.override))) failure(failures, 'unsupported-behavior-attribute', b, `${key}=${attr(b,key)}`);
   if (n.localName === 'animEffect') {
     model.transition = attr(n, 'transition', 'in'); model.filter = attr(n, 'filter', '');
     if (!['fade','wipe(left)','wipe(right)','wipe(up)','wipe(down)','box(in)','box(out)','diamond(in)','diamond(out)','circle(in)','circle(out)','blinds(horizontal)','blinds(vertical)','slide(fromLeft)','slide(fromRight)','slide(fromTop)','slide(fromBottom)'].includes(model.filter)) failure(failures, 'unsupported-animation-filter', n, model.filter);
@@ -183,6 +183,12 @@ function parseTimeNode(n, failures,depth=0,inSub=false,path=[]) {
     if (!['lin','discrete'].includes(model.calcMode)) failure(failures,'unsupported-interpolation',n,model.calcMode);
     if (model.attributes.some(v => !['style.opacity','ppt_x','ppt_y','ppt_w','ppt_h'].includes(v))) failure(failures,'unsupported-animate-property',n,model.attributes);
     for(const value of [...model.values.map(v=>v.value),model.from,model.to].filter(v=>v!=null))try{animationExpression(value,{ppt_x:1,ppt_y:1,ppt_w:1,ppt_h:1},true);}catch(e){failure(failures,'unsupported-animation-value',n,e.message);}
+    if(model.additive==='base'){
+      const prop=model.attributes[0],axis=prop==='ppt_x'?'x':prop==='ppt_y'?'y':null,extent=axis==='x'?'w':'h';
+      const canonicalStarts=axis?[`#ppt_${axis}`,`0-#ppt_${extent}/2`,`1+#ppt_${extent}/2`]:[];
+      model.baseCanonical=model.attributes.length===1&&axis&&model.calcMode==='lin'&&model.by==null&&model.from==null&&model.to==null&&model.values.length===2&&model.values[0].offset===0&&model.values[1].offset===1&&model.values.every(v=>!v.formula)&&canonicalStarts.includes(model.values[0].value)&&model.values[1].value===`#ppt_${axis}`;
+      if(!model.baseCanonical)failure(failures,'unsupported-base-additive-behavior',n,'Only original-coordinate two-keypoint fly-in/identity position behaviors are implemented.');
+    }
   } else if (n.localName === 'animMotion') {
     model.path = attr(n,'path',''); model.origin = attr(n,'origin','layout'); model.pathEditMode = attr(n,'pathEditMode','relative');
     if (model.path.trim()&&!motionPath(model.path)) failure(failures,'unsupported-motion-path',n,model.path);
@@ -228,6 +234,7 @@ function parseTimeNode(n, failures,depth=0,inSub=false,path=[]) {
     if(!['none','seek'].includes(model.nextAction)||!['none','skipTimed'].includes(model.previousAction))failure(failures,'unsupported-sequence-action',n,`${model.nextAction}/${model.previousAction}`);
     for(const condition of model.next.concat(model.previous))if(condition.timeNode||!['onNext','onPrev','onClick','onMediaBookmark'].includes(condition.event))failure(failures,'unsupported-sequence-navigation-condition',n,condition);
   }
+  if(model.additive==='base'&&n.localName!=='anim')failure(failures,'unsupported-base-additive-behavior',n,n.localName);
   return model;
 }
 function normalizeRelationship(rels,id) {
@@ -395,6 +402,7 @@ export function createPptxPlayback({ model,root,shapes=new Map(),resolveMedia,au
   const timeNodeStates=new Map(),mediaSettings=new Map(),originalBounds=new Map(),frozenByNode=new Map(),sequenceControllers=new Set();
   const collectMedia=n=>{if(n.media)mediaSettings.set(n.mediaRelationshipId?'r:'+n.mediaRelationshipId:String(n.shapeId),n);for(const c of n.children.concat(n.subChildren||[]))collectMedia(c);};model.timeline.forEach(collectMedia);
   const mediaOwners=new Map();
+  const baseAnimationOwners=new Map();
   const animations=new Set(),timers=new Set(),listeners=[],mediaElements=new Map(),mediaEnvelopes=new Map(),restore=new Map(),pending=new Set();
   const originalPaint=new Map(),paintAborters=new Set(),paintOwners=new Map();let paintRestoration=Promise.resolve();
   const failures=[...model.failures,...(shapePaint?.failures||[])];
@@ -429,6 +437,17 @@ export function createPptxPlayback({ model,root,shapes=new Map(),resolveMedia,au
   }
   async function animate(el,frames,node,token=epoch,scope=null) {
     if(disposed||token!==epoch||scope?.cancelled)return;
+    const coordinateProperty=node.kind==='anim'&&['ppt_x','ppt_y'].includes(node.attributes?.[0])?node.attributes[0]:null;
+    const usesTransform=frames?.some(frame=>frame.transform);
+    if(node.additive&&(node.additive!=='base'||!node.baseCanonical)){report('runtime-unsupported-additive-behavior',{id:node.id,additive:node.additive});return;}
+    if(usesTransform){
+      for(const [property,owners]of baseAnimationOwners.get(el)||[])for(const owner of owners){
+        if(!animations.has(owner.animation)){owners.delete(owner);continue;}
+        if(!(node.additive==='base'||owner.explicitBase))continue;
+        if(coordinateProperty&&property===coordinateProperty){report('unverified-base-additive-composition',{id:node.id,property,reason:'A previous active or held behavior owns the same original-coordinate property.'});return;}
+        if(!coordinateProperty||!owner.coordinateProperty){report('unverified-base-transform-composition',{id:node.id,property,reason:'Base position combined with rotation, scale or another transform requires a reference matrix order.'});return;}
+      }
+    }
     save(el);
     if (!frames) {report('runtime-unsupported-effect',node.filter || node.kind);return;}
     if (!Number.isFinite(node.duration) || node.duration<0) {report('runtime-invalid-effect-duration',node.id);return;}
@@ -436,8 +455,16 @@ export function createPptxPlayback({ model,root,shapes=new Map(),resolveMedia,au
     const iterations=Math.min((node.repeatCount??1)*cycleIterations,node.duration>0?(node.repeatDuration??Infinity)/node.duration:Infinity);
     const direction=node.autoReverse?(speed<0?'alternate-reverse':'alternate'):(speed<0?'reverse':'normal');
     const anim=el.animate(frames,{duration:node.duration/Math.abs(speed),iterations,direction,fill:node.fill==='hold'||node.fill==='freeze'?'forwards':'none',easing:timingEasing(node),composite:frames.some(v=>v.transform)?'add':'replace'});
+    // Finished additive translations must retain ownership: browsers can
+    // automatically remove an older finished animation when a newer transform
+    // exists, even though its other coordinate is still part of the held state.
+    if(coordinateProperty&&typeof anim.persist==='function')anim.persist();
+    else if(node.additive==='base'){anim.cancel();report('unsupported-native-persistent-base-animation',node.id);return;}
+    let ownerSet,owner;
+    if(usesTransform){const property=coordinateProperty||`transform:${node.kind}:${node.id}`;if(!baseAnimationOwners.has(el))baseAnimationOwners.set(el,new Map());const properties=baseAnimationOwners.get(el);if(!properties.has(property))properties.set(property,new Set());ownerSet=properties.get(property);owner={animation:anim,explicitBase:node.additive==='base',coordinateProperty};ownerSet.add(owner);}
+    const releaseOwner=()=>ownerSet?.delete(owner);
     anim.pptxCycleIterations=cycleIterations;animations.add(anim);scope?.animations.add(anim);if(scope?.seeking)seekAnimation(anim);
-    try{await anim.finished;}catch{}finally{if(token===epoch&&!scope?.cancelled&&node.fill==='freeze')freeze(node,()=>{anim.cancel();animations.delete(anim);});if(node.fill!=='hold'&&node.fill!=='freeze'){anim.cancel();animations.delete(anim);}}
+    try{await anim.finished;}catch{}finally{if(token===epoch&&!scope?.cancelled&&node.fill==='freeze')freeze(node,()=>{anim.cancel();animations.delete(anim);releaseOwner();});if(node.fill!=='hold'&&node.fill!=='freeze'){anim.cancel();animations.delete(anim);releaseOwner();}}
   }
   function framesFor(node,targets) {
     if(node.kind==='animEffect') {
@@ -540,6 +567,7 @@ export function createPptxPlayback({ model,root,shapes=new Map(),resolveMedia,au
     const active=()=>!disposed&&token===epoch&&!scope?.cancelled;
     if(!active())return;
     if(node.iteration&&containsSubTime(node)){report('unsupported-iteration-sub-time-combination',node.id);return;}
+    if(node.additive&&(node.additive!=='base'||!node.baseCanonical)){report('runtime-unsupported-additive-behavior',{id:node.id,additive:node.additive});return;}
     scope?.nodes.add(node);
     if(node.start.length&&!forceStart&&!scope?.seeking) {
       await new Promise(resolve=>{
@@ -786,7 +814,7 @@ export function createPptxPlayback({ model,root,shapes=new Map(),resolveMedia,au
     }
   }
   function cancel() {
-    epoch++;preparedEpoch=null;preparedReady=null;startedEpoch=null;for(const owners of mediaOwners.values())for(const owner of owners)owner.active=false;mediaOwners.clear();for(const aborter of paintAborters)aborter.abort();paintAborters.clear();paintOwners.clear();timeNodeStates.clear();for(const node of frozenByNode.keys())thaw(node);paintRestoration=Promise.all([...originalPaint].map(([id,snapshot])=>restorePaint(id,snapshot)));
+    epoch++;baseAnimationOwners.clear();preparedEpoch=null;preparedReady=null;startedEpoch=null;for(const owners of mediaOwners.values())for(const owner of owners)owner.active=false;mediaOwners.clear();for(const aborter of paintAborters)aborter.abort();paintAborters.clear();paintOwners.clear();timeNodeStates.clear();for(const node of frozenByNode.keys())thaw(node);paintRestoration=Promise.all([...originalPaint].map(([id,snapshot])=>restorePaint(id,snapshot)));
     for(const id of timers)clearTimeout(id);timers.clear();
     for(const fn of pending)fn();pending.clear();
     for(const animation of animations)animation.cancel();animations.clear();

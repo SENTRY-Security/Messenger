@@ -1,0 +1,1182 @@
+{
+  "scope": "Observed Microsoft Office Web bitmap bounds only. Source identity checked; no local render comparison or exact transition timing pass. Capture intervals include screenshot latency.",
+  "sourceSha256": "9baa7f4554cbaddfcebcc431432268ea34f20c02787172bb0a7d12d640e7e84f",
+  "samples": [
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "004-step1-before.png",
+      "label": "step1-before",
+      "imageSha256": "2c72720154c101ae8d25b3259c29d05b71ff13e31149c86ce26584e889529dc3",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        -154.76994000000013,
+        -33.624642999999196
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": []
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "005-step1-t0.png",
+      "label": "step1-t0",
+      "imageSha256": "80830c804afe1bc361d543d956ceb90a5d8a08af2dfeb3696cabf48b10b9149d",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        36.39464299999963,
+        477.3686550000002
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 211,
+          "width": 222,
+          "height": 68,
+          "area": 10437
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "006-step1-t50.png",
+      "label": "step1-t50",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        494.4900319999997,
+        613.1915960000006
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "007-step1-t100.png",
+      "label": "step1-t100",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        636.6630600000008,
+        837.5964870000007
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "008-step1-t200.png",
+      "label": "step1-t200",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        856.6396010000008,
+        1040.644056000001
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "009-step1-t400.png",
+      "label": "step1-t400",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1062.416634000001,
+        1158.1587220000001
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "010-step1-t700.png",
+      "label": "step1-t700",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1172.69009,
+        1315.1292080000003
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "011-step1-t1000.png",
+      "label": "step1-t1000",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1343.5848800000003,
+        1560.8881469999997
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "012-step1-t1500.png",
+      "label": "step1-t1500",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1574.7145070000006,
+        1673.2867960000003
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 1,
+      "sample": "013-step1-t2000.png",
+      "label": "step1-t2000",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1999.6281870000003,
+        2176.5829510000003
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "014-step2-before.png",
+      "label": "step2-before",
+      "imageSha256": "16c9e449cefc8c0595084b8b9c437335e36f2f8680dad284ec09e0b420e523eb",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        -132.8088429999989,
+        -12.015019999998913
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "015-step2-t0.png",
+      "label": "step2-t0",
+      "imageSha256": "7efc0b978b184b969337122c7866cb533a87af631986d95e8286664a8cf690c1",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        17.610465000001568,
+        473.35405700000047
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 302,
+          "width": 222,
+          "height": 63,
+          "area": 10075
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "016-step2-t50.png",
+      "label": "step2-t50",
+      "imageSha256": "86ae54f0c3feb97a767902b53ea5b35ba8298ddc7d71e96ca3b332b3d03fee18",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        491.39912600000025,
+        603.6802779999998
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 265,
+          "width": 222,
+          "height": 81,
+          "area": 13353
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "017-step2-t100.png",
+      "label": "step2-t100",
+      "imageSha256": "86ae54f0c3feb97a767902b53ea5b35ba8298ddc7d71e96ca3b332b3d03fee18",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        616.2770149999997,
+        801.765416000002
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 265,
+          "width": 222,
+          "height": 81,
+          "area": 13353
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "018-step2-t200.png",
+      "label": "step2-t200",
+      "imageSha256": "86ae54f0c3feb97a767902b53ea5b35ba8298ddc7d71e96ca3b332b3d03fee18",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        834.0933590000022,
+        1010.8621180000009
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 265,
+          "width": 222,
+          "height": 81,
+          "area": 13353
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "019-step2-t400.png",
+      "label": "step2-t400",
+      "imageSha256": "86ae54f0c3feb97a767902b53ea5b35ba8298ddc7d71e96ca3b332b3d03fee18",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1022.018594000001,
+        1120.434416
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 265,
+          "width": 222,
+          "height": 81,
+          "area": 13353
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "020-step2-t700.png",
+      "label": "step2-t700",
+      "imageSha256": "86ae54f0c3feb97a767902b53ea5b35ba8298ddc7d71e96ca3b332b3d03fee18",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1135.7793249999995,
+        1260.5495819999996
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 265,
+          "width": 222,
+          "height": 81,
+          "area": 13353
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "021-step2-t1000.png",
+      "label": "step2-t1000",
+      "imageSha256": "86ae54f0c3feb97a767902b53ea5b35ba8298ddc7d71e96ca3b332b3d03fee18",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1286.4874080000009,
+        1483.3495680000015
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 265,
+          "width": 222,
+          "height": 81,
+          "area": 13353
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "022-step2-t1500.png",
+      "label": "step2-t1500",
+      "imageSha256": "86ae54f0c3feb97a767902b53ea5b35ba8298ddc7d71e96ca3b332b3d03fee18",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1501.431112000002,
+        1656.4625510000005
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 265,
+          "width": 222,
+          "height": 81,
+          "area": 13353
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "sample": "023-step2-t2000.png",
+      "label": "step2-t2000",
+      "imageSha256": "86ae54f0c3feb97a767902b53ea5b35ba8298ddc7d71e96ca3b332b3d03fee18",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        2000.497786,
+        2189.293608
+      ],
+      "bboxMethod": "blue-fill 4-connected components >500 pixels in right-side content ROI; clipped at x425",
+      "pixelBboxes": [
+        {
+          "x": 425,
+          "y": 265,
+          "width": 222,
+          "height": 81,
+          "area": 13353
+        },
+        {
+          "x": 425,
+          "y": 156,
+          "width": 222,
+          "height": 69,
+          "area": 10813
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "004-step1-before.png",
+      "label": "step1-before",
+      "imageSha256": "c42951d83f79d13eadb6de3a5dc52981e53daa6fb30160abdda8602cd93771ea",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        -207.02403699999923,
+        -17.664655999997194
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 293,
+          "width": 73,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "005-step1-t0.png",
+      "label": "step1-t0",
+      "imageSha256": "68609ec326106613989ad394977a9352b615c6304cfa484e0334d8709d5f7974",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        14.103368000000046,
+        233.71536900000137
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 423,
+          "width": 367,
+          "height": 27
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "006-step1-t50.png",
+      "label": "step1-t50",
+      "imageSha256": "880d89977b164713e99b6ccbd451f5e46fa4a3b7b99b7d7eae0f0f8cc66b28ab",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        258.22583900000245,
+        450.9197920000006
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 264,
+          "width": 367,
+          "height": 27
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "007-step1-t100.png",
+      "label": "step1-t100",
+      "imageSha256": "8dfeea82c18a8fa3551e9b339ad9f78fb0c0baa0e219649422a51ebbbe38bf45",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        478.2598610000023,
+        631.1281040000031
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "008-step1-t200.png",
+      "label": "step1-t200",
+      "imageSha256": "8dfeea82c18a8fa3551e9b339ad9f78fb0c0baa0e219649422a51ebbbe38bf45",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        642.0731220000016,
+        781.9324560000023
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "009-step1-t400.png",
+      "label": "step1-t400",
+      "imageSha256": "8dfeea82c18a8fa3551e9b339ad9f78fb0c0baa0e219649422a51ebbbe38bf45",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        797.840285000002,
+        930.6470640000007
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "010-step1-t700.png",
+      "label": "step1-t700",
+      "imageSha256": "8dfeea82c18a8fa3551e9b339ad9f78fb0c0baa0e219649422a51ebbbe38bf45",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        941.8894700000019,
+        1047.135938000003
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "011-step1-t1000.png",
+      "label": "step1-t1000",
+      "imageSha256": "8dfeea82c18a8fa3551e9b339ad9f78fb0c0baa0e219649422a51ebbbe38bf45",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1059.2038680000005,
+        1197.434102000003
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "012-step1-t1500.png",
+      "label": "step1-t1500",
+      "imageSha256": "8dfeea82c18a8fa3551e9b339ad9f78fb0c0baa0e219649422a51ebbbe38bf45",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1499.2776620000004,
+        1630.6630440000008
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 1,
+      "sample": "013-step1-t2000.png",
+      "label": "step1-t2000",
+      "imageSha256": "8dfeea82c18a8fa3551e9b339ad9f78fb0c0baa0e219649422a51ebbbe38bf45",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        2000.431926000001,
+        2131.0530750000034
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "014-step2-before.png",
+      "label": "step2-before",
+      "imageSha256": "8dfeea82c18a8fa3551e9b339ad9f78fb0c0baa0e219649422a51ebbbe38bf45",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        -147.05617399999755,
+        -11.850641000000905
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "015-step2-t0.png",
+      "label": "step2-t0",
+      "imageSha256": "85aa5776a1c8dd7341af366b5072b5b815dd7b46786ee0e5bc8f87b1f4f4093c",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        6.110815000000002,
+        216.82262099999934
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 444,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "016-step2-t50.png",
+      "label": "step2-t50",
+      "imageSha256": "ef6f7b95301646224c307eddcbae25e3a719c291b7a3b5446cad2938ecc3805a",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        234.24085399999967,
+        421.301997999999
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 318,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "017-step2-t100.png",
+      "label": "step2-t100",
+      "imageSha256": "7b811bb9463b94df4779ef0d844a9dbb05b6720fb103edb61c8779252dca1b1e",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        440.06445200000235,
+        605.2107560000004
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 247,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "018-step2-t200.png",
+      "label": "step2-t200",
+      "imageSha256": "7b811bb9463b94df4779ef0d844a9dbb05b6720fb103edb61c8779252dca1b1e",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        614.8477310000017,
+        738.691433
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 247,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "019-step2-t400.png",
+      "label": "step2-t400",
+      "imageSha256": "7b811bb9463b94df4779ef0d844a9dbb05b6720fb103edb61c8779252dca1b1e",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        751.5227530000011,
+        870.7359519999991
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 247,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "020-step2-t700.png",
+      "label": "step2-t700",
+      "imageSha256": "7b811bb9463b94df4779ef0d844a9dbb05b6720fb103edb61c8779252dca1b1e",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        883.874233999999,
+        1004.3478219999997
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 247,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "021-step2-t1000.png",
+      "label": "step2-t1000",
+      "imageSha256": "7b811bb9463b94df4779ef0d844a9dbb05b6720fb103edb61c8779252dca1b1e",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1013.589340999999,
+        1138.3423800000019
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 247,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "022-step2-t1500.png",
+      "label": "step2-t1500",
+      "imageSha256": "7b811bb9463b94df4779ef0d844a9dbb05b6720fb103edb61c8779252dca1b1e",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1500.2697279999993,
+        1621.8699350000024
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 247,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "sample": "023-step2-t2000.png",
+      "label": "step2-t2000",
+      "imageSha256": "7b811bb9463b94df4779ef0d844a9dbb05b6720fb103edb61c8779252dca1b1e",
+      "matchesProvenanceSha256": true,
+      "captureIntervalSinceInputStartMs": [
+        1999.7187369999992,
+        2121.263912000002
+      ],
+      "bboxMethod": "black-ink horizontal row groups in content ROI",
+      "pixelBboxes": [
+        {
+          "x": 323,
+          "y": 158,
+          "width": 73,
+          "height": 20
+        },
+        {
+          "x": 176,
+          "y": 194,
+          "width": 367,
+          "height": 28
+        },
+        {
+          "x": 322,
+          "y": 247,
+          "width": 77,
+          "height": 20
+        }
+      ]
+    }
+  ],
+  "classification": {
+    "engine": "Microsoft Office Online public PowerPoint viewer",
+    "input": "apache__poi__customGeo.pptx",
+    "inputSource": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/slideshow/customGeo.pptx",
+    "originalCommit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+    "verifiedFullConformance": false,
+    "nativeCandidateCompared": false,
+    "claimedExactTimingPass": false,
+    "note": "Observed canonical base-position fly-in. Explicit base-vs-default behavior and general composition are not distinguished by these samples."
+  },
+  "actionMapping": [
+    {
+      "slide": 6,
+      "identity": "ELA Standards Framework; Strands/Topics/Standard Statements blue boxes",
+      "step": 1,
+      "shapeId": "23",
+      "paragraphRange": null,
+      "timeNodes": [
+        "6",
+        "7",
+        "8"
+      ],
+      "text": "The major areas or disciplines of study within each content area."
+    },
+    {
+      "slide": 6,
+      "step": 2,
+      "shapeId": "20",
+      "paragraphRange": null,
+      "timeNodes": [
+        "12",
+        "13",
+        "14"
+      ],
+      "text": "The main focus of the content within each strand."
+    },
+    {
+      "slide": 18,
+      "identity": "ELA Standards Coding Quiz",
+      "automaticBeforeFirstAction": {
+        "shapeId": "3",
+        "paragraphIndex": 0,
+        "text": "W.4.3",
+        "timeNodes": [
+          "6",
+          "7",
+          "8"
+        ],
+        "durationMs": 500,
+        "start": "onBegin time node2"
+      },
+      "step": 1,
+      "shapeId": "3",
+      "paragraphRange": {
+        "start": 1,
+        "end": 1
+      },
+      "timeNodes": [
+        "12",
+        "13",
+        "14"
+      ],
+      "text": "Writing, Grade 4, Standard 3",
+      "priorParagraphJumpInterpretation": "Main sequence nextAc=seek can finish the still-running automatic paragraph0 before paragraph1 starts. No paragraph reflow is established."
+    },
+    {
+      "slide": 18,
+      "step": 2,
+      "shapeId": "3",
+      "paragraphRange": {
+        "start": 2,
+        "end": 2
+      },
+      "timeNodes": [
+        "18",
+        "19",
+        "20"
+      ],
+      "text": "RF.2.4"
+    }
+  ],
+  "captureProvenance": [
+    {
+      "slide": 6,
+      "provenanceFileName": "office-customgeo-navigation-6-0534/apache__poi__customGeo/provenance.json",
+      "provenanceSha256": "9f858b409c391f5a399bf2b2df73a419f1202ff93b229fb2196cb9930a6c2316"
+    },
+    {
+      "slide": 18,
+      "provenanceFileName": "office-customgeo-navigation-18-0534/apache__poi__customGeo/provenance.json",
+      "provenanceSha256": "15806dea97f40acdc40988596ce250a1162222513708108259c4a0bfa431c625"
+    }
+  ]
+}

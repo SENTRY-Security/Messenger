@@ -65,9 +65,9 @@ function blurred(image,radius){if(!radius)return copy(image);const c=surface(ima
 // once, including its own existing group and shape transforms. No DOM cloning.
 export async function renderDrawingEffects(ctx,input,bounds,paint,options={}){
  const effects=Array.isArray(input)?input:parseDrawingEffects(input,options);
- if(!effects.length){await paint(ctx);return {supported:true,effects:[],conformanceStatus:'unverified'};}
+ if(!effects.length){await paint(ctx,{deviceOrigin:{x:0,y:0},callerTransform:ctx.getTransform()});return {supported:true,effects:[],conformanceStatus:'unverified'};}
  const callerTransform=ctx.getTransform(),inverseCaller=callerTransform.inverse(),deviceBounds=mappedBounds(bounds,callerTransform),extent=mappedBounds(drawingEffectsExtent(effects,bounds,options),callerTransform),left=Math.floor(extent.x),top=Math.floor(extent.y),width=Math.ceil(extent.x+extent.width)-left,height=Math.ceil(extent.y+extent.height)-top,dpi=options.dpi||96,base=surface(width,height),baseCtx=base.getContext('2d');
- baseCtx.setTransform(new DOMMatrix().translate(-left,-top).multiply(callerTransform));await paint(baseCtx);
+ baseCtx.setTransform(new DOMMatrix().translate(-left,-top).multiply(callerTransform));await paint(baseCtx,{deviceOrigin:{x:left,y:top},callerTransform});
  // The callback paints in caller coordinates; subsequent raster compositing
  // operates in surface coordinates. Retaining this capture transform would
  // translate each inner-shadow/overlay draw a second time.

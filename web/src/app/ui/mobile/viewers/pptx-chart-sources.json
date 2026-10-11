@@ -348,5 +348,21 @@
       "Full chartStyle fillRef/lnRef/effectRef role cascade",
       "Exact Microsoft Box layout/pixels"
     ]
+  },
+  "boxCategoryGap": {
+    "primaryReference": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/a630f348-bc49-4045-b2aa-d6b1fb6f22b6",
+    "primarySection": "MS-ODRAWXML 2.24.3.8 CT_CategoryAxisScaling",
+    "primaryFact": "gapWidth expresses a ratio of gap width to category width.",
+    "nativeSource": "Original pinned dotnet Open-XML-SDK Of16-02 catScaling gapWidth=1; three series per category",
+    "renderingRule": "Divide a category slot into centered occupied-category width and authored inter-category gap; divide occupied width among sibling-series boxes without repeating the category gap for each series.",
+    "evidence": "Native Microsoft SDK02 gold first category blue interior x183..203 and orange x209..230 versus candidate113 x147..170 and x198..221. Gold observed sibling-center spacing approximately26, old candidate approximately51.",
+    "controls": "Original gapWidth1 and controlled authored gapWidth2 preserve category center, source data, series identities, and whole-category gap ratios.",
+    "unverified": "Automatic plot rectangle, stroke footprint, and exact Microsoft full pixels remain unverified."
+  },
+  "externalAxisVisualDefaults": {
+    "primaryReference": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/4019845e-6b38-47b0-88b9-c6d739e7292f",
+    "nativeSource": "Original SDK02 style1.categoryAxis.spPr contains ln w9525 and tx1 lumMod15000/lumOff85000",
+    "scope": "Direct categoryAxis/valueAxis spPr visual defaults merge below explicit authored axis properties; actual category baseline uses physical width/dash/color and noFill. Theme lnRef cascade and automatic plot geometry remain unverified.",
+    "traits": "Controlled original native axis-role RGB/physical-width mutation reaches actual stroke; authored axis noFill suppresses inherited stroke and retains actual boxes."
   }
 }

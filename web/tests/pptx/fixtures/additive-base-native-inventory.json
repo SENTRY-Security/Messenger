@@ -1,0 +1,2909 @@
+{
+  "sha256": "9baa7f4554cbaddfcebcc431432268ea34f20c02787172bb0a7d12d640e7e84f",
+  "primaryClauses": [
+    {
+      "source": "ISO29500-1:2012 mirror",
+      "section": "19.5.79,19.5.80",
+      "lines": "131652+,131865+",
+      "claim": "Canonical additive=base fly-in uses original center endpoint #ppt_y, from 1+#ppt_h/2"
+    },
+    {
+      "source": "MS-OI29500 v20260818",
+      "section": "2.1.1152(d)",
+      "line": 32773,
+      "claim": "default additive base"
+    },
+    {
+      "source": "MS-OI29500 v20260818",
+      "section": "2.1.1190(a)",
+      "line": 33695,
+      "claim": "PowerPoint does not support base/mult/none; no explicit-value fallback semantics specified"
+    }
+  ],
+  "nativeNodes": [
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "7",
+      "kind": "anim",
+      "cTn": {
+        "id": "7",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "0",
+        "end": "0"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"7\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"0\" end=\"0\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "5fb0e07bbe2b6f20e14dc86bd500a99ea6b1296c8cafab3d2883f015d4804e1b",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "8",
+      "kind": "anim",
+      "cTn": {
+        "id": "8",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "0",
+        "end": "0"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"8\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"0\" end=\"0\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "74346e1682465f08bf883ce9a4cbb0fe8551c8dda68ee8c397fdda4e8bef805b",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "13",
+      "kind": "anim",
+      "cTn": {
+        "id": "13",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "1",
+        "end": "1"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"13\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"1\" end=\"1\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "0f8f052e2cda2771c606f38a22ebdf8309d0e9a99326f93db4068628d66d9ac8",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "14",
+      "kind": "anim",
+      "cTn": {
+        "id": "14",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "1",
+        "end": "1"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"14\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"1\" end=\"1\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "72bd22bd0745b18562741619af9fd15f49631290e57c88a88e33837b44a83a5d",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "19",
+      "kind": "anim",
+      "cTn": {
+        "id": "19",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "2",
+        "end": "2"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"19\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"2\" end=\"2\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "e29680f0c952117eed910710ecf6688fe85ab64b60efea961d53cd32d0a9bd5b",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "20",
+      "kind": "anim",
+      "cTn": {
+        "id": "20",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "2",
+        "end": "2"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"20\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"2\" end=\"2\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "bde81411b37854be6a56144c1beb1d07bfe850eec2ec48986d90bf91dced8616",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "25",
+      "kind": "anim",
+      "cTn": {
+        "id": "25",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "3",
+        "end": "3"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"25\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"3\" end=\"3\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "a86e60fbd4acea53148b1474a79e1697f35fbcca0ca8221ed20e3eed7445f872",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "26",
+      "kind": "anim",
+      "cTn": {
+        "id": "26",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "3",
+        "end": "3"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"26\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"3\" end=\"3\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "d359eed7d209ecb50ed9a9af8745ad118280681d8dc0eca033a12327cf9d4791",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "31",
+      "kind": "anim",
+      "cTn": {
+        "id": "31",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "4",
+        "end": "4"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"31\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"4\" end=\"4\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "3a8499ee29b73a4016ea2bef91c012c429082b5a98c3ae447ce08bafd4a686b4",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "32",
+      "kind": "anim",
+      "cTn": {
+        "id": "32",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "4",
+        "end": "4"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"32\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"4\" end=\"4\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "9f77fc64b0184e9d57deb6b0d09c000f231c06992d5ceb367cc8f940ab70c470",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "37",
+      "kind": "anim",
+      "cTn": {
+        "id": "37",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "5",
+        "end": "5"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"37\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"5\" end=\"5\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "3ec8aa1b605a0ef4b4b62af04700d1e416dd8980ac14beb2e6467a1f96b72515",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide18.xml",
+      "nodeId": "38",
+      "kind": "anim",
+      "cTn": {
+        "id": "38",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "3",
+      "range": {
+        "st": "5",
+        "end": "5"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"38\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"3\"><p:txEl><p:pRg st=\"5\" end=\"5\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "6e2d999e76b2d51e2736720d511b1e85aaf6b3d070005f5d8410fd2d8e8c1f36",
+      "sourcePartSha256": "ebc29c2509cdfb2e7a2df5c4c2279819811be65677540be90dbf7b7e6b51cbde",
+      "sourcePartCrc32": "d6f9f47b",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide6.xml",
+      "nodeId": "7",
+      "kind": "anim",
+      "cTn": {
+        "id": "7",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "23",
+      "range": null,
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"7\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"23\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "4319befb740bb417aef9f99330fe76489fbb5756e8a6b2d3f67e6145467c271a",
+      "sourcePartSha256": "9ad83bdb84a535cb0abbad071ca4776fe9f773badfda218612d73b12592738cf",
+      "sourcePartCrc32": "280d5492",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide6.xml",
+      "nodeId": "8",
+      "kind": "anim",
+      "cTn": {
+        "id": "8",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "23",
+      "range": null,
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"8\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"23\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "c07d9b37695b2c3083c40437ae76385614479dccb43f77aa8c0a5a8e03ea42df",
+      "sourcePartSha256": "9ad83bdb84a535cb0abbad071ca4776fe9f773badfda218612d73b12592738cf",
+      "sourcePartCrc32": "280d5492",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide6.xml",
+      "nodeId": "13",
+      "kind": "anim",
+      "cTn": {
+        "id": "13",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "20",
+      "range": null,
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"13\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"20\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "9c733e807dd968f12a2f35892aed433d3ef2f847cbf3f4d2e215626e6eecffd7",
+      "sourcePartSha256": "9ad83bdb84a535cb0abbad071ca4776fe9f773badfda218612d73b12592738cf",
+      "sourcePartCrc32": "280d5492",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide6.xml",
+      "nodeId": "14",
+      "kind": "anim",
+      "cTn": {
+        "id": "14",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "20",
+      "range": null,
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"14\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"20\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "3b35af3a31913f74373dd243d2d38a0625c7d4d83415845117a0a834d5617c26",
+      "sourcePartSha256": "9ad83bdb84a535cb0abbad071ca4776fe9f773badfda218612d73b12592738cf",
+      "sourcePartCrc32": "280d5492",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide6.xml",
+      "nodeId": "19",
+      "kind": "anim",
+      "cTn": {
+        "id": "19",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "19",
+      "range": null,
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"19\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"19\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "373816f4c7a2d6414197a391a9b3970c5e899eef749f8a6d84d886bff7a07060",
+      "sourcePartSha256": "9ad83bdb84a535cb0abbad071ca4776fe9f773badfda218612d73b12592738cf",
+      "sourcePartCrc32": "280d5492",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide6.xml",
+      "nodeId": "20",
+      "kind": "anim",
+      "cTn": {
+        "id": "20",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "19",
+      "range": null,
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"20\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"19\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "3054eb305b40602669fb6bba80b6725a37b38eddca033a8f0047fadb3f7a0320",
+      "sourcePartSha256": "9ad83bdb84a535cb0abbad071ca4776fe9f773badfda218612d73b12592738cf",
+      "sourcePartCrc32": "280d5492",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "7",
+      "kind": "anim",
+      "cTn": {
+        "id": "7",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "0",
+        "end": "0"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"7\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"0\" end=\"0\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "c0bc97aff28a62454118f3d75ee41690b9aa1c9e14e27ea8fdc0dd9940ddd870",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "8",
+      "kind": "anim",
+      "cTn": {
+        "id": "8",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "0",
+        "end": "0"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"8\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"0\" end=\"0\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "3fc50714e471edf94690837469efc55a068132b55fb208efa8fc02eb842e0d51",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "13",
+      "kind": "anim",
+      "cTn": {
+        "id": "13",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "1",
+        "end": "1"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"13\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"1\" end=\"1\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "9f522bef102132fdb606e0232242a5749ef17361d74e529f638ed69542a68650",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "14",
+      "kind": "anim",
+      "cTn": {
+        "id": "14",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "1",
+        "end": "1"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"14\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"1\" end=\"1\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "1215b3faafb6b2c62e62100120b51cc131ce79034df53dc4b43d73726a19fee7",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "19",
+      "kind": "anim",
+      "cTn": {
+        "id": "19",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "2",
+        "end": "2"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"19\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"2\" end=\"2\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "a97f6f7a37936cb2cc3b158eec5455d2019646db344ad3692bf1e4b12cdc8908",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "20",
+      "kind": "anim",
+      "cTn": {
+        "id": "20",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "2",
+        "end": "2"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"20\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"2\" end=\"2\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "4e82f284444bacc593171c53d0671e8bf4f667838839f9ed543bbe8f23ef7c55",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "25",
+      "kind": "anim",
+      "cTn": {
+        "id": "25",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "3",
+        "end": "3"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"25\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"3\" end=\"3\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "09e202d12b7923514da3e7f9dda1e924194f6029ff90bf5f75586df01e71f7ce",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "26",
+      "kind": "anim",
+      "cTn": {
+        "id": "26",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "3",
+        "end": "3"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"26\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"3\" end=\"3\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "f18908ffc00c38421c50fff5fd2c4f316f59188e8f1391f02b32c1d5bf822ffe",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "31",
+      "kind": "anim",
+      "cTn": {
+        "id": "31",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "4",
+        "end": "4"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"31\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"4\" end=\"4\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "276b06dc75001a6b7aa3e4cf5b7f5ea82e758dea08c5b79e1e6dc3e66292d606",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "32",
+      "kind": "anim",
+      "cTn": {
+        "id": "32",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "4",
+        "end": "4"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"32\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"4\" end=\"4\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "139db3deb5626eb0a7bc7b26a9f43ad0b9b3247ca6437c26b6a8cf2b7f7630ce",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "37",
+      "kind": "anim",
+      "cTn": {
+        "id": "37",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "6",
+        "end": "6"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"37\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"6\" end=\"6\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "85fdd5007a17149064df6e4620a440aad6d270b819af9ad386e93ddb3094e468",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "38",
+      "kind": "anim",
+      "cTn": {
+        "id": "38",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "6",
+        "end": "6"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"38\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"6\" end=\"6\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "6e7802db4792eb9c55242d7dfe051b43d67227e3ab59c7cd6d75af5ed878dc6b",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "43",
+      "kind": "anim",
+      "cTn": {
+        "id": "43",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "7",
+        "end": "7"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"43\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"7\" end=\"7\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "557506da4d85b7b800abb68b3b9ee79b4134b36aa9af690a948961cae42418ed",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "44",
+      "kind": "anim",
+      "cTn": {
+        "id": "44",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "7",
+        "end": "7"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"44\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"7\" end=\"7\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "4ed348378c024a74667ffe36cf604f5f6426f8666d009279ee207d07953db0dc",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "49",
+      "kind": "anim",
+      "cTn": {
+        "id": "49",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "8",
+        "end": "8"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"49\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"8\" end=\"8\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "82b3182b6ccb197c1b49347565216bff1cbb879cfdd48f4e841dd081eb576f9f",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "50",
+      "kind": "anim",
+      "cTn": {
+        "id": "50",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "8",
+        "end": "8"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"50\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"8\" end=\"8\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "0da5a5e8cf008b55892543fde4e2b15111d8308ceee7587ed4a0a4434fb480af",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "55",
+      "kind": "anim",
+      "cTn": {
+        "id": "55",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "9",
+        "end": "9"
+      },
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"55\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"9\" end=\"9\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "8a323148e0d62ee6f7f27d16d05cc1ec524eede020d20e7480e93d402d929602",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide48.xml",
+      "nodeId": "56",
+      "kind": "anim",
+      "cTn": {
+        "id": "56",
+        "dur": "500",
+        "fill": "hold"
+      },
+      "shapeId": "2",
+      "range": {
+        "st": "9",
+        "end": "9"
+      },
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"56\" dur=\"500\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"2\"><p:txEl><p:pRg st=\"9\" end=\"9\"/></p:txEl></p:spTgt></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "63f3d6291110fe75d2ea3bf0193750aa152ac2add74f22532417e7eb73fcebb2",
+      "sourcePartSha256": "8bc31ae663c443262b47566c10f15a9cf35d0682f39af1aad902f88eabcc1d0e",
+      "sourcePartCrc32": "3073aa1d",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "7",
+      "kind": "anim",
+      "cTn": {
+        "id": "7",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "13",
+      "range": null,
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "0-#ppt_w/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"7\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"13\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"0-#ppt_w/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "318643d4c72164d1d85ce0405a91e863cbbaa682ea4feeea73a3a65de19aefb7",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "8",
+      "kind": "anim",
+      "cTn": {
+        "id": "8",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "13",
+      "range": null,
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_y",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"8\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"13\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "95d3b6ce33044f604b32add4a57b4a583a4f3cd68dcbf32107abcb88227b61ad",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "13",
+      "kind": "anim",
+      "cTn": {
+        "id": "13",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "7",
+      "range": null,
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"13\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"7\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "b0e7bf48e13bf7aea024b1b27d6b7f748f109dc887691a99f1ecfd0e6199f0ea",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "14",
+      "kind": "anim",
+      "cTn": {
+        "id": "14",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "7",
+      "range": null,
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "0-#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"14\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"7\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"0-#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "69bb1d7c7df1a0f3ea2c56842a34fb3747651d078a8aa41db5df863cdfd2fbf3",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "19",
+      "kind": "anim",
+      "cTn": {
+        "id": "19",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "8",
+      "range": null,
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_w/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"19\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"8\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_w/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "5d4a92e70e56ebf887662cb68d09e47ae4075356ea91f4a71bc537832309c550",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "20",
+      "kind": "anim",
+      "cTn": {
+        "id": "20",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "8",
+      "range": null,
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_y",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"20\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"8\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "6396e908928240f17ba1e0cf07781dc49fa7125c54263f1b04081cbe28e005ee",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "25",
+      "kind": "anim",
+      "cTn": {
+        "id": "25",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "9",
+      "range": null,
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"25\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"9\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "1b3727e2c3ad4ef9b6354deb94af3a6fd8ef974c9ec5789b072a16da9cd81068",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "26",
+      "kind": "anim",
+      "cTn": {
+        "id": "26",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "9",
+      "range": null,
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"26\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"9\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "4271c92b9242c77e2f8d94ab40804d6cc80e258fce3bad1086e0561b07e633de",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "31",
+      "kind": "anim",
+      "cTn": {
+        "id": "31",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "10",
+      "range": null,
+      "attributes": [
+        "ppt_x"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "#ppt_x",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_x",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"31\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"10\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_x</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_x\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "fefc0038d1b036e7f58282a4a03953151bea2734b70254ce43f790c43db15197",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    },
+    {
+      "slidePart": "ppt/slides/slide36.xml",
+      "nodeId": "32",
+      "kind": "anim",
+      "cTn": {
+        "id": "32",
+        "dur": "1000",
+        "fill": "hold"
+      },
+      "shapeId": "10",
+      "range": null,
+      "attributes": [
+        "ppt_y"
+      ],
+      "values": [
+        {
+          "offset": "0",
+          "value": "1+#ppt_h/2",
+          "formula": null
+        },
+        {
+          "offset": "100000",
+          "value": "#ppt_y",
+          "formula": null
+        }
+      ],
+      "originalXml": "<p:anim calcmode=\"lin\" valueType=\"num\"><p:cBhvr additive=\"base\"><p:cTn id=\"32\" dur=\"1000\" fill=\"hold\"/><p:tgtEl><p:spTgt spid=\"10\"/></p:tgtEl><p:attrNameLst><p:attrName>ppt_y</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm=\"0\"><p:val><p:strVal val=\"1+#ppt_h/2\"/></p:val></p:tav><p:tav tm=\"100000\"><p:val><p:strVal val=\"#ppt_y\"/></p:val></p:tav></p:tavLst></p:anim>",
+      "originalXmlSha256": "3fabe97f3d5da8a2f0eb8a443663c3c86ad7ce231dfa8d833658509aaec113e3",
+      "sourcePartSha256": "a7e95b2cee347e4990228754c7bbd89a06241277070271dd1610a314d4314d8a",
+      "sourcePartCrc32": "b2b6ce30",
+      "classification": {
+        "isoCanonicalCandidate": true,
+        "microsoftFrameComparison": "unverified",
+        "samePropertyOverlappingOwnership": "unsupported-unverified",
+        "legacyFadeSpeedToDuration": "unverified"
+      }
+    }
+  ],
+  "microsoftReferenceStatus": "missing",
+  "provenance": {
+    "id": "apache__poi__customGeo",
+    "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+    "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/slideshow/customGeo.pptx",
+    "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/slideshow/customGeo.pptx",
+    "license": "Apache-2.0; individual legacy third-party fixture attribution may vary",
+    "sha256": "9baa7f4554cbaddfcebcc431432268ea34f20c02787172bb0a7d12d640e7e84f"
+  },
+  "referenceHashes": {
+    "ms-oi29500.txt": "3939de005cb8a500a080cb38ce84bbfbe98b280eb31b23a41d02b4ac64013fc8",
+    "iso29500-part1-mirror.txt": "093e8faa55de8dd197623ffb8366dced5d3f20247297a7d4dbf5f7947d45ee53"
+  },
+  "inputFile": "apache__poi__customGeo.pptx",
+  "primarySource": {
+    "MS-OI29500": {
+      "url": "https://officeprotocoldocs-f5hpbjgea6b8gneq.b02.azurefd.net/files/MS-OI29500/%5bMS-OI29500%5d.pdf",
+      "version": "20260818",
+      "pdfSha256": "b297063cce0ac79d10a8efd382b0f90f3b9fd6615fac7f01c88f0288e5fa7372"
+    },
+    "ISO29500-1:2012": {
+      "formalSections": [
+        "19.5.79",
+        "19.5.80",
+        "19.5.92",
+        "19.7.28"
+      ],
+      "downloadProvenance": "Text extracted from a third-party ISO mirror, not an official ISO download; statements cross-checked against MS-OI29500.",
+      "normativeLimitation": "Base enumeration is named Base without defining general same-property composition; implementation only admits exact position fly-in examples."
+    }
+  },
+  "microsoftContradiction": {
+    "default": "MS-OI29500 \u00a72.1.1152(d) says additive defaults to base.",
+    "explicit": "MS-OI29500 \u00a72.1.1190(a) says PowerPoint does not support base, mult or none.",
+    "resolution": "No explicit-value fallback or composition resolution is specified. Original PowerPoint-authored native XML is not a rendered reference. Microsoft frame/timing verification remains required."
+  },
+  "requiredRuntimeTraits": [
+    "base-fly-in-start-uses-original-coordinate-not-cumulative-offset",
+    "base-fly-in-end-is-original-center",
+    "native-base-xy-both-nonzero-start-composes-original-coordinate-matrix",
+    "native-base-xy-halfway-composes-both-original-axis-midpoints",
+    "native-base-xy-end-retains-two-owners-and-original-center",
+    "older-implicit-held-owner-survives-later-implicit-remove-registry",
+    "third-explicit-base-cannot-bypass-older-held-original-coordinate-owner"
+  ],
+  "nativeEntryObservation": {
+    "operationalPagesObserved": 48,
+    "javascriptExceptions": 0,
+    "parseFailureCounts": {
+      "unverified-transition-speed-duration": 48
+    },
+    "viewerSourceSha256": "d33cc3dee0b5557e85179b2fd9568f2422250d8aeb985f0913c2c8ff3ff0bd8e",
+    "playbackDependencySha256": "cb5d71a1eda1d55331564a6fd666f564720c9a7e68d4a3156c66f39d29be72c5",
+    "scope": "Original pinned downloaded bytes, all authored page entry observations. This is not a Microsoft frame, sound or timing comparison.",
+    "conformanceStatus": "fail"
+  },
+  "sourceTargetContext": [
+    {
+      "slide": 6,
+      "part": "ppt/slides/slide6.xml",
+      "shapes": [
+        {
+          "id": "19",
+          "name": "Rounded Rectangular Callout 18",
+          "placeholder": null,
+          "serializedBodyPr": {
+            "anchor": "ctr"
+          },
+          "bodyPrChildren": [],
+          "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"838200\" y=\"3016250\" /><ns0:ext cx=\"1905000\" cy=\"1447800\" /></ns0:xfrm>",
+          "paragraphs": [
+            {
+              "index": 0,
+              "text": "\u201cWhat\u201d students should know and be able to do at each grade level and band.",
+              "pPr": {
+                "algn": "ctr",
+                "fontAlgn": "auto"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" algn=\"ctr\" fontAlgn=\"auto\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"0\" /></ns0:spcAft><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "sz": "1400",
+                  "b": "1",
+                  "dirty": "0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "20",
+          "name": "Rounded Rectangular Callout 19",
+          "placeholder": null,
+          "serializedBodyPr": {
+            "anchor": "ctr"
+          },
+          "bodyPrChildren": [],
+          "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"5943600\" y=\"3341688\" /><ns0:ext cx=\"2286000\" cy=\"1066800\" /></ns0:xfrm>",
+          "paragraphs": [
+            {
+              "index": 0,
+              "text": "The main focus of the content within each strand.",
+              "pPr": {
+                "algn": "ctr",
+                "fontAlgn": "auto"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" algn=\"ctr\" fontAlgn=\"auto\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"0\" /></ns0:spcAft><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "sz": "1400",
+                  "b": "1",
+                  "dirty": "0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "23",
+          "name": "Rounded Rectangular Callout 22",
+          "placeholder": null,
+          "serializedBodyPr": {
+            "anchor": "ctr"
+          },
+          "bodyPrChildren": [],
+          "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"5943600\" y=\"1960563\" /><ns0:ext cx=\"2286000\" cy=\"914400\" /></ns0:xfrm>",
+          "paragraphs": [
+            {
+              "index": 0,
+              "text": "The major areas or disciplines of study within each content area.",
+              "pPr": {
+                "algn": "ctr",
+                "fontAlgn": "auto"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" algn=\"ctr\" fontAlgn=\"auto\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"0\" /></ns0:spcAft><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "sz": "1400",
+                  "b": "1",
+                  "dirty": "0"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "builds": [
+        {
+          "spid": "19",
+          "grpId": "0",
+          "animBg": "1"
+        },
+        {
+          "spid": "20",
+          "grpId": "0",
+          "animBg": "1"
+        },
+        {
+          "spid": "23",
+          "grpId": "0",
+          "animBg": "1"
+        }
+      ],
+      "sequence": {
+        "concurrent": "1",
+        "nextAc": "seek"
+      },
+      "firstEffectStartConditions": "<ns0:stCondLst xmlns:ns0=\"http://schemas.openxmlformats.org/presentationml/2006/main\"><ns0:cond delay=\"indefinite\" /></ns0:stCondLst>",
+      "inheritedSerializedCandidates": [
+        {
+          "part": "ppt/slideLayouts/slideLayout15.xml",
+          "sha256": "0d93b5370409f4305f0e52f577a222d6347b4f09352d279811fec0ab05a041c0",
+          "shapes": [
+            {
+              "id": "2",
+              "name": "Title 1",
+              "placeholder": {
+                "type": "title"
+              },
+              "serializedBodyPr": {},
+              "bodyPrChildren": [],
+              "transform": null,
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "Click to edit Master title style",
+                  "pPr": {},
+                  "pPrXml": null,
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "6",
+              "name": "Text Placeholder 5",
+              "placeholder": {
+                "type": "body",
+                "sz": "quarter",
+                "idx": "10"
+              },
+              "serializedBodyPr": {},
+              "bodyPrChildren": [],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"381000\" y=\"1411552\" /><ns0:ext cx=\"8382000\" cy=\"2210862\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "Click to edit Master text styles",
+                  "pPr": {
+                    "lvl": "0"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"0\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 1,
+                  "text": "Second level",
+                  "pPr": {
+                    "lvl": "1"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"1\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 2,
+                  "text": "Third level",
+                  "pPr": {
+                    "lvl": "2"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"2\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 3,
+                  "text": "Fourth level",
+                  "pPr": {
+                    "lvl": "3"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"3\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 4,
+                  "text": "Fifth level",
+                  "pPr": {
+                    "lvl": "4"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"4\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "part": "ppt/slideMasters/slideMaster1.xml",
+          "sha256": "02c537e67ec52ca574eed3d95c12688ba21895b7845affe9283ba2c8cfaf5bf5",
+          "shapes": [
+            {
+              "id": "1026",
+              "name": "Title Placeholder 1",
+              "placeholder": {
+                "type": "title"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "wrap": "square",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "numCol": "1",
+                "anchor": "ctr",
+                "anchorCtr": "0",
+                "compatLnSpc": "1"
+              },
+              "bodyPrChildren": [
+                "prstTxWarp"
+              ],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"457200\" y=\"274638\" /><ns0:ext cx=\"8229600\" cy=\"1143000\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "Click to edit Master title style",
+                  "pPr": {
+                    "lvl": "0"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"0\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "1027",
+              "name": "Text Placeholder 2",
+              "placeholder": {
+                "type": "body",
+                "idx": "1"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "wrap": "square",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "numCol": "1",
+                "anchor": "t",
+                "anchorCtr": "0",
+                "compatLnSpc": "1"
+              },
+              "bodyPrChildren": [
+                "prstTxWarp"
+              ],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"457200\" y=\"1600200\" /><ns0:ext cx=\"8229600\" cy=\"4525963\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "Click to edit Master text styles",
+                  "pPr": {
+                    "lvl": "0"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"0\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 1,
+                  "text": "Second level",
+                  "pPr": {
+                    "lvl": "1"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"1\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 2,
+                  "text": "Third level",
+                  "pPr": {
+                    "lvl": "2"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"2\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 3,
+                  "text": "Fourth level",
+                  "pPr": {
+                    "lvl": "3"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"3\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 4,
+                  "text": "Fifth level",
+                  "pPr": {
+                    "lvl": "4"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"4\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4",
+              "name": "Date Placeholder 3",
+              "placeholder": {
+                "type": "dt",
+                "sz": "half",
+                "idx": "2"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "rtlCol": "0",
+                "anchor": "ctr"
+              },
+              "bodyPrChildren": [],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"457200\" y=\"6356350\" /><ns0:ext cx=\"2133600\" cy=\"365125\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "5/29/2013",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            },
+            {
+              "id": "5",
+              "name": "Footer Placeholder 4",
+              "placeholder": {
+                "type": "ftr",
+                "sz": "quarter",
+                "idx": "3"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "rtlCol": "0",
+                "anchor": "ctr"
+              },
+              "bodyPrChildren": [],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"3124200\" y=\"6356350\" /><ns0:ext cx=\"2895600\" cy=\"365125\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            },
+            {
+              "id": "6",
+              "name": "Slide Number Placeholder 5",
+              "placeholder": {
+                "type": "sldNum",
+                "sz": "quarter",
+                "idx": "4"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "rtlCol": "0",
+                "anchor": "ctr"
+              },
+              "bodyPrChildren": [],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"6553200\" y=\"6356350\" /><ns0:ext cx=\"2133600\" cy=\"365125\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "\u2039#\u203a",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "interpretation": "Serialized body/layout/master attributes retained without inventing effective anchor/reflow. Page 18 pRg0 is automatic onBegin and pRg1 is first click; nextAc=seek can complete pRg0 before starting pRg1."
+    },
+    {
+      "slide": 18,
+      "part": "ppt/slides/slide18.xml",
+      "shapes": [
+        {
+          "id": "3",
+          "name": "Content Placeholder 2",
+          "placeholder": {
+            "idx": "1"
+          },
+          "serializedBodyPr": {
+            "rtlCol": "0"
+          },
+          "bodyPrChildren": [
+            "normAutofit"
+          ],
+          "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"914400\" y=\"1828800\" /><ns0:ext cx=\"7315200\" cy=\"3962400\" /></ns0:xfrm>",
+          "paragraphs": [
+            {
+              "index": 0,
+              "text": "W.4.3",
+              "pPr": {
+                "marL": "0",
+                "indent": "0",
+                "algn": "ctr",
+                "eaLnBrk": "1",
+                "fontAlgn": "auto",
+                "hangingPunct": "1"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" marL=\"0\" indent=\"0\" algn=\"ctr\" eaLnBrk=\"1\" fontAlgn=\"auto\" hangingPunct=\"1\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"0\" /></ns0:spcAft><ns0:buFont typeface=\"Arial\" pitchFamily=\"34\" charset=\"0\" /><ns0:buNone /><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "b": "1",
+                  "dirty": "0",
+                  "smtClean": "0"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "text": "Writing, Grade 4, Standard 3",
+              "pPr": {
+                "marL": "0",
+                "indent": "0",
+                "algn": "ctr",
+                "eaLnBrk": "1",
+                "fontAlgn": "auto",
+                "hangingPunct": "1"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" marL=\"0\" indent=\"0\" algn=\"ctr\" eaLnBrk=\"1\" fontAlgn=\"auto\" hangingPunct=\"1\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"1200\" /></ns0:spcAft><ns0:buFont typeface=\"Arial\" pitchFamily=\"34\" charset=\"0\" /><ns0:buNone /><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "dirty": "0",
+                  "smtClean": "0"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "text": "RF.2.4",
+              "pPr": {
+                "marL": "0",
+                "indent": "0",
+                "algn": "ctr",
+                "eaLnBrk": "1",
+                "fontAlgn": "auto",
+                "hangingPunct": "1"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" marL=\"0\" indent=\"0\" algn=\"ctr\" eaLnBrk=\"1\" fontAlgn=\"auto\" hangingPunct=\"1\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"0\" /></ns0:spcAft><ns0:buFont typeface=\"Arial\" pitchFamily=\"34\" charset=\"0\" /><ns0:buNone /><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "b": "1",
+                  "dirty": "0",
+                  "smtClean": "0"
+                }
+              ]
+            },
+            {
+              "index": 3,
+              "text": "Reading Foundations, Grade 2, Standard 4",
+              "pPr": {
+                "marL": "0",
+                "indent": "0",
+                "algn": "ctr",
+                "eaLnBrk": "1",
+                "fontAlgn": "auto",
+                "hangingPunct": "1"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" marL=\"0\" indent=\"0\" algn=\"ctr\" eaLnBrk=\"1\" fontAlgn=\"auto\" hangingPunct=\"1\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"1200\" /></ns0:spcAft><ns0:buFont typeface=\"Arial\" pitchFamily=\"34\" charset=\"0\" /><ns0:buNone /><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "dirty": "0",
+                  "smtClean": "0"
+                }
+              ]
+            },
+            {
+              "index": 4,
+              "text": "L.10.3a",
+              "pPr": {
+                "marL": "0",
+                "indent": "0",
+                "algn": "ctr",
+                "eaLnBrk": "1",
+                "fontAlgn": "auto",
+                "hangingPunct": "1"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" marL=\"0\" indent=\"0\" algn=\"ctr\" eaLnBrk=\"1\" fontAlgn=\"auto\" hangingPunct=\"1\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"0\" /></ns0:spcAft><ns0:buFont typeface=\"Arial\" pitchFamily=\"34\" charset=\"0\" /><ns0:buNone /><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "b": "1",
+                  "dirty": "0",
+                  "smtClean": "0"
+                }
+              ]
+            },
+            {
+              "index": 5,
+              "text": "Language, Grade 10, Standard 3a",
+              "pPr": {
+                "marL": "0",
+                "indent": "0",
+                "algn": "ctr",
+                "eaLnBrk": "1",
+                "fontAlgn": "auto",
+                "hangingPunct": "1"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" marL=\"0\" indent=\"0\" algn=\"ctr\" eaLnBrk=\"1\" fontAlgn=\"auto\" hangingPunct=\"1\"><ns0:spcBef><ns0:spcPts val=\"0\" /></ns0:spcBef><ns0:spcAft><ns0:spcPts val=\"1200\" /></ns0:spcAft><ns0:buFont typeface=\"Arial\" pitchFamily=\"34\" charset=\"0\" /><ns0:buNone /><ns0:defRPr /></ns0:pPr>",
+              "runs": [
+                {
+                  "lang": "en-US",
+                  "dirty": "0",
+                  "smtClean": "0"
+                }
+              ]
+            },
+            {
+              "index": 6,
+              "text": "",
+              "pPr": {
+                "eaLnBrk": "1",
+                "fontAlgn": "auto",
+                "hangingPunct": "1"
+              },
+              "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" eaLnBrk=\"1\" fontAlgn=\"auto\" hangingPunct=\"1\"><ns0:spcAft><ns0:spcPts val=\"0\" /></ns0:spcAft><ns0:buFont typeface=\"Arial\" pitchFamily=\"34\" charset=\"0\" /><ns0:buNone /><ns0:defRPr /></ns0:pPr>",
+              "runs": []
+            }
+          ]
+        }
+      ],
+      "builds": [
+        {
+          "spid": "3",
+          "grpId": "0",
+          "build": "p"
+        }
+      ],
+      "sequence": {
+        "concurrent": "1",
+        "nextAc": "seek"
+      },
+      "firstEffectStartConditions": "<ns0:stCondLst xmlns:ns0=\"http://schemas.openxmlformats.org/presentationml/2006/main\"><ns0:cond delay=\"indefinite\" /><ns0:cond evt=\"onBegin\" delay=\"0\"><ns0:tn val=\"2\" /></ns0:cond></ns0:stCondLst>",
+      "inheritedSerializedCandidates": [
+        {
+          "part": "ppt/slideLayouts/slideLayout2.xml",
+          "sha256": "da4d7bd74f49ee7b4de2a73ef285b21c6562c1d1b7755b8bb320b3ac584e42c4",
+          "shapes": [
+            {
+              "id": "2",
+              "name": "Title 1",
+              "placeholder": {
+                "type": "title"
+              },
+              "serializedBodyPr": {},
+              "bodyPrChildren": [],
+              "transform": null,
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "Click to edit Master title style",
+                  "pPr": {},
+                  "pPrXml": null,
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "3",
+              "name": "Content Placeholder 2",
+              "placeholder": {
+                "idx": "1"
+              },
+              "serializedBodyPr": {},
+              "bodyPrChildren": [],
+              "transform": null,
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "Click to edit Master text styles",
+                  "pPr": {
+                    "lvl": "0"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"0\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 1,
+                  "text": "Second level",
+                  "pPr": {
+                    "lvl": "1"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"1\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 2,
+                  "text": "Third level",
+                  "pPr": {
+                    "lvl": "2"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"2\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 3,
+                  "text": "Fourth level",
+                  "pPr": {
+                    "lvl": "3"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"3\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 4,
+                  "text": "Fifth level",
+                  "pPr": {
+                    "lvl": "4"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"4\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4",
+              "name": "Date Placeholder 3",
+              "placeholder": {
+                "type": "dt",
+                "sz": "half",
+                "idx": "10"
+              },
+              "serializedBodyPr": {},
+              "bodyPrChildren": [],
+              "transform": null,
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "5/29/2013",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            },
+            {
+              "id": "5",
+              "name": "Footer Placeholder 4",
+              "placeholder": {
+                "type": "ftr",
+                "sz": "quarter",
+                "idx": "11"
+              },
+              "serializedBodyPr": {},
+              "bodyPrChildren": [],
+              "transform": null,
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            },
+            {
+              "id": "6",
+              "name": "Slide Number Placeholder 5",
+              "placeholder": {
+                "type": "sldNum",
+                "sz": "quarter",
+                "idx": "12"
+              },
+              "serializedBodyPr": {},
+              "bodyPrChildren": [],
+              "transform": null,
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "\u2039#\u203a",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "part": "ppt/slideMasters/slideMaster1.xml",
+          "sha256": "02c537e67ec52ca574eed3d95c12688ba21895b7845affe9283ba2c8cfaf5bf5",
+          "shapes": [
+            {
+              "id": "1026",
+              "name": "Title Placeholder 1",
+              "placeholder": {
+                "type": "title"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "wrap": "square",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "numCol": "1",
+                "anchor": "ctr",
+                "anchorCtr": "0",
+                "compatLnSpc": "1"
+              },
+              "bodyPrChildren": [
+                "prstTxWarp"
+              ],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"457200\" y=\"274638\" /><ns0:ext cx=\"8229600\" cy=\"1143000\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "Click to edit Master title style",
+                  "pPr": {
+                    "lvl": "0"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"0\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "1027",
+              "name": "Text Placeholder 2",
+              "placeholder": {
+                "type": "body",
+                "idx": "1"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "wrap": "square",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "numCol": "1",
+                "anchor": "t",
+                "anchorCtr": "0",
+                "compatLnSpc": "1"
+              },
+              "bodyPrChildren": [
+                "prstTxWarp"
+              ],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"457200\" y=\"1600200\" /><ns0:ext cx=\"8229600\" cy=\"4525963\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "Click to edit Master text styles",
+                  "pPr": {
+                    "lvl": "0"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"0\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 1,
+                  "text": "Second level",
+                  "pPr": {
+                    "lvl": "1"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"1\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 2,
+                  "text": "Third level",
+                  "pPr": {
+                    "lvl": "2"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"2\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 3,
+                  "text": "Fourth level",
+                  "pPr": {
+                    "lvl": "3"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"3\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                },
+                {
+                  "index": 4,
+                  "text": "Fifth level",
+                  "pPr": {
+                    "lvl": "4"
+                  },
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lvl=\"4\" />",
+                  "runs": [
+                    {
+                      "lang": "en-US",
+                      "smtClean": "0"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "4",
+              "name": "Date Placeholder 3",
+              "placeholder": {
+                "type": "dt",
+                "sz": "half",
+                "idx": "2"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "rtlCol": "0",
+                "anchor": "ctr"
+              },
+              "bodyPrChildren": [],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"457200\" y=\"6356350\" /><ns0:ext cx=\"2133600\" cy=\"365125\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "5/29/2013",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            },
+            {
+              "id": "5",
+              "name": "Footer Placeholder 4",
+              "placeholder": {
+                "type": "ftr",
+                "sz": "quarter",
+                "idx": "3"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "rtlCol": "0",
+                "anchor": "ctr"
+              },
+              "bodyPrChildren": [],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"3124200\" y=\"6356350\" /><ns0:ext cx=\"2895600\" cy=\"365125\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            },
+            {
+              "id": "6",
+              "name": "Slide Number Placeholder 5",
+              "placeholder": {
+                "type": "sldNum",
+                "sz": "quarter",
+                "idx": "4"
+              },
+              "serializedBodyPr": {
+                "vert": "horz",
+                "lIns": "91440",
+                "tIns": "45720",
+                "rIns": "91440",
+                "bIns": "45720",
+                "rtlCol": "0",
+                "anchor": "ctr"
+              },
+              "bodyPrChildren": [],
+              "transform": "<ns0:xfrm xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:off x=\"6553200\" y=\"6356350\" /><ns0:ext cx=\"2133600\" cy=\"365125\" /></ns0:xfrm>",
+              "paragraphs": [
+                {
+                  "index": 0,
+                  "text": "\u2039#\u203a",
+                  "pPr": {},
+                  "pPrXml": "<ns0:pPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:defRPr /></ns0:pPr>",
+                  "runs": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "interpretation": "Serialized body/layout/master attributes retained without inventing effective anchor/reflow. Page 18 pRg0 is automatic onBegin and pRg1 is first click; nextAc=seek can complete pRg0 before starting pRg1."
+    }
+  ]
+}

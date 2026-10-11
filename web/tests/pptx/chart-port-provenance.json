@@ -1,8 +1,8 @@
 {
   "issue": "SEN-2598",
   "auditProbe": "chart-types-regression.cjs",
-  "auditProbeSHA256": "9b6fbf62155441e91257a6599d2b81d92d7760736cd60066992cd88cd2b76f68",
-  "portedProbeSHA256": "741845fb3fe6592d699b6dcf87d1aed2fbfac8abcb57eff6a10e069ad67101f8",
+  "auditProbeSHA256": "9c45dcd8eb9dc95c168a93f10239096d43e2f9bdf179154636546e0f3dfac525",
+  "portedProbeSHA256": "be54b0d83e4eff7945e4ef55bd0bfd823c60165e3af671fe577b36afba8ae403",
   "extractorSHA256": "dec9c3c51c1f480ebbb235aa94bdf3370254682db4ed0d166bbcb212d0620dea",
   "changes": [
     "Preserve every audit semantic/pixel oracle unchanged",
@@ -21,14 +21,17 @@
     "Native hierarchy title body-inset ink-top candidate uses actual loaded glyph ascent; prior plot and sector semantics retained, Microsoft exact pixels pending",
     "Resolve original related chartColorStyle through formal document color parser; preserve descending hierarchy source identities and explicitly reject unsupported live color methods. Two actual rendering pipeline traits, not only utility probes.",
     "Three new native Microsoft SDK02 box traits: observed automatic -100..150 step50 including128outlier, measured body title placement, authored scale precedence. Universal automatic layout stays unverified. Stage110 owned files preserved separately for palette-only comparison.",
-    "Seven new traits preserve original native chart/theme XML for Box direct-role phClr defaults and rectangle effect ownership, supplied callback context, authored empty-list clearing, and explicit missing/unsupported effect gates. Callback tracers are not Microsoft raster oracles."
+    "Seven new traits preserve original native chart/theme XML for Box direct-role phClr defaults and rectangle effect ownership, supplied callback context, authored empty-list clearing, and explicit missing/unsupported effect gates. Callback tracers are not Microsoft raster oracles.",
+    "Two original native Box ChartEx category-gap traits: authored gapWidth1 applies once between categories, controlled gapWidth2 preserves sibling adjacency and category center. Primary CT_CategoryAxisScaling plus measured native Microsoft grouped-box evidence; no hardcoded golden coordinates in renderer.",
+    "Fix controlled native effect fixture context by restoring its original theme color getter before applying original legacy18/moderate defaults. Actual production viewer already supplies this getter. Four actual-adapter profiles now compare all six CTM entries by exact independent native setTransform(original CTM minus raster device origin), without epsilon or decomposition duplication.",
+    "Two source-derived native external axis-role direct-spPr traits: physical baseline stroke/color reaches actual canvas; authored noFill overrides inherited role. Existing fallback one-pixel axis width retained where no physical width is authored."
   ],
   "limitations": [
     "Finite trait pass is not full Microsoft rendering acceptance",
     "Hierarchy parent-span semantics and exact visual layouts require Microsoft oracle",
     "Supplementary XLSX and synthetic trait wrappers are never labeled native PPTX or Microsoft golden"
   ],
-  "caseCount": 120,
+  "caseCount": 124,
   "verifiedInputCount": 19,
-  "separateActualAdapterProbe": "chart-effects-regression.cjs (four profiles; browser execution pending)"
+  "separateActualAdapterProbe": "chart-effects-regression.cjs: four real-viewer profiles; readonly stdin import alias observer calls original raster; actual native six-CTM and source raster RGBA0 counters; dependency SHA unchanged; fresh browser execution pending"
 }

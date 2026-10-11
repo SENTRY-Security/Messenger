@@ -1,0 +1,70 @@
+{
+  "scope": "Exact original native text-effect XML owners; minimal derived integration fixtures, Microsoft pixels unverified",
+  "cases": [
+    {
+      "id": "apache__poi__keyframes",
+      "part": "ppt/slides/slide1.xml",
+      "owner": "rPr",
+      "ownerXML": "<ns0:rPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lang=\"en-US\" sz=\"5400\" b=\"1\" dirty=\"0\" err=\"1\" smtClean=\"0\"><ns0:ln w=\"31550\" cmpd=\"sng\"><ns0:gradFill><ns0:gsLst><ns0:gs pos=\"70000\"><ns0:schemeClr val=\"accent6\"><ns0:shade val=\"50000\" /><ns0:satMod val=\"190000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"0\"><ns0:schemeClr val=\"accent6\"><ns0:tint val=\"77000\" /><ns0:satMod val=\"180000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:lin ang=\"5400000\" /></ns0:gradFill><ns0:prstDash val=\"solid\" /></ns0:ln><ns0:solidFill><ns0:schemeClr val=\"accent2\" /></ns0:solidFill><ns0:effectLst><ns0:outerShdw blurRad=\"50800\" dist=\"40000\" dir=\"5400000\" algn=\"tl\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:shade val=\"5000\" /><ns0:satMod val=\"120000\" /><ns0:alpha val=\"33000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst><ns0:latin typeface=\"Informal Roman\" pitchFamily=\"66\" charset=\"0\" /></ns0:rPr>",
+      "ownerSHA256": "5682df518b637281a3051dc40b5c8a723164d8beb4de266380d29a049bb82dbd",
+      "effectsXML": "<ns0:effectLst xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:outerShdw blurRad=\"50800\" dist=\"40000\" dir=\"5400000\" algn=\"tl\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:shade val=\"5000\" /><ns0:satMod val=\"120000\" /><ns0:alpha val=\"33000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst>",
+      "ancestorChain": [
+        "r",
+        "p",
+        "txBody",
+        "sp",
+        "spTree",
+        "cSld",
+        "sld"
+      ],
+      "partSHA256": "82df11c2fe42389a37fe59e6b5ed0f1ba276d491dc79357687c7630071864667",
+      "sourceSHA256": "bc9dd90cee7318ef1637c4e6175d44756004e67c7cb68c2e320f62ff2e7ce6a0",
+      "sourceURL": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/slideshow/keyframes.pptx",
+      "sourceCommit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "license": "Apache-2.0; individual legacy third-party fixture attribution may vary",
+      "microsoftPixelBaseline": null
+    },
+    {
+      "id": "apache__poi__aascu.org_workarea_downloadasset.aspx_id=5864",
+      "part": "ppt/slideMasters/slideMaster1.xml",
+      "owner": "defRPr",
+      "ownerXML": "<ns0:defRPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" kumimoji=\"0\" sz=\"4100\" b=\"1\" kern=\"1200\"><ns0:solidFill><ns0:schemeClr val=\"tx2\" /></ns0:solidFill><ns0:effectLst><ns0:outerShdw blurRad=\"31750\" dist=\"25400\" dir=\"5400000\" algn=\"tl\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:alpha val=\"25000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst><ns0:latin typeface=\"+mj-lt\" /><ns0:ea typeface=\"+mj-ea\" /><ns0:cs typeface=\"+mj-cs\" /></ns0:defRPr>",
+      "ownerSHA256": "f80d22be160ac95275f08abdfa5d01a6c86d05a0bf0fb7b3dd3db016cea8e3b0",
+      "effectsXML": "<ns0:effectLst xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:outerShdw blurRad=\"31750\" dist=\"25400\" dir=\"5400000\" algn=\"tl\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:alpha val=\"25000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst>",
+      "ancestorChain": [
+        "lvl1pPr",
+        "titleStyle",
+        "txStyles",
+        "sldMaster"
+      ],
+      "partSHA256": "76c7560522690ae9c015ea2741dae3571430d97a714030c91be877c80d578eb9",
+      "sourceSHA256": "5df09eff2c5fbb2bea72971421dc5507d68cab10ce3af8791969fdee35e76991",
+      "sourceURL": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/slideshow/aascu.org_workarea_downloadasset.aspx_id=5864.pptx",
+      "sourceCommit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "license": "Apache-2.0; individual legacy third-party fixture attribution may vary",
+      "microsoftPixelBaseline": null
+    },
+    {
+      "id": "apache__poi__keyframes",
+      "part": "ppt/slides/slide1.xml",
+      "owner": "endParaRPr",
+      "ownerXML": "<ns0:endParaRPr xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\" lang=\"en-US\" sz=\"5400\" b=\"1\" cap=\"none\" spc=\"0\" dirty=\"0\"><ns0:ln w=\"31550\" cmpd=\"sng\"><ns0:gradFill><ns0:gsLst><ns0:gs pos=\"70000\"><ns0:schemeClr val=\"accent6\"><ns0:shade val=\"50000\" /><ns0:satMod val=\"190000\" /></ns0:schemeClr></ns0:gs><ns0:gs pos=\"0\"><ns0:schemeClr val=\"accent6\"><ns0:tint val=\"77000\" /><ns0:satMod val=\"180000\" /></ns0:schemeClr></ns0:gs></ns0:gsLst><ns0:lin ang=\"5400000\" /></ns0:gradFill><ns0:prstDash val=\"solid\" /></ns0:ln><ns0:solidFill><ns0:schemeClr val=\"accent2\" /></ns0:solidFill><ns0:effectLst><ns0:outerShdw blurRad=\"50800\" dist=\"40000\" dir=\"5400000\" algn=\"tl\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:shade val=\"5000\" /><ns0:satMod val=\"120000\" /><ns0:alpha val=\"33000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst><ns0:latin typeface=\"Informal Roman\" pitchFamily=\"66\" charset=\"0\" /></ns0:endParaRPr>",
+      "ownerSHA256": "4bd59080d7e4d6476cef4496bff46a4e33fd9bf3e3ec1f4b3bbfcb61fb46406c",
+      "effectsXML": "<ns0:effectLst xmlns:ns0=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><ns0:outerShdw blurRad=\"50800\" dist=\"40000\" dir=\"5400000\" algn=\"tl\" rotWithShape=\"0\"><ns0:srgbClr val=\"000000\"><ns0:shade val=\"5000\" /><ns0:satMod val=\"120000\" /><ns0:alpha val=\"33000\" /></ns0:srgbClr></ns0:outerShdw></ns0:effectLst>",
+      "ancestorChain": [
+        "p",
+        "txBody",
+        "sp",
+        "spTree",
+        "cSld",
+        "sld"
+      ],
+      "partSHA256": "82df11c2fe42389a37fe59e6b5ed0f1ba276d491dc79357687c7630071864667",
+      "sourceSHA256": "bc9dd90cee7318ef1637c4e6175d44756004e67c7cb68c2e320f62ff2e7ce6a0",
+      "sourceURL": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/slideshow/keyframes.pptx",
+      "sourceCommit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "license": "Apache-2.0; individual legacy third-party fixture attribution may vary",
+      "microsoftPixelBaseline": null
+    }
+  ]
+}

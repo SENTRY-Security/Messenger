@@ -668,7 +668,11 @@ async function applyExternalChartTextStyles(model, zip, part, helpers) {
   model.externalChartStyle=document.documentElement;
   model.externalChartStyleOwner=segments.join('/');
   try { model.externalTextStyles = parseExternalChartTextStyles(document.documentElement,helpers); } catch(error) { fail(error.message); }
-  for (const axis of model.axes) axis.textStyle = {...model.externalTextStyles[axis.type==='valAx'?'valueAxis':'categoryAxis'],...axis.textStyle};
+  for (const axis of model.axes) {
+    const roleName=axis.type==='valAx'?'valueAxis':'categoryAxis',role=one(model.externalChartStyle,roleName);
+    axis.textStyle = {...model.externalTextStyles[roleName],...axis.textStyle};
+    if(role) {axis.style=mergeStyle(shapeStyle(role,helpers),axis.style);axis.externalVisualOwner=model.externalChartStyleOwner;axis.externalVisualRole=roleName;}
+  }
   if (model.legend) model.legend.textStyle = {...model.externalTextStyles.legend,...model.legend.textStyle};
   model.externalStyleConformance = {textRoleDefaultsApplied:true,fullStyleRenderingVerified:false};
 }
@@ -843,7 +847,7 @@ export async function renderPptxChart({ ctx, shape, bounds, scale = 1, zip, help
           if (d.yAxis?.labelPosition !== 'none') paintText(ctx, formatNumber(tick, d.yAxis?.numberFormat, percent), group.horizontal ? position : plotRect.x - 4 * scale, group.horizontal ? plotRect.y + plotRect.height + (fontSize || 12) * scale : position, scale, 9, group.horizontal ? 'center' : 'right', d.yAxis?.textStyle || model.baseFont);
         }
         if (!d.xAxis?.deleted) {
-          const base = yc(crossing(d.xAxis, ys)); ctx.strokeStyle = d.xAxis?.style.lineColor || '#808080'; ctx.beginPath(); if (group.horizontal) { ctx.moveTo(base, plotRect.y); ctx.lineTo(base, plotRect.y + plotRect.height); } else { ctx.moveTo(plotRect.x, base); ctx.lineTo(plotRect.x + plotRect.width, base); } ctx.stroke();
+          const base = yc(crossing(d.xAxis, ys)); if(!d.xAxis?.style.noLine) {applyStyle(ctx,{...d.xAxis?.style,lineWidth:d.xAxis?.style.lineWidth??1},d.xAxis?.style.lineColor||'#808080',scale);ctx.beginPath(); if (group.horizontal) { ctx.moveTo(base, plotRect.y); ctx.lineTo(base, plotRect.y + plotRect.height); } else { ctx.moveTo(plotRect.x, base); ctx.lineTo(plotRect.x + plotRect.width, base); } ctx.stroke();}
           if (xy) for (const tick of axisTicks(xs, d.xAxis)) paintText(ctx, formatNumber(tick, d.xAxis?.numberFormat), xc(tick), plotRect.y + plotRect.height + (fontSize || 12) * scale, scale, 9, 'center', d.xAxis?.textStyle || model.baseFont);
           else for (let i = 0; i < count; i++) { const label = group.categories?.[i] ?? group.series.find(s => s.categories[i] != null)?.categories[i] ?? ''; if (label && d.xAxis?.labelPosition !== 'none') paintText(ctx, label, group.horizontal ? plotRect.x - 4 * scale : cat(i), group.horizontal ? cat(i) : plotRect.y + plotRect.height + (fontSize || 12) * scale, scale, 8, group.horizontal ? 'right' : 'center', d.xAxis?.textStyle || model.baseFont); }
         }
@@ -886,10 +890,12 @@ export async function renderPptxChart({ ctx, shape, bounds, scale = 1, zip, help
             }; if (maxDepth) visit(root, -Math.PI / 2, Math.PI * 2, 0);
           }
         } else if (group.family === 'boxWhiskerChart') {
-          const categorySlot = plotRect.width / group.categories.length, slot = categorySlot / group.series.length, boxWidth = slot / (1 + group.gapWidth), previousMeans = new Map();
+          // ChartEx gapWidth is the gap/category-width ratio. A category
+          // contains all series boxes; the authored gap belongs between clusters.
+          const categorySlot = plotRect.width / group.categories.length, clusterWidth = categorySlot / (1 + group.gapWidth), slot = clusterWidth / group.series.length, boxWidth = slot, clusterInset = (categorySlot - clusterWidth) / 2, previousMeans = new Map();
           for (const [ci,category] of group.categories.entries()) for (const [si, ser] of group.series.entries()) {
             const box = ser.boxes.find(b=>b.category===category), stats = box?.statistics; if (!stats) continue;
-            const cx = plotRect.x + categorySlot * ci + slot * (si + 0.5), y1 = yc(stats.q1), y3 = yc(stats.q3), style = ser.style;
+            const cx = plotRect.x + categorySlot * ci + clusterInset + slot * (si + 0.5), y1 = yc(stats.q1), y3 = yc(stats.q3), style = ser.style;
             applyStyle(ctx, style, palette[ser.index % palette.length], scale);
             const rect = { x: cx - boxWidth / 2, y: Math.min(y1, y3), width: boxWidth, height: Math.abs(y1 - y3) };
             if (!style.noFill) { if (style.fillNode) { if (!helpers.renderChartFill) fail('Box-whisker fill requires fill renderer'); await helpers.renderChartFill(ctx, style.fillNode, rect, zip, path, {relationships:style.fillRelationships}); } else ctx.fillRect(rect.x, rect.y, rect.width, rect.height); }

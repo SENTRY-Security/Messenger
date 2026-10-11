@@ -1,0 +1,10 @@
+*.png
+*.mp4
+*.mov
+*.wav
+*.pptx
+*-report.json
+receipt.json
+validation.json
+mac-preflight.json
+source-plan.json

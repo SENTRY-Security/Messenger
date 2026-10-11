@@ -47,17 +47,23 @@ async function initAuditHost(page, root = __pptxRuntime.repoRoot) {
 }
 
 // Keep actual renderer module imports intact. Only host-app integrations are mocked.
-async function createViewerBundle(viewer, exposeCode) {
+async function createViewerBundle(viewer, exposeCode, options = {}) {
   const root = path.resolve(path.dirname(viewer), '../../../../../..');
   const esbuild = require(path.join(root, 'web/node_modules/esbuild'));
   const sourceBytes = fs.readFileSync(viewer);
+  if (options.transformEntry != null && typeof options.transformEntry !== 'function') throw new TypeError('transformEntry must be a function');
+  // Instrument only the in-memory entry. Dependency integrity always hashes
+  // original production bytes; callers record this separate entry hash.
+  const entrySource = options.transformEntry ? options.transformEntry(sourceBytes.toString('utf8')) : sourceBytes.toString('utf8');
+  if (typeof entrySource !== 'string' || !entrySource.trim()) throw new TypeError('transformEntry must return nonempty JavaScript');
+  const instrumentedEntry = entrySource + '\n' + exposeCode;
   const dependencies = new Map([[path.resolve(viewer), digest(sourceBytes)]]);
   for (const name of FONT_ASSET_NAMES) {
     const font = path.join(root, 'web/src/assets/fonts/carlito', name);
     if (fs.existsSync(font)) dependencies.set(font, digest(fs.readFileSync(font)));
   }
   const result = await esbuild.build({
-    stdin: { contents: sourceBytes.toString('utf8') + '\n' + exposeCode, sourcefile: path.basename(viewer), resolveDir: path.dirname(viewer), loader: 'js' },
+    stdin: { contents: instrumentedEntry, sourcefile: path.basename(viewer), resolveDir: path.dirname(viewer), loader: 'js' },
     bundle: true, write: false, format: 'iife', platform: 'browser', target: 'es2022', metafile: true,
     plugins: [{ name: 'pptx-audit-host-integrations', setup(build) {
       build.onResolve({ filter: /^(\.\.\/\.\.\/\.\.\/core\/log\.js|\.\.\/ui-utils\.js|\/locales\/index\.js)$/ }, args => ({ path: args.path, namespace: 'pptx-host-mock' }));
@@ -73,6 +79,6 @@ async function createViewerBundle(viewer, exposeCode) {
   });
   const dependencyHashes = Object.fromEntries([...dependencies].sort(([a], [b]) => a.localeCompare(b)));
   const content = result.outputFiles[0].text;
-  return { content, sourceSha256: digest(sourceBytes), dependencyHashes, bundleSha256: digest(content), changedDependencies: () => Object.entries(dependencyHashes).filter(([file, hash]) => !fs.existsSync(file) || digest(fs.readFileSync(file)) !== hash).map(([file]) => file) };
+  return { content, sourceSha256: digest(sourceBytes), dependencyHashes, entryTransformApplied: Boolean(options.transformEntry), instrumentedEntrySha256: digest(instrumentedEntry), bundleSha256: digest(content), changedDependencies: () => Object.entries(dependencyHashes).filter(([file, hash]) => !fs.existsSync(file) || digest(fs.readFileSync(file)) !== hash).map(([file]) => file) };
 }
 module.exports = { createViewerBundle, initAuditHost, checkProductionFontAssets };

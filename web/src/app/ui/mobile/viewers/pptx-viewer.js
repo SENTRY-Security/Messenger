@@ -597,8 +597,15 @@ function parseParagraph(pEl) {
   const endFontSize = endSz ? Number(endSz) / 100 : null;
   const endColor = parseColor(qn(endParaRPr, NS_A, 'solidFill'));
   return { runs, align, explicitAlign: !!pPr?.hasAttribute('algn'), bullet, explicitBullet, bulletStart, bulletType, bulletColor, bulletFont, bulletSizePoints, bulletSizePercent, indent, marginLeft, hangingIndent, eastAsianLineBreak, hangingPunctuation, lineHeight, lineSpacingPoints, spaceBefore, spaceAfter, spaceBeforePct, spaceAfterPct,
-    defaultFontSize: defaultFontSize || endFontSize, defaultColor: defaultColor || endColor, defaultColorExplicit:defaultColor!=null||endColor!=null,
-    defaultEffects:parseTextDrawingEffects(defRPr) ?? parseTextDrawingEffects(endParaRPr),
+    defaultFontSize: defaultFontSize ?? (runs.length===0?endFontSize:null),
+    defaultColor: defaultColor ?? (runs.length===0?endColor:null),
+    defaultColorExplicit:defaultColor!=null||(runs.length===0&&endColor!=null),
+    endFontSize,endColor,
+    // ISO/IEC 29500 21.1.2.2.3: endParaRPr formats a future run
+    // inserted after the last specified run, rather than existing glyphs.
+    // Preserve its effect properties separately from the run/default cascade.
+    defaultEffects:parseTextDrawingEffects(defRPr),
+    endEffects:parseTextDrawingEffects(endParaRPr),
     defaultBold, defaultItalic, defaultUnderline, defaultStrike, defaultFont,
     defaultFontEa: defEa?.getAttribute('typeface') || null, defaultFontCs: qn(defRPr, NS_A, 'cs')?.getAttribute('typeface') || null, defaultLanguage: defRPr?.getAttribute('lang') || null };
 }
@@ -1815,13 +1822,15 @@ function drawTextShape(ctx, shape, sx, sy, sw, sh, scale, relMap, slideBgColor) 
         const segmentX=seg.bullet ? lineStartX+(para.hangingIndent||0)*scale : drawX;
         shape._recordTextPaint?.(ctx,{text:seg.text,x:segmentX,y:segY,width:seg.bullet?seg.bulletWidth:seg.width,bullet:seg.bullet});
         const tw = seg.width,decorationX=drawX;
+        const segFs=seg.fontSize||maxFs,ulOffset=Math.max(2,ptToPx(segFs)*scale*.12);
+        const textPaintState={};
+        for(const key of ['textAlign','textBaseline','direction','fontKerning','fontStretch','fontVariantCaps','textRendering','lineCap','lineJoin','miterLimit'])if(key in ctx)textPaintState[key]=ctx[key];
         const paintTextSegment=target=>{
+        for(const [key,value]of Object.entries(textPaintState))target[key]=value;
         target.font=seg.font;target.fillStyle=seg.color||'#000';
         if(target.letterSpacing!==undefined)target.letterSpacing=seg.letterSpacing?`${ptToPx(seg.letterSpacing)*scale}px`:'0px';
         target.fillText(seg.text,segmentX,segY);
 
-        const segFs = seg.fontSize || maxFs;
-        const ulOffset = Math.max(2, ptToPx(segFs) * scale * 0.12);
         if (seg.underline || isLink) {
           target.beginPath();
           target.strokeStyle = seg.color || '#000';
@@ -1868,7 +1877,7 @@ async function renderChartFill(ctx, fillNode, bounds, zip, chartPartPath, scale 
 }
 
 async function renderChartEffects(ctx, effectNode, bounds, paint, shape, zip, scale, options={}) {
-  const colorParser=captureColorParser(),urls=[];
+  const colorParser=captureColorParser(),urls=[],originalTransform=ctx.getTransform();
   const relationships=options.relationships||await buildRelMapForPath(zip,options.chartPartPath||resolvePath(shape.chartTarget));
   const effects=parseDrawingEffects(effectNode,{parseColor:colorParser,renderingProfile:'office',resolveRelationship:id=>relationships[id]});
   // Chart marks use the frame's local coordinates. Remove that frame from
@@ -1876,15 +1885,19 @@ async function renderChartEffects(ctx, effectNode, bounds, paint, shape, zip, sc
   // evaluated in the slide coordinate system, independently of frame rotation.
   const kx=options.kx,ky=options.ky,m=shapeAffine(shape);
   const frame=new DOMMatrix([m[0],m[1]*ky/kx,m[2]*kx/ky,m[3],m[4]*kx,m[5]*ky]);
-  const base=ctx.getTransform().multiply(frame.inverse());
+  const base=originalTransform.multiply(frame.inverse());
   const corners=[[bounds.x,bounds.y],[bounds.x+bounds.width,bounds.y],[bounds.x,bounds.y+bounds.height],[bounds.x+bounds.width,bounds.y+bounds.height]].map(([x,y])=>frame.transformPoint({x,y}));
   const left=Math.min(...corners.map(p=>p.x)),top=Math.min(...corners.map(p=>p.y));
   const worldBounds={x:left,y:top,width:Math.max(...corners.map(p=>p.x))-left,height:Math.max(...corners.map(p=>p.y))-top};
   ctx.save();
   try {
     ctx.setTransform(base);
-    return await renderDrawingEffects(ctx,effects,worldBounds,async context=>{
-      context.save();try{context.transform(frame.a,frame.b,frame.c,frame.d,frame.e,frame.f);await paint(context);}finally{context.restore();}
+    return await renderDrawingEffects(ctx,effects,worldBounds,async (context,capture)=>{
+      const origin=capture?.deviceOrigin||(effects.length===0?{x:0,y:0}:null);
+      if(!origin||!Number.isFinite(origin.x)||!Number.isFinite(origin.y))throw new Error('missing-drawing-effects-device-origin');
+      // Transfer the actual caller CTM once. Removing and reapplying the frame
+      // would quantize its linear terms again in the native Canvas context.
+      context.save();try{context.setTransform(originalTransform.a,originalTransform.b,originalTransform.c,originalTransform.d,originalTransform.e-origin.x,originalTransform.f-origin.y);await paint(context);}finally{context.restore();}
     },{parseColor:colorParser,renderingProfile:'office',dpi:96*scale,localBounds:bounds,shapeTransform:frame,container:'chartPrimitive',
       resolveImage:target=>loadZipFillImage(zip,resolvePath(target),urls)});
   } finally {ctx.restore();for(const url of urls)URL.revokeObjectURL(url);}
@@ -2051,7 +2064,7 @@ async function paintTextEffectJobs(ctx,jobs,baseTransform,scale){
     const basis=baseTransform.inverse().multiply(job.transform);
     const points=[[job.left,job.top],[job.right,job.top],[job.left,job.bottom],[job.right,job.bottom]].map(([x,y])=>basis.transformPoint({x,y}));
     const left=Math.min(...points.map(p=>p.x)),top=Math.min(...points.map(p=>p.y)),bounds={x:left,y:top,width:Math.max(...points.map(p=>p.x))-left,height:Math.max(...points.map(p=>p.y))-top};
-    ctx.save();try{ctx.setTransform(baseTransform);await renderDrawingEffects(ctx,job.effects,bounds,async target=>{target.save();try{target.transform(basis.a,basis.b,basis.c,basis.d,basis.e,basis.f);for(const paint of job.paints)paint(target);}finally{target.restore();}},
+    ctx.save();try{ctx.setTransform(baseTransform);await renderDrawingEffects(ctx,job.effects,bounds,async (target,capture)=>{const origin=capture?.deviceOrigin;if(!origin||!Number.isFinite(origin.x)||!Number.isFinite(origin.y))throw new Error('missing-drawing-effects-device-origin');target.save();try{target.setTransform(job.transform.a,job.transform.b,job.transform.c,job.transform.d,job.transform.e-origin.x,job.transform.f-origin.y);for(const paint of job.paints)paint(target);}finally{target.restore();}},
       {dpi:96*scale,renderingProfile:'office',localBounds,shapeTransform:basis,container:'rPr'});
       evidence.push({owner:job.owner,effects:job.effects.map(effect=>effect.kind),paintSegmentCount:job.paints.length,localInkBounds:localBounds,worldInkBounds:bounds,transform:[basis.a,basis.b,basis.c,basis.d,basis.e,basis.f]});
     }finally{ctx.restore();}
@@ -2412,6 +2425,13 @@ function shapeBounds(shape, includeEffects = true, kx = 1, ky = kx) {
   const corners=[[shape.x,shape.y],[shape.x+shape.w,shape.y],[shape.x,shape.y+shape.h],[shape.x+shape.w,shape.y+shape.h]].map(([x,y])=>[m[0]*x+m[2]*y+m[4],m[1]*x+m[3]*y+m[5]]);
   const left=Math.min(...corners.map(p=>p[0])),top=Math.min(...corners.map(p=>p[1]));
   let bounds={x:left,y:top,width:Math.max(...corners.map(p=>p[0]))-left,height:Math.max(...corners.map(p=>p[1]))-top};
+  if(includeEffects&&shape.line?.width>0){
+    // A centered outline extends beyond the shape's transform rectangle. Use
+    // the complete affine basis so rotated/nonuniform grouped strokes survive
+    // cropping; round joins fit inside this conservative transformed envelope.
+    const half=shape.line.width/2,dx=half*(Math.abs(m[0])+Math.abs(m[2])),dy=half*(Math.abs(m[1])+Math.abs(m[3]));
+    bounds={x:bounds.x-dx,y:bounds.y-dy,width:bounds.width+2*dx,height:bounds.height+2*dy};
+  }
   const textEffects=(shape.paragraphs||[]).flatMap(para=>para.runs.flatMap(run=>textEffectsSupported(run.effects??para.defaultEffects??[])?run.effects??para.defaultEffects??[]:[]));
   const allEffects=[...(shape.drawingEffects||[]),...textEffects];
   if(includeEffects&&allEffects.length){
@@ -2637,13 +2657,17 @@ async function buildShapeLayers(wrapper, canvas, slideData, slideSize, zip, obje
   const targets = new Map(), paintRecords = new Map();
   const kx = canvas.width / slideSize.w, ky = canvas.height / slideSize.h;
   for (const shape of slideData.shapes) {
-    const bounds = shapeBounds(shape,true,kx,ky);
+    let bounds = shapeBounds(shape,true,kx,ky);
     if (!(bounds.w > 0 && bounds.h > 0)) continue;
+    // Every layer occupies whole device pixels. Giving a ceil-sized bitmap a
+    // fractional CSS extent would resample its glyphs and centered outlines.
+    const left=Math.floor(bounds.x*kx),top=Math.floor(bounds.y*ky),right=Math.ceil((bounds.x+bounds.w)*kx),bottom=Math.ceil((bounds.y+bounds.h)*ky);
+    bounds={x:left/kx,y:top/ky,w:(right-left)/kx,h:(bottom-top)/ky};
     const layer = document.createElement('div');
     layer.dataset.pptxShapeId = shape.sourceId || '';
     layer.style.cssText = `position:absolute;left:${bounds.x / slideSize.w * 100}%;top:${bounds.y / slideSize.h * 100}%;width:${bounds.w / slideSize.w * 100}%;height:${bounds.h / slideSize.h * 100}%;pointer-events:auto`;
     const paint = document.createElement('canvas');
-    paint.width = Math.max(1, Math.ceil(bounds.w * kx)); paint.height = Math.max(1, Math.ceil(bounds.h * ky));
+    paint.width = Math.max(1,right-left); paint.height = Math.max(1,bottom-top);
     paint.style.cssText = 'width:100%;height:100%;display:block'; layer.append(paint); host.append(layer);
     const ctx = paint.getContext('2d'); ctx.translate(-bounds.x * kx, -bounds.y * ky);
     await drawShapeOnCanvas(ctx, shape.type === 'text' && shape.paragraphs?.length && !shape.drawingEffects?.length ? { ...shape, _paragraphFilter: [] } : shape, zip, canvas.width, canvas.height, slideSize, kx, objectUrls, slideData.slideBgColor);

@@ -60,7 +60,17 @@ PPTX_CORPUS_CACHE=/tmp/sentry-pptx-corpus PPTX_CHARTML_CACHE=/tmp/sentry-chartml
 
 05:11:38 UTC 快照新增實際文字 run 的外陰影／光暈／內陰影初步路徑，以及原生圖表 primitive 效果；尚未縮小未驗收診斷。12 suites 定向回歸中，既有文字／字形／形狀、入口關閉及原始書籤條目符合預期；新 120 個 chart traits 有 3 個 callback 條目失敗，4 個 chart effect 情境有 2 個矩陣條目失敗，均保留原輸出並繼續修正。該快照建置 168 hashes／60 SRI 驗證通過。這是可推送的進度快照，不能合併 main 或 Secretary。
 
-已準備[真 Windows PowerPoint 靜態基準收集器](../web/tests/pptx/windows/Collect-PowerPointStatic.ps1)及[桌面播放／音訊取證契約](../web/tests/pptx/windows/desktop-baseline-contract.txt)。收集器驗證 pinned SHA／全 ZIP CRC、原始頁序與 COM SlideID，記錄 Office 版本並直接 Export PNG；目前 Linux 環境沒有執行 Windows COM。靜態 Export 不執行動畫、轉場或影音，桌面畫面與 WASAPI 實際音訊仍須另外取得。網頁版與桌面版不能互相假定完整功能相同；官方文章亦包含新舊版本與不同功能描述，未觀察到書籤效果不等於證實桌面版沒有該效果。
+05:27:33 UTC 快照的 6 suites／396 個檢查保留 6 個失敗：3 個圖表 callback、2 個群組／裁切 CTM，以及 1 個新 additive X/Y 動畫數量探針。最後一項尚未證明實際位置錯誤，需以非零雙軸起點、中點及終點區分播放與探針問題。新增原生 Box category gap 的兩個 trait 符合預期；相同原檔、相同 720×405 Microsoft baseline、零 RGBA 容差，像素差異由 25,938 降至 18,732，仍為 FAIL。獨立原生 Canvas 對照確認圖表移除／重套 affine frame 的多次量化造成 CTM 差異，不採放寬精度處理。
+
+05:44:27 UTC 快照完成 43 suites／762 個局部檢查，來源未異動。圖表 124 項與 4 個效果情境符合預期，效果回呼使用原始 CTM 與明確裁切原點，六個係數及來源圖層 RGBA 與獨立原生對照一致；播放 226 項包含非零雙軸位置、持續 hold 與多 owner 清理，來源 46 個節點的原始 XML／SHA／CRC 另逐項核對。段尾格式的 8 個獨立對照符合預期，底線效果例外已修正。建置 168 hashes／60 SRI 通過。
+
+該次完整局部回歸仍為 FAIL：新文字 owner 12 項有 10 個失敗、native reference 12 項有 11 個失敗、非預設文字 context 4 項與寬描邊 3 項失敗，共 28 個。有些為實際圖層裁切／合成差異，有些參照的 native CTM 相位及多階段 alpha 合成仍待獨立釐清；不得把所有失敗直接歸因於產品，也不得更換寬鬆門檻消除。原始失敗快照保留，後續修正須以新來源重跑。這批可作進度推送，完整 Microsoft 驗收仍未通過。
+
+Mac 收集流程、唯讀 preflight、原始頁面計畫及 PNG 匯入校驗已備妥，見 [Mac README](../web/tests/pptx/mac/README.md)。20 個 guard assertions 在 Linux 使用真 pinned PPTX 通過，Linux preflight 如實回報 unavailable；沒有 Mac 原生收集或播放證據。原始 customGeo 第 6／18 頁另已透過公開控制取得 Microsoft 與候選原生畫面，保留真頁碼、逐帧 SHA 及擷取時間區間；Writing 段落終點邊界一致，字型像素與 callout 裁切仍有差異，不算整份簡報或完整時序通過。
+
+PowerPoint for Mac 也可作為 Microsoft 原生桌面比對基準；先前收集環境限定 Windows 只是現有 COM 程式的限制。Mac／Windows 基準須各自記錄 PowerPoint 版本、作業系統、字型、顯示尺寸及媒體支援，不假定兩者完全相同。使用者將稍後提供 Mac 環境，目前尚無 Mac 執行證據。
+
+已準備[真 Windows PowerPoint 靜態基準收集器](../web/tests/pptx/windows/Collect-PowerPointStatic.ps1)及[桌面播放／音訊取證契約](../web/tests/pptx/windows/desktop-baseline-contract.txt)。收集器驗證 pinned SHA／全 ZIP CRC、原始頁序與 COM SlideID，記錄 Office 版本並直接 Export PNG；目前 Linux 環境沒有執行 Windows COM。靜態 Export 不執行動畫、轉場或影音，桌面畫面與實際系統音訊仍須另外取得。[Microsoft 的 Mac 匯出說明](https://support.microsoft.com/en-us/powerpoint/export-your-powerpoint-for-mac-presentation-as-a-different-file-format)指出影片匯出可能不播放其他內嵌媒體，因此匯出影片不能代替完整的真放映取證。網頁版與桌面版不能互相假定完整功能相同；未觀察到書籤效果不等於證實桌面版沒有該效果。
 
 Microsoft 參考必須來自 PowerPoint 的實際 rendering，不能以 LibreOffice、另一個 JS viewer、SDK 範例 XML 或 model 數值作替代。Office Online 的 bootstrap 回應也不能當作渲染成功。服務無法開啟檔案、網路失敗和 viewer 本身不符分別保留紀錄；參考不可取得時狀態維持未驗收。
 

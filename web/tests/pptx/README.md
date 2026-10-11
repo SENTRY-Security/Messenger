@@ -51,6 +51,8 @@ Microsoft 比對需要同一輸入的實際 PowerPoint 影像、來源與頁序 
 
 Windows 桌面版基準收集與真投影片播放／音訊擷取要求見 [desktop-baseline-contract.txt](windows/desktop-baseline-contract.txt)。[Collect-PowerPointStatic.ps1](windows/Collect-PowerPointStatic.ps1) 只收集原始 PPTX 的真 COM 靜態 PNG，永遠回傳未驗收，不能拿静態 Export 代替動畫取樣。Node preflight 的原始 SHA／全 ZIP CRC 與負向案例可在 Linux 執行；PowerShell／Office COM 必須另在實際 Windows PowerPoint 環境驗證。
 
+PowerPoint for Mac 也是 Microsoft 原生桌面基準；[Mac 收集流程及工具](mac/README.md)提供唯讀環境檢查、原始頁序計畫與 PNG 匯入校驗。[播放取證契約](mac/playback-contract.md)要求實際放映画面及系統音訊，Mac 影片匯出不能代替內嵌影音播放。Linux 已驗證匯入工具的 20 個來源／頁序／PNG 負向及未驗收門檻；尚未在 Mac 執行原生匯出或播放。
+
 來源及限制：
 
 - `port-provenance.json` 保存移植前審查檔與移植檔的 SHA；移植不放寬原預期。

@@ -9,15 +9,34 @@ const {loadCorpus}=require('./corpus-inputs.cjs');
  // Instrument the actual viewer adapter, without replacing its raster renderer.
  const bundle=await createViewerBundle(path.join(runtime.viewerDir,'pptx-viewer.js'),`
  window.chartEffectCalls=[];
+ const renderDrawingEffects=async function(context,models,bounds,paint,options){
+  return actualDrawingEffects(context,models,bounds,async(supplied,capture)=>{
+   const previous=window.chartEffectDeviceOrigin;window.chartEffectDeviceOrigin=capture?.deviceOrigin;
+   try{return await paint(supplied,capture);}finally{window.chartEffectDeviceOrigin=previous;}
+  },options);
+ };
  const actualChartEffects=renderChartEffects;
  renderChartEffects=async function(context,node,rect,paint,...rest){
   const before=context.getTransform(),call={xml:new XMLSerializer().serializeToString(node),rect,part:rest[3]?.chartPartPath,paints:[]};window.chartEffectCalls.push(call);
   await actualChartEffects(context,node,rect,async supplied=>{
-   const matrix=supplied.getTransform();call.paints.push({differentContext:supplied!==context,linear:[matrix.a,matrix.b,matrix.c,matrix.d],expectedLinear:[before.a,before.b,before.c,before.d]});await paint(supplied);
+   const matrix=supplied.getTransform(),origin=window.chartEffectDeviceOrigin;
+   if(!origin)throw Error('Actual raster capture did not report device origin');
+   // Independent native transfer uses original incoming CTM and capture origin,
+   // without reproducing the viewer's frame decomposition/recomposition.
+   const counterCanvas=document.createElement('canvas');counterCanvas.width=supplied.canvas.width;counterCanvas.height=supplied.canvas.height;const counter=counterCanvas.getContext('2d');counter.setTransform(before.a,before.b,before.c,before.d,before.e-origin.x,before.f-origin.y);
+   const expected=counter.getTransform();await paint(supplied);await paint(counter);
+   const actualPixels=supplied.getImageData(0,0,counterCanvas.width,counterCanvas.height).data,expectedPixels=counter.getImageData(0,0,counterCanvas.width,counterCanvas.height).data;let differentSourceChannels=0;
+   for(let i=0;i<actualPixels.length;i++)if(actualPixels[i]!==expectedPixels[i])differentSourceChannels++;
+   call.paints.push({differentContext:supplied!==context,deviceOrigin:origin,matrix:['a','b','c','d','e','f'].map(key=>matrix[key]),expectedMatrix:['a','b','c','d','e','f'].map(key=>expected[key]),exactNativeCTM:['a','b','c','d','e','f'].every(key=>matrix[key]===expected[key]),differentSourceChannels,sourceRasterRGBAExact:differentSourceChannels===0});
   },...rest);
-  const after=context.getTransform();call.restored=['a','b','c','d','e','f'].every(key=>Math.abs(before[key]-after[key])<1e-8);
+  const after=context.getTransform();call.restored=['a','b','c','d','e','f'].every(key=>before[key]===after[key]);
  };
- window.chartEffectAudit={buildSlideCanvas,restoreTheme,drawShapeOnCanvas};`);
+ window.chartEffectAudit={buildSlideCanvas,restoreTheme,drawShapeOnCanvas};`,{transformEntry:entry=>{
+  const imported="renderDrawingEffects } from './pptx-effects.js';";
+  if(!entry.includes(imported))throw Error('Actual viewer raster import changed; observer must be reviewed');
+  return entry.replace(imported,"renderDrawingEffects as actualDrawingEffects } from './pptx-effects.js';");
+ }});
+ if(process.env.PPTX_CHART_EFFECTS_BUILD_ONLY==='1'){console.log(JSON.stringify({sourceSha256:bundle.sourceSha256,entryTransformApplied:bundle.entryTransformApplied,instrumentedEntrySha256:bundle.instrumentedEntrySha256,changedDependencies:bundle.changedDependencies()}));return;}
  const browser=await runtime.playwright().chromium.launch(runtime.launchOptions()),page=await browser.newPage({viewport:{width:1000,height:800}}),exceptions=[];
  page.on('pageerror',error=>exceptions.push(error.message));
  try{
@@ -35,12 +54,12 @@ const {loadCorpus}=require('./corpus-inputs.cjs');
      return {pixels:context.getImageData(0,0,960,720).data,calls:window.chartEffectCalls.slice(),evidence:shape.chartRenderEvidence};
     };
     const actual=await paint(true),plain=await paint(false);let differentPixels=0;for(let i=0;i<actual.pixels.length;i+=4)if([0,1,2,3].some(channel=>actual.pixels[i+channel]!==plain.pixels[i+channel]))differentPixels++;
-    const valid=actual.evidence?.markCount>0&&actual.calls.length===actual.evidence.markCount&&actual.calls.every(call=>call.xml.includes('dist="23000"')&&call.xml.includes('rotWithShape="0"')&&call.restored&&call.paints.length===1&&call.paints.every(p=>p.differentContext&&p.linear.every((v,i)=>Math.abs(v-p.expectedLinear[i])<1e-8)))&&plain.calls.length===0&&differentPixels>0;
+    const valid=actual.evidence?.markCount>0&&actual.calls.length===actual.evidence.markCount&&actual.calls.every(call=>call.xml.includes('dist="23000"')&&call.xml.includes('rotWithShape="0"')&&call.restored&&call.paints.length===1&&call.paints.every(p=>p.differentContext&&p.exactNativeCTM&&p.sourceRasterRGBAExact))&&plain.calls.length===0&&differentPixels>0;
     cases.push({name:profile.name,status:valid?'MATCH':'FAIL',differentPixels,evidence:actual.evidence,calls:actual.calls,plainEffectCalls:plain.calls.length,scope:profile.name==='native frame'?'authentic native chart/theme/shape through actual viewer adapter':'controlled derivative retaining native chart/theme; full affine adapter trait'});
    }catch(error){cases.push({name:profile.name,status:'FAIL',error:error.message,stack:error.stack});}}
    return cases;
   },bytes.toString('base64'));
-  const changedDependencies=bundle.changedDependencies(),report={cases,exceptions,changedDependencies,sourceSha256:bundle.sourceSha256,dependencyHashes:bundle.dependencyHashes,corpusManifestSHA256:corpus.manifestSha256,inputSHA256:runtime.digest(bytes),chartPart:'ppt/charts/chart7.xml',slide:2,fullMicrosoftRenderingAcceptance:'unverified',microsoftEffectPixels:'unverified',passed:cases.length===4&&cases.every(c=>c.status==='MATCH')&&!exceptions.length&&!changedDependencies.length};
+  const changedDependencies=bundle.changedDependencies(),report={cases,exceptions,changedDependencies,sourceSha256:bundle.sourceSha256,entryTransformApplied:bundle.entryTransformApplied,instrumentedEntrySha256:bundle.instrumentedEntrySha256,dependencyHashes:bundle.dependencyHashes,corpusManifestSHA256:corpus.manifestSha256,inputSHA256:runtime.digest(bytes),chartPart:'ppt/charts/chart7.xml',slide:2,fullMicrosoftRenderingAcceptance:'unverified',microsoftEffectPixels:'unverified',passed:cases.length===4&&cases.every(c=>c.status==='MATCH')&&!exceptions.length&&!changedDependencies.length};
   fs.writeFileSync(path.join(runtime.outputDir,'chart-effects-results.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));process.exitCode=report.passed?0:1;
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=2;});
