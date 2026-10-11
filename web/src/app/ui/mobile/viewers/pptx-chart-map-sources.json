@@ -1,0 +1,62 @@
+{
+  "sourceURL": "https://learn.microsoft.com/en-us/bingmaps/rest-services/elevations/point-compression-algorithm",
+  "primaryOpenedByAgent": "2026-10-11 via indexed web open, content last-updated2024-05-22",
+  "standardMathIndependentImplementation": [
+    "Round latitude/longitude to integer units of1e-5degree",
+    "Encode deltas, longitude jumps outside +/-180degrees wrap360",
+    "Map signed deltas to nonnegative zigzag integers",
+    "Pair latitude and longitude via Cantor triangular pairing",
+    "Represent integer with base32 least-significant chunks; continuation bit32",
+    "Use published64-character lookup alphabet; inverse restores quantized points"
+  ],
+  "officialExample": {
+    "encoded": "vx1vilihnM6hR7mEl2Q",
+    "quantizedDecoded": [
+      [
+        35.89431,
+        -110.72522
+      ],
+      [
+        35.89393,
+        -110.72578
+      ],
+      [
+        35.89374,
+        -110.72606
+      ],
+      [
+        35.89337,
+        -110.72662
+      ]
+    ]
+  },
+  "implementation": "pptx-chart-map.js written independently from math; no copied sample JavaScript",
+  "scope": "Decode user-authored embedded geographic cache only; never calls Bing API",
+  "remaining": [
+    "Office default projection/parameter selection and exact Microsoft geographic render remain unverified",
+    "698 geographic fixture polygons pointCounts/bounds/ringclosureverified; full Microsoft render remains unverified"
+  ],
+  "geographicSchemaSources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/0462abd6-817c-4313-b795-e4fc87ef43f9",
+      "facts": "CT_GeoPolygon numPoints counts lat/lon pairs and pcaRings explicitly binds to Bing Point Compression Algorithm",
+      "primaryOpenedByAgent": "2026-10-11"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/ee9b19d5-358b-427d-9afb-ea6c5d2e6ae2",
+      "facts": "CT_GeoData east/west/north/south bound returned geographical polygons; required entity identity and coordinate bounds"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/e926e112-d64d-45d3-b536-dfd73ca93db0",
+      "facts": "CT_GeoCache may hold binary or clear geographical cache; provider identifies source"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/5e722ee2-d933-454f-8198-8490cbf17e77",
+      "facts": "CT_Geography projectionType optional without schema default, region/language/attribution retained"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/2444fd04-930a-4042-9a1b-6a38c8bce42b",
+      "facts": "ST_GeoProjectionType enumerates mercator, miller, robinson, albers"
+    }
+  ]
+}

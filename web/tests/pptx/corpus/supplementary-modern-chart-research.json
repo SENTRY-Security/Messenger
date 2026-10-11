@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "scope": "3 authentic XLSX modern chart research specimens; not native PPTX, not Microsoft gold, separate from stable18 supplementary specimens",
+  "files": [
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_path": "chart2/qa/extras/data/xlsx/pareto-gapwidth.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/pareto-gapwidth.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/pareto-gapwidth.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "9835a85a0003b0e74a1c1c2a6044a1297c9695c33ecc09f2edac4daf1be767d4",
+      "source_git_blob_sha": "419ef725ae49a176795ec739d31dcdbd36fa0576",
+      "id": "LibreOffice__core__pareto-gapwidth",
+      "file": "pareto-gapwidth.xlsx",
+      "format": "xlsx",
+      "size_bytes": 13001,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chartEx1.xml",
+          "chart_types": [
+            "ChartEx",
+            "ChartEx:clusteredColumn",
+            "ChartEx:paretoLine"
+          ]
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": []
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_path": "chart2/qa/extras/data/xlsx/paretoLine.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/paretoLine.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/paretoLine.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "46f96c30f6de3a0bcd8a990d950854bc696aec5a7d2c1c4d051836b4f9c733ac",
+      "source_git_blob_sha": "2886bdc2f144dc4a1363c03bb83adccb493d7a3d",
+      "id": "LibreOffice__core__paretoLine",
+      "file": "paretoLine.xlsx",
+      "format": "xlsx",
+      "size_bytes": 11615,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chartEx1.xml",
+          "chart_types": [
+            "ChartEx",
+            "ChartEx:clusteredColumn",
+            "ChartEx:paretoLine"
+          ]
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": []
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_path": "chart2/qa/extras/data/xlsx/regionMap.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/regionMap.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/regionMap.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "aef6b18c702bd09476b02972f1fb02a95b297de219da42df510812e8b5177215",
+      "source_git_blob_sha": "c79e150399b800c71066d7ace3e2024162182164",
+      "id": "LibreOffice__core__regionMap",
+      "file": "regionMap.xlsx",
+      "format": "xlsx",
+      "size_bytes": 201594,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/chartEx1.xml",
+          "chart_types": [
+            "ChartEx",
+            "ChartEx:regionMap"
+          ]
+        }
+      ]
+    }
+  ]
+}

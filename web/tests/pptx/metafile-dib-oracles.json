@@ -1,0 +1,18 @@
+[
+  {
+    "part": "ppt/media/image1.emf",
+    "emfSha256": "007fc444cffafe7da98e1a15218a6d341de54b59b7676f4bf079dbfd4cc03fb9",
+    "width": 595,
+    "height": 842,
+    "expectedRgbaSha256": "983b1d7e61993a48bbef216f49d9a7e8271df280cb230f30f3b2b53924883db1",
+    "oracle": "Independent Pillow BMP decoder of real embedded DIB, not PowerPoint pixel acceptance"
+  },
+  {
+    "part": "ppt/media/image2.emf",
+    "emfSha256": "02783b574d8eeacbc4005e06f715342174db0b4528f9bb7217bcbd8cd0675160",
+    "width": 612,
+    "height": 792,
+    "expectedRgbaSha256": "dcd1743a38c8752a43f1024f44938edb84324a33941571fa49d2d6bf00093028",
+    "oracle": "Independent Pillow BMP decoder of real embedded DIB, not PowerPoint pixel acceptance"
+  }
+]

@@ -1,0 +1,352 @@
+{
+  "sources": [
+    {
+      "name": "BarChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.barchart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "LineChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.linechart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "AreaChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.areachart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "PieChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.piechart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "DoughnutChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.doughnutchart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "ScatterChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.scatterchart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "BubbleChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.bubblechart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "RadarChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.radarchart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "StockChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.stockchart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "SurfaceChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.surfacechart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "Surface3DChart",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.surface3dchart?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "ChartSpace",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.chartspace?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "Scaling",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.scaling?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "CrossesAt",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.crossesat?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "GapWidth",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.gapwidth?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "Overlap",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.overlap?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "DataLabels",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.datalabels?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "BubbleSize",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.bubblesize?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "SizeRepresents",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.sizerepresents?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "ManualLayout",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.manuallayout?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "View3D",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.charts.view3d?view=openxml-3.0.1",
+      "fetched": true
+    },
+    {
+      "name": "ChartEx",
+      "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/",
+      "fetched": true
+    }
+  ],
+  "implementationNotes": [
+    "MS-OI29500 2.1.1436 bandFmts: lowest band index is zero",
+    "MS-OI29500 2.1.1447 crossesAt: coordinate depends on crossed-axis type",
+    "MS-OI29500 2.1.1475 bar gapWidth is a percent of individual bar width"
+  ],
+  "verifiedOfficeBehaviors": [
+    {
+      "behavior": "Scatter all-text StringReference X values are replaced with one-based positions, numerical axis retained",
+      "fixture": "apache__poi__scatter-chart",
+      "reference": "/workspace/pptx-audit/office-static-baselines/apache__poi__scatter-chart/desktop/slide-001.png",
+      "provenance": "/workspace/pptx-audit/office-static-baselines/apache__poi__scatter-chart/desktop/provenance.json",
+      "expectedX": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "expectedY": [
+        8.2,
+        3.2,
+        1.4,
+        1.2
+      ]
+    }
+  ],
+  "implementedFamilies": [
+    "bar",
+    "line",
+    "area",
+    "pie",
+    "doughnut",
+    "scatter",
+    "bubble",
+    "radar",
+    "stock HLC/OHLC",
+    "surface contour/wireframe",
+    "combo"
+  ],
+  "pendingAcceptance": [
+    "3D camera lighting and surface3D",
+    "ofPie",
+    "ChartEx",
+    "built-in chartStyle/colorStyle tables",
+    "trendlines/errorbars/displayunits/datatables",
+    "full format/date axis",
+    "exact automatic Microsoft plot/legend/text layout"
+  ],
+  "warning": "Passing unit/corpus probes is not complete Office pixel conformance.",
+  "chartEx": {
+    "namespace": "http://schemas.microsoft.com/office/drawing/2014/chartex",
+    "implemented": [
+      "funnel cached numDim/strDim lvl indexed values, hidden series, dataId, centered rectangles, title, legend, category labels",
+      "workbook cache materialization from XLSX definedNames/ranges/sharedStrings/worksheet relationships",
+      "waterfall signed accumulation, explicit subtotal baseline, and cx:dataLabels",
+      "histogram explicit binSize/binCount/intervalClosed/underflow/overflow; binCount includes end bins",
+      "boxWhisker quartile lower/upper median halves with inclusive/exclusive odd-N rule, IQR whisker/outlier, mean marker/line",
+      "experimental treemap squarified hierarchical areas and sunburst proportional hierarchical rings"
+    ],
+    "sourceSchema": "https://github.com/dotnet/Open-XML-SDK/blob/main/data/schemas/schemas_microsoft_com_office_drawing_2014_chartex.json",
+    "realNativeFixture": "LibreOffice/core chart2/qa/extras/data/pptx/funnel-pp1.pptx commit 63a2e191551b157adad367d020835e9ec21fc964",
+    "pending": [
+      "Microsoft pixel oracle for all implemented modern layouts and exact gap/style/layout",
+      "Automatic histogram Scott rule with Microsoft variance and boundary oracle",
+      "ChartEx workbook formula evaluation beyond cached cell range references",
+      "RegionMap geography and paretoLine",
+      "Hierarchy blank parent spans require Microsoft reference; mixed parent-own-values with children explicitly fail",
+      "ChartEx external chart style/color parts"
+    ],
+    "officialQuartileSource": "https://support.microsoft.com/en-us/excel/create-a-box-and-whisker-chart",
+    "officialHistogramSource": "https://support.microsoft.com/en-us/excel/create-a-histogram",
+    "officialBinningSchema": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/2e5dfc5a-d3b7-4390-bc00-188a2fefcb3a"
+  },
+  "legacyStyleRules": {
+    "implementation": "pptx-chart-styles.js",
+    "standard": "ISO/IEC 29500-1:2012 21.2.3.46 ST_Style Tables 1-6",
+    "microsoftDifferences": "MS-OI29500 2.1.1598(a,b)",
+    "referencePublicationURL": "https://www.iso.org/standard/61750.html",
+    "referenceTextProvenance": "2012 ISO text mirrored in python-pptx research source; independent factual interpretation; no third-party preset table imported",
+    "covered": [
+      "48 legacy numeric styles validated 1..48",
+      "font/line/fill/effect role descriptors from normative tables",
+      "six-color pattern definitions",
+      "style42 uses pattern2; style41 pattern4",
+      "style35..40 fixed accent1..6 and effectColor dk1 per Microsoft implementation notes",
+      "namespace-aware MC supported Choice/legacy Fallback selection",
+      "authored chart/plot/series colors override theme-derived default colors",
+      "Theme fmtScheme selectors cloned by intensity; phClr substitution preserves ordered transforms and owning relationships",
+      "Normative line series width factors and authored overrides",
+      "Authored external chartStyle role text sizes and tri-state bold/italic override inheritance"
+    ],
+    "notVerified": [
+      "application-defined fade endpoints exact Microsoft pixels",
+      "theme format selector gradient/effect realization",
+      "extension c14 style101..148 and external chartStyle/chartColorStyle",
+      "default font painting/layout exact Microsoft metrics",
+      "all 48 style atlas Microsoft rendering comparison",
+      "2D area/pie/doughnut/ofPie/radar/bubble default theme gradient realization remains pending"
+    ],
+    "syntheticOracle": "derived-real-poi-bar-legacy48-styles.pptx is controlled source mutation, never native/golden"
+  },
+  "nativeSunburstOracle": {
+    "fixture": "dotnet__Open-XML-SDK__Of16-03",
+    "sourceManifest": "web/tests/pptx/corpus/manifest.json",
+    "microsoftBaseline": "office-sdk-static-baselines/dotnet__Open-XML-SDK__Of16-03/desktop/slide-001.png",
+    "contentIdentityReview": "Original native ZIP cached hierarchy plus subtree labels/numerical values reviewed independently by root against Microsoft image",
+    "facts": [
+      "Native cx:strDim cache lvl enumerates Leaf then Stem then Branch; Microsoft inner ring Branch, middle Stem, outer Leaf",
+      "Three-level diagram reserves central empty band equal to ring width (outer radius / 4)",
+      "Microsoft gold Branch1 blue, Branch3 gray, Branch2 orange clockwise from twelve oclock confirms descending summed sibling values while retaining source color identity",
+      "Microsoft middle Stem2 precedes Stem1; outer Leaf5 precedes Leaf4; native weights175>52 and88>87 confirm descending at each level",
+      "Native Microsoft labels follow sector radial angles with left-half text flipped to remain upright; observed Branch1, Stem2, Leaf5, Leaf4 and Branch2 orientations"
+    ],
+    "limits": [
+      "Only level order and empty root band covered by these traits; full shape/font/color/label/layout pixel comparison remains failing/unverified",
+      "Cached blank parent-span general semantics require diverse Microsoft evidence",
+      "Earlier full viewer SDK captures chose embedded mc:Fallback picture; module-specific hierarchy traits remain distinct; next true ChartEx entry captures required",
+      "Terminal nodes preserve authored depth radii; gold has outer gaps and no global terminal-to-outer-radius expansion is inferred",
+      "Radial labels implemented for ctr only; explicit bodyPr rot wins; exact font glyphs/autofit and full Microsoft pixels pending"
+    ]
+  },
+  "native3DOracle": {
+    "fixture": "ChristopherVR__ooxml__three-d-charts",
+    "parts": [
+      "ppt/charts/chart10.xml",
+      "ppt/charts/chart16.xml",
+      "ppt/charts/chart17.xml"
+    ],
+    "covered": "Native types, cached data and finite projected surfaces with distinct depth",
+    "microsoftPixels": "unverified",
+    "declaredCOMLossyWebP": "Research semantic reference only; not an exact Microsoft golden"
+  },
+  "authoredExternalStyles": {
+    "sources": [
+      {
+        "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/4019845e-6b38-47b0-88b9-c6d739e7292f",
+        "facts": "Chart style roles identify default formatting for title, axes, labels and legend"
+      },
+      {
+        "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/502b63f6-d2ff-47f9-a466-73af2d4cc03e",
+        "facts": "A role may use explicit settings or theme references; defRPr supplies character defaults and spPr overrides style references"
+      }
+    ],
+    "retrieved": "2026-10-11",
+    "nativeEvidence": {
+      "fixture": "dotnet__Open-XML-SDK__Of16-01",
+      "part": "ppt/charts/style1.xml",
+      "title": {
+        "sizeHundredthsPoint": 1862,
+        "bold": false
+      },
+      "valueCategoryAxisDataLabelLegend": {
+        "sizeHundredthsPoint": 1197
+      }
+    },
+    "warning": "Only text role defaults currently applied; other external visual style roles remain pending Microsoft conformance"
+  },
+  "chartTitleSemantics": {
+    "officialURL": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/deda6fce-bc6b-4873-bf8a-2a469fd143aa",
+    "facts": "Authored overlay true leaves the title outside automatic layout allocation",
+    "nativeMicrosoftEvidence": "Of16-01 and Of16-03 authored empty cx:title appears as Chart Title in independently captured Microsoft output; absent title node does not request a placeholder",
+    "pending": "Exact automatic title rectangle, rotation and alignment across all title positions"
+  },
+  "externalColorStyleResearch": {
+    "primaryURLs": [
+      "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/93087d0b-22d2-41e2-a2b7-a7bea8f18524",
+      "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/e26bbba2-f2aa-4465-a867-f5d99836129c"
+    ],
+    "retrieved": "2026-10-11",
+    "facts": "Each variation creates another complete sequence of base colors; cycle picks index modulo the complete list",
+    "nativeEvidence": "SDK colors1.xml has six accent colors and nine variations yielding54 ordered slots",
+    "utility": "chartColorStyleNode implements cycle and preserves transform order",
+    "pending": [
+      "Main renderer external palette/visual role integration",
+      "Application-defined linear brightness endpoint formula and all Microsoft pixels"
+    ]
+  },
+  "hierarchyAutomaticLayout": {
+    "facts": [
+      "Hierarchy charts do not reserve Cartesian axis label margins",
+      "DrawingML bodyPr omitted vertical insets imply45720EMU; horizontal91440EMU per ISO text properties"
+    ],
+    "implemented": "Symmetric hierarchy chart padding; title allocated using authored external style physical font size plus normative body insets; circle fits available square",
+    "normativeTextReference": "ISO/IEC29500-1:2012 \u00a721.1.2.1.1 bodyPr, bIns and tIns descriptions",
+    "microsoftPixelStatus": "unverified pending repeated native gold comparison; no manual single-fixture coordinates"
+  },
+  "hierarchyTitlePlacementCandidate": {
+    "status": "Microsoft exact pixel comparison pending",
+    "evidence": "Native SDK Of16-03 Microsoft title ink bbox x330..389/y49..59; previous genuine viewer bbox x331..388/y44..53 at720x405. Original chart frame and normative bodyPr insets preserved.",
+    "implementation": "Automatic hierarchy title ink-top aligned to symmetric chart padding plus authored/default body top inset using the loaded canvas font actualBoundingBoxAscent; plot extent and hierarchy ring geometry preserved.",
+    "limits": "Automatic title text-box placement is a candidate Office profile, not an ISO-specified chart layout algorithm. Font substitution and exact Microsoft pixels remain unverified; no waterfall layout correction inferred from this sunburst case."
+  },
+  "authoredRelatedColorStyle": {
+    "primary": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-odrawxml/93087d0b-22d2-41e2-a2b7-a7bea8f18524",
+    "facts": "Cycle variations are applied to the complete original base-color list and repeat after its expanded color count. The actual related chartColorStyle part is now resolved locally and parsed through the document DrawingML color helper, including ordered transforms.",
+    "pipeline": "ChartEx hierarchy retains original branch colorIdentity when stable descending sorting chooses geometry order. Original native colors1 cycle has 54 entries. Controlled original native source mutation verifies red/blue/green retained identities in actual render, not solely the color utility.",
+    "owner": "Related colorStyle target is resolved from the chart part owner. Ambiguous, missing, external, malformed or unsupported linear/preset methods fail explicitly.",
+    "limits": [
+      "Complete external chartStyle role fill/line/effect defaults still pending",
+      "Legacy authored series styles may take priority over palette; complete modern/classic formatting precedence requires Microsoft oracle",
+      "No Microsoft exact pixel conformance claimed"
+    ]
+  },
+  "nativeBoxWhiskerMicrosoftProfile": {
+    "evidence": "Authentic Microsoft Office public viewer SDK Of16-02 captured /workspace/pptx-audit/office-box-reference-0435; root independently reviewed original numeric categories,128outlier and nine rendered boxes. True candidate0443 preserves boxes but used raw -78..128 endpoints instead of observed Microsoft -100..150 step50.",
+    "candidate": "For boxWhisker ChartEx axes with no authored min/max/majorUnit/logarithm: use the existing1/2/5 nice-step function targeting five intervals on all original sample values including outliers. Extend bodyPr/actual font-ascent title placement to boxWhisker because authentic gold title shares sunburst ink bbox49..59 in the same frame.",
+    "precedence": "Explicit min/max/majorUnit bypass this automatic profile; regression uses a declared controlled native XML mutation to check -90..130 step20.",
+    "limits": [
+      "Profile evidence is native SDK02 public Microsoft rendering, not a documented universal auto-scale algorithm",
+      "Other datasets/font sizes/chart heights and desktop PowerPoint require independent baselines",
+      "Plot rectangle top/bottom/series spacing still pending exact Microsoft pixels",
+      "Waterfall frame-external title behavior is not inferred from this box case"
+    ]
+  },
+  "primitiveEffectOwnership": {
+    "scope": [
+      "bar/histogram/funnel/waterfall rectangles",
+      "legacy theme effect intensity references retain effect relationship owners",
+      "authored empty effectLst clears inherited effect without raster pass",
+      "nonempty effect requires actual viewer full-frame renderer; callback paints supplied context"
+    ],
+    "tests": [
+      "chart-types-regression controlled callback tracer",
+      "chart-effects-regression actual viewer adapter with original chart7/theme from pinned scanny native PPTX and controlled rotation/nonuniform/crop profiles"
+    ],
+    "unverified": [
+      "Microsoft effect kernels/exact pixels",
+      "sector/line/Box/3D complete primitive effect silhouettes",
+      "external chartStyle effectRef defaults"
+    ]
+  },
+  "boxExternalVisualRoleDefaults": {
+    "scope": "Native related chartStyle dataPoint.spPr direct fill/line defaults only",
+    "placeholder": "Original chartColorStyle source identity node and ordered transforms bind phClr; authored series/point properties prevail",
+    "unverified": [
+      "Full chartStyle fillRef/lnRef/effectRef role cascade",
+      "Exact Microsoft Box layout/pixels"
+    ]
+  }
+}

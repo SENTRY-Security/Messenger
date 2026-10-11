@@ -1,0 +1,5 @@
+ooxml-core contains modern OOXML modules extracted from ChristopherVR/docx-viewer and ChristopherVR/pptx-viewer, Copyright ChristopherVR, licensed under the Apache License, Version 2.0. The Apache License text is included in LICENSE. PROVENANCE.md records where each module came from.
+
+The pptx area also contains PowerPoint glyph-advance measurements (font-advance-widths*.generated.ts: numeric widths measured through COM automation; no font software is included). Third-party runtime dependencies are listed in THIRD-PARTY-LICENSES.
+
+The math area includes Apache-2.0 equation conversion modules extracted from ChristopherVR/pptx-viewer. Their source paths and modifications are recorded in PROVENANCE.md.

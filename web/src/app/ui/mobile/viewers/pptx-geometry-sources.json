@@ -1,0 +1,107 @@
+{
+  "specifications": [
+    {
+      "name": "ECMA-376 Part 1 DrawingML Geometry",
+      "sections": [
+        "20.1.9 DrawingML geometry",
+        "20.1.9.5 avLst",
+        "20.1.9.12 gdLst",
+        "20.1.9.16 pathLst"
+      ],
+      "url": "https://ecma-international.org/publications-and-standards/standards/ecma-376/"
+    },
+    {
+      "name": "ISO/IEC 29500 DrawingML preset geometry definitions",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.presetgeometry"
+    },
+    {
+      "name": "Microsoft ShapeGuide formula grammar (17 operators)",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.shapeguide"
+    },
+    {
+      "name": "Microsoft ArcTo angle and radii semantics",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.arcto"
+    },
+    {
+      "name": "Microsoft CustomGeometry path and text rectangle model",
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.customgeometry"
+    },
+    {
+      "name": "MS-OI29500 Office implementation notes",
+      "url": "https://learn.microsoft.com/en-us/openspecs/office_standards/ms-oi29500/1fd4a662-8623-49c0-82f0-18fa91b413b8",
+      "sections": [
+        "2.1.1311(b): sqrt uses absolute argument",
+        "2.1.1327: PathFillMode Less tint/shade 50/255"
+      ]
+    }
+  ],
+  "presetDefinitions": {
+    "count": 187,
+    "upstream": "https://github.com/apache/poi/blob/trunk/poi/src/main/resources/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml",
+    "sha256": "4a762444d8d85876881c02a5b1dedf6f73006fcd8acb7b4e393435615b37c780",
+    "license": "Apache-2.0",
+    "licenseFile": "licenses/Apache-POI-LICENSE.txt",
+    "noticeFile": "licenses/Apache-POI-NOTICE.txt",
+    "retrieval": "GitHub connected fetch, 2026-10-10",
+    "commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+    "materializedXmlSha256": "69197c3d3bede822dda36b4f95aba779e1f8c552b207424c1465bfc9cf88b391",
+    "materializationNote": "Connected fetch materialized XML adds one final newline; upstream original SHA256 verified against pinned git checkout."
+  },
+  "unsupportedBehavior": "Unknown formula, preset, malformed input or fill gradient shade requires explicit error / caller fillPath callback; never substitute a rectangle.",
+  "upstreamErrata": {
+    "corrections": [
+      {
+        "preset": "circularArrow",
+        "guide": "xB",
+        "original": "+- xH 0 dxB 0",
+        "corrected": "+- xH 0 dxB"
+      },
+      {
+        "preset": "circularArrow",
+        "guide": "yB",
+        "original": "+- yH 0 dyB 0",
+        "corrected": "+- yH 0 dyB"
+      },
+      {
+        "preset": "leftCircularArrow",
+        "guide": "xB",
+        "original": "+- xH 0 dxB 0",
+        "corrected": "+- xH 0 dxB"
+      },
+      {
+        "preset": "leftCircularArrow",
+        "guide": "yB",
+        "original": "+- yH 0 dyB 0",
+        "corrected": "+- yH 0 dyB"
+      },
+      {
+        "preset": "leftRightCircularArrow",
+        "guide": "xB",
+        "original": "+- xH 0 dxB 0",
+        "corrected": "+- xH 0 dxB"
+      },
+      {
+        "preset": "leftRightCircularArrow",
+        "guide": "yB",
+        "original": "+- yH 0 dyB 0",
+        "corrected": "+- yH 0 dyB"
+      },
+      {
+        "preset": "leftRightCircularArrow",
+        "guide": "xJ",
+        "original": "+- xI 0 dxJ 0",
+        "corrected": "+- xI 0 dxJ"
+      },
+      {
+        "preset": "leftRightCircularArrow",
+        "guide": "yJ",
+        "original": "+- yI 0 dyJ 0",
+        "corrected": "+- yI 0 dyJ"
+      }
+    ],
+    "basis": "Microsoft ShapeGuide formula +- takes exactly three arguments: x+y-z. xB/yB and xJ/yJ are opposite-side coordinates; remove extraneous final zero only from eight documented definitions. All formulas in all 187 presets scanned for arity. Runtime formula arity remains strict.",
+    "reference": "https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.drawing.shapeguide",
+    "secondSource": "https://github.com/plutext/docx4j/blob/master/docx4j-core/src/main/resources/org/docx4j/model/shapes/presetShapeDefinitions.xml",
+    "secondSourceFinding": "Same invalid four-argument formulas in shared upstream; no valid four-argument extension."
+  }
+}

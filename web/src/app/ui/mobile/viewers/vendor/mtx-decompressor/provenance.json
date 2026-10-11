@@ -1,0 +1,23 @@
+{
+  "name": "mtx-decompressor",
+  "version": "1.4.2",
+  "source": "https://github.com/ChristopherVR/mtx-decompressor/tree/v1.4.2",
+  "license": "MPL-2.0",
+  "upstreamProvenance": "ChristopherVR TypeScript port of libeot by Brennan T. Vincent.",
+  "files": {
+    "LICENSE": "393eaf2b92b3d49bea139e39b6fd205b6e99c499999986aec5554586a830dfdd",
+    "README.md": "a08d897044cf021f2324a3c19de452bc61d964e720565751cb37adc09e53eb08",
+    "index.js": "f4ae54c9b0ec7d3fa880b236facb0f842939d108cd90ce1cf047a1d0cd965e8c",
+    "src/ahuff.ts": "2d1174d7597abe5522b3ad8241c7fdd147a3307945525de2bca89ff2ec06b345",
+    "src/bitio.ts": "27dfcb1519d314687814ef81684b3e42c0e784d30ab19096c489263b3813e2dd",
+    "src/ctf-parser.ts": "3c8c474d5dd0e7b174ec6363be5599b0826dd3409909114dc46b61eae910eaa4",
+    "src/lzcomp.ts": "368c6bd9d89ba38afab4a44f7777c9a6c4131e159cc038d1794ab8f3b327e62a",
+    "src/mtx-decompress.ts": "acafd78c3cbf659ad5fdcadb051f840c0184206621ba4ee259a5ad90ba6d256a",
+    "src/sfnt-builder.ts": "35ae9ab97e960cc5a8249523a7255e965d7c6057cc553dacaf31727fac936b70",
+    "src/stream.ts": "4cecd4ba786f589035af52701ba4c2f077c97019c85a7fd741ad8da6c18a2022",
+    "src/triplet-encodings.ts": "5f8ceb529c2f49d5522e7acea3fe703d9ef0479b133bba02fce4a9e3bada60fa"
+  },
+  "modifications": "Unmodified upstream TypeScript source; bundled ES2020 ESM with esbuild and attribution banner.",
+  "buildCommand": "web/node_modules/esbuild/bin/esbuild src/mtx-decompress.ts --bundle --format=esm --target=es2020 --outfile=index.js (with MPL-2.0 attribution banner)",
+  "distributionSource": "/assets/licenses/mtx-decompressor-source.zip"
+}

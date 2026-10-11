@@ -1,0 +1,70 @@
+{
+  "method": "Stable archive probes copied without broadening expected traits; executable paths/output paths parameterized. No Microsoft pixel acceptance implied.",
+  "files": [
+    {
+      "file": "regression.cjs",
+      "originArchiveSHA256": "6cdec20bbd4d4c1c7d04fbd8ed380e9422160566c527cb04b1fefae79ae09c76",
+      "portedSHA256": "6f0c5dc87f25687170fb5bb5a18c324d12effbf8d573dd394a553971dd50c564"
+    },
+    {
+      "file": "geometry-regression.cjs",
+      "originArchiveSHA256": "0e0666b5427844023c6e2006c929f1283f4829e4086f703378cf0818debd15eb",
+      "portedSHA256": "4b97ea3900a2cdf25ed52b0785b71193b6db84b28b20f6dbf718b402302a72f7"
+    },
+    {
+      "file": "office-geometry-traits.cjs",
+      "originArchiveSHA256": "14aafbf5423c74c626c1e753ebf1f26f4cef46e8dfd87f2dfad687ee576fd727",
+      "portedSHA256": "66fc29f8a6710b8724b5620fd3fec0bb9f1e4dd472db21929b9ac47171724fcf"
+    },
+    {
+      "file": "office-text-table-traits.cjs",
+      "originArchiveSHA256": "4fbba4c6b8345bfb8dc1d2ba70da7d033f7d66d064dd3cd0f7d79cb0704fc5ef",
+      "portedSHA256": "5527d3ace5204017a0a3e6951eae38cc8151dbb44428b69ff3c6799dc6ab7984"
+    },
+    {
+      "file": "office-color-traits.cjs",
+      "originArchiveSHA256": "16b9856962fa47de26e83133ec349aa4f1d4fa9c22283c6d9559ce41790bb872",
+      "portedSHA256": "7c535f0f20724620458b3216d6fcb85f3e2012d3135d534d166bb8789083f8c2"
+    },
+    {
+      "file": "office-picture-effects-traits.cjs",
+      "originArchiveSHA256": "85602df7bd89ccc8c2e4e47ee6f7dfca47ee3e1e31281ded7c758c9de36311c2",
+      "portedSHA256": "ed1846fadc2b0a61b111a0a5493770adea2eb611b5759869d5a64ea75680e3d9"
+    },
+    {
+      "file": "office-table-text-traits.cjs",
+      "originArchiveSHA256": "9dca5321aa127f548269df25b29a3d68b08aff9da832fbc8a6f324f7630e13db",
+      "portedSHA256": "88a01c8b7d5b6e02984e6bbb0f9531e17a2f94cd0cd2721c29aa3fb8b346dc65"
+    },
+    {
+      "file": "office-line-spacing-traits.cjs",
+      "originArchiveSHA256": "37e4dacf5eebaf9800f2c1e9d4d60887c48fde9e6c5d59bcc145da8c533817b4",
+      "portedSHA256": "f244c987f31afef6a6837426207651da82927cc4be4a41c02ce23fbe2496b3b1"
+    },
+    {
+      "file": "chart-table-regression.cjs",
+      "originArchiveSHA256": "f5f96417df0f0c3d3fa6f13d6fb207c9a67bcef44726c3c71deb5c2b8e405b85",
+      "portedSHA256": "1132bb9a4464853e8b735a47defa9604951f43c2c2ad67153c295ddbefbd738b"
+    },
+    {
+      "file": "next-spec-regression.cjs",
+      "originArchiveSHA256": "4b0aa1220234818db6d09d73a3e5a93ac6ce2220c06e7c92a81aa984f3008ddf",
+      "portedSHA256": "68b2a67ec282b758e364f82d597866ed0aaa5d3931a17b30e3d1ba4c043cb127"
+    },
+    {
+      "file": "font-host-regression.cjs",
+      "originArchiveSHA256": "86af273df48122555699a2d08a2902547915af8d26b1f29b4c66c006ee970609",
+      "portedSHA256": "78e278aab1edcf411e9a028f977257ac8c28dc35c5dddcf651bb4bf242c71aa6"
+    },
+    {
+      "file": "production-font-assets.cjs",
+      "originArchiveSHA256": "8f60ab2f58f1992446c527f7c89a8a335e98e42be7ada5627848b6ecf08c94c2",
+      "portedSHA256": "129f03094f65177f4f9e043e3d7e49e6f3eb0f1148ed797abe406560de657815"
+    },
+    {
+      "file": "viewer-bundle.cjs",
+      "originArchiveSHA256": "c255fce2d46c2d4513d0ef6fb5a2e2e49be3912e5df7adbc597bc56bab39ec88",
+      "portedSHA256": "4bd333f9d54d406ed45c50af1b5b8ec0c925850b5c90f680c71fd164081200b3"
+    }
+  ]
+}

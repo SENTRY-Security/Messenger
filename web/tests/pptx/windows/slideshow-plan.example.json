@@ -1,0 +1,17 @@
+{
+  "schema": "powerpoint-desktop-slideshow-plan/v1",
+  "status": "unexecuted-template",
+  "collectorImplemented": false,
+  "specimenId": "ChristopherVR__ooxml__media-bookmark-trigger",
+  "sourceIdentity": "Must resolve SHA/CRC/slide order from authoritative pinned manifest; never override pins in this plan",
+  "clock": "monotonic QPC/Stopwatch, actual action and capture timestamps",
+  "actions": [
+    {"requestedAtMs": 0, "action": "run-original-native-slideshow"},
+    {"requestedAtMs": 1000, "action": "native-media-play", "shapeId": null, "note": "Reviewer must identify true media shape ID from pinned source; null is invalid for execution"}
+  ],
+  "sampleTimesMs": [0, 500, 1000, 1250, 1500, 2000, 2500, 3000, 4000],
+  "pixelCapture": "Actual unobscured desktop slideshow viewport; native PNG; no resampling",
+  "audioCapture": "WASAPI playback-endpoint loopback PCM with QPC timestamps and latency/drift evidence",
+  "acceptanceStatus": "unverified",
+  "manualContentReview": false
+}

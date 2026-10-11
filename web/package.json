@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:pptx": "node tests/pptx/run.cjs",
+    "test:pptx:corpus": "node tests/pptx/corpus/fetch-corpus.mjs",
     "build": "node build.mjs",
     "build:raw": "cp -r src dist",
     "verify": "node scripts/verify-build.mjs",

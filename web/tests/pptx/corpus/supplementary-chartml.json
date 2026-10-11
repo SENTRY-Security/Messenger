@@ -1,0 +1,625 @@
+{
+  "schema_version": 1,
+  "scope": "18 real XLSX specimens containing ChartML/ChartEx. They are supplementary source data, not native PPTX cases or Microsoft render goldens.",
+  "files": [
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "be3c1a2f91f250f3bbd0ae70da5959870d0a779a",
+      "source_path": "test-data/spreadsheet/123233_charts.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/123233_charts.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/123233_charts.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "47e9e8dea87494d17dbacce9aa3a9ec31cb2b26b288de05ca95c0a4622ca7f80",
+      "id": "apache__poi__123233_charts",
+      "file": "apache__poi__123233_charts.xlsx",
+      "format": "xlsx",
+      "size_bytes": 12957,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "barChart"
+          ]
+        },
+        {
+          "part": "xl/charts/chart2.xml",
+          "chart_types": [
+            "pieChart"
+          ]
+        },
+        {
+          "part": "xl/charts/chart3.xml",
+          "chart_types": [
+            "barChart"
+          ]
+        },
+        {
+          "part": "xl/charts/chart4.xml",
+          "chart_types": [
+            "lineChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "207638d57be3f310e9ee216fb40243bd05447ffc",
+      "source_path": "test-data/spreadsheet/SimpleScatterChart.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/SimpleScatterChart.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/SimpleScatterChart.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "c3024ac94d6d42cbe48d20a798eda98b06d8dba6e2ed2b1fcda10659883c7be4",
+      "id": "apache__poi__SimpleScatterChart",
+      "file": "apache__poi__SimpleScatterChart.xlsx",
+      "format": "xlsx",
+      "size_bytes": 18278,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "scatterChart"
+          ]
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/colors2.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/chart2.xml",
+          "chart_types": [
+            "scatterChart"
+          ]
+        },
+        {
+          "part": "xl/charts/style2.xml",
+          "chart_types": []
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "5de94080d14820e476f29874df1ed1f273b48eca",
+      "source_path": "test-data/spreadsheet/WithChart.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/WithChart.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/WithChart.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "51f27aabf7417f5aaa0542857b6bb56a92d4afbabdc5c63f084c06f92b67429d",
+      "id": "apache__poi__WithChart",
+      "file": "apache__poi__WithChart.xlsx",
+      "format": "xlsx",
+      "size_bytes": 10138,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "lineChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "8defbd6cc4b80d9c5ff3807cf47c061bb54b9362",
+      "source_path": "test-data/spreadsheet/WithChartSheet.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/WithChartSheet.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/WithChartSheet.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "792b9f21afdb6b8b1f82345864ee15d55c17a1b54d71c250e82c87304385d362",
+      "id": "apache__poi__WithChartSheet",
+      "file": "apache__poi__WithChartSheet.xlsx",
+      "format": "xlsx",
+      "size_bytes": 30333,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "barChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "e7398e274bce4b97f9f8329cdb43f038f135c6e3",
+      "source_path": "test-data/spreadsheet/WithThreeCharts.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/WithThreeCharts.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/WithThreeCharts.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "629b69bd250d9b4e173eb2088eb80b656b7748b0287cd7b0df0c2dc22c6af7b0",
+      "id": "apache__poi__WithThreeCharts",
+      "file": "apache__poi__WithThreeCharts.xlsx",
+      "format": "xlsx",
+      "size_bytes": 13841,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart3.xml",
+          "chart_types": [
+            "areaChart"
+          ]
+        },
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "lineChart"
+          ]
+        },
+        {
+          "part": "xl/charts/chart2.xml",
+          "chart_types": [
+            "pieChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "9b8deceae25a974fe9207ef79d52320d611f247e",
+      "source_path": "test-data/spreadsheet/WithTwoCharts.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/WithTwoCharts.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/WithTwoCharts.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "7d29c92e9f7968a5bc9ec076458785295c24d13916b02b8a467c0a8fd013cddd",
+      "id": "apache__poi__WithTwoCharts",
+      "file": "apache__poi__WithTwoCharts.xlsx",
+      "format": "xlsx",
+      "size_bytes": 12810,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart2.xml",
+          "chart_types": [
+            "areaChart"
+          ]
+        },
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "lineChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "48daae4ee56846f47a98ecca79f11c223f99d6a5",
+      "source_path": "test-data/spreadsheet/chartTitle_noTitle.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/chartTitle_noTitle.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/chartTitle_noTitle.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "9be4f74eea0dcbb802473be420f0e0ce0c45a47deec398d71c7411483a4ddf70",
+      "id": "apache__poi__chartTitle_noTitle",
+      "file": "apache__poi__chartTitle_noTitle.xlsx",
+      "format": "xlsx",
+      "size_bytes": 12623,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "scatterChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "680579d00af2c71f63887cb5a13f34b778edd03b",
+      "source_path": "test-data/spreadsheet/chartTitle_withTitle.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/chartTitle_withTitle.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/chartTitle_withTitle.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "586c174285621c081020da523c4a814a9ad62b75d86f49276faa1b6036919395",
+      "id": "apache__poi__chartTitle_withTitle",
+      "file": "apache__poi__chartTitle_withTitle.xlsx",
+      "format": "xlsx",
+      "size_bytes": 12743,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "scatterChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "0f609ca3b6868b2def4108fdd474ba17ba88355f",
+      "source_path": "test-data/spreadsheet/chartTitle_withTitleFormula.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/chartTitle_withTitleFormula.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/chartTitle_withTitleFormula.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "120375c8bfd5b5e7cbb388531a1f328adde31f628419cfdc29202981e3a7bd93",
+      "id": "apache__poi__chartTitle_withTitleFormula",
+      "file": "apache__poi__chartTitle_withTitleFormula.xlsx",
+      "format": "xlsx",
+      "size_bytes": 13515,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": []
+        },
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "scatterChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "apache/poi",
+      "source_commit": "ae62bb5116b9aee19ebd5834e3a82066132c9f7f",
+      "source_git_blob_sha": "44d771b06af6747af40b72f3ec9098150cb17b6a",
+      "source_path": "test-data/spreadsheet/chart_sheet.xlsx",
+      "source_url": "https://github.com/apache/poi/blob/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/chart_sheet.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/apache/poi/ae62bb5116b9aee19ebd5834e3a82066132c9f7f/test-data/spreadsheet/chart_sheet.xlsx",
+      "license": "Apache-2.0; fixture-specific provenance may vary",
+      "sha256": "93e2d8663bc1a6b7d961f2a74440953ecdaadb1a3f171960129b730f7c935d3e",
+      "id": "apache__poi__chart_sheet",
+      "file": "apache__poi__chart_sheet.xlsx",
+      "format": "xlsx",
+      "size_bytes": 10795,
+      "license_files": [
+        "licenses/apache-poi-LICENSE.txt",
+        "licenses/apache-poi-NOTICE.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "barChart"
+          ]
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_git_blob_sha": "5fb7e33b7a4ca70649f88c3e4e587527a87ad6ce",
+      "source_path": "chart2/qa/extras/data/xlsx/SimpleHistogram.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/SimpleHistogram.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/SimpleHistogram.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "dfe40e742cf92aad408273d17bb0733e1571c309678ec3a3148e10e45a946e56",
+      "id": "LibreOffice__core__SimpleHistogram",
+      "file": "LibreOffice__core__SimpleHistogram.xlsx",
+      "format": "xlsx",
+      "size_bytes": 12936,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chartEx1.xml",
+          "chart_types": [
+            "ChartEx",
+            "ChartEx:clusteredColumn"
+          ],
+          "sha256": "258dada1daad250f67252b62e8bb089e627f6a2fe76e05f204b192229ae4c3aa"
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": [],
+          "sha256": "94305dd1f95b72016b51cc9dd8969313cd40f1f7f02772940f988ba8970cdb35"
+        },
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": [],
+          "sha256": "04fefba7d31853fa0aa636e5c8b8e308fc3126a9b48a1f4490947fff91d5a92f"
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_git_blob_sha": "227ab832a4ac3bfa2ad8a0858e219a4dd616230f",
+      "source_path": "chart2/qa/extras/data/xlsx/barOfPieChart.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/barOfPieChart.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/barOfPieChart.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "4baf42c7703e502ea000b7662bee1e5eea1964ace1fd49791be2fe920d8b30ab",
+      "id": "LibreOffice__core__barOfPieChart",
+      "file": "LibreOffice__core__barOfPieChart.xlsx",
+      "format": "xlsx",
+      "size_bytes": 7741,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "ofPieChart"
+          ],
+          "sha256": "506e1d8a242c022d3f917904cd439101e0e40680f1a5485b3b1d8fb0935bb59a"
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_git_blob_sha": "68b2b5be652baf5fa766206b8c26386365712128",
+      "source_path": "chart2/qa/extras/data/xlsx/boxWhisker.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/boxWhisker.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/boxWhisker.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "7c725dda9da6f571ea58824f603bf6eff7bc6c49d122ac4322cc0d6129fa7f92",
+      "id": "LibreOffice__core__boxWhisker",
+      "file": "LibreOffice__core__boxWhisker.xlsx",
+      "format": "xlsx",
+      "size_bytes": 13397,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chartEx1.xml",
+          "chart_types": [
+            "ChartEx",
+            "ChartEx:boxWhisker"
+          ],
+          "sha256": "7dbc3da9bf4dffb7c0aaada835a6ece26969b366f65c072e767e2c02871fd1f7"
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": [],
+          "sha256": "25905c723f6ff964fa7d420a73dff39e84867e4100daddcb7ee08d1d2234eb0a"
+        },
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": [],
+          "sha256": "04fefba7d31853fa0aa636e5c8b8e308fc3126a9b48a1f4490947fff91d5a92f"
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_git_blob_sha": "d13fe5ef48ab53f22e21f7289049a238102faf31",
+      "source_path": "chart2/qa/extras/data/xlsx/bubble_chart_simple.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/bubble_chart_simple.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/bubble_chart_simple.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "a852d9d520177739ea09427ef5677c82c011ce69f5bbebfdde4e7cd5bf0bd770",
+      "id": "LibreOffice__core__bubble_chart_simple",
+      "file": "LibreOffice__core__bubble_chart_simple.xlsx",
+      "format": "xlsx",
+      "size_bytes": 13010,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": [],
+          "sha256": "04fefba7d31853fa0aa636e5c8b8e308fc3126a9b48a1f4490947fff91d5a92f"
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": [],
+          "sha256": "aa160a28078e196208d1a5200dbe064ff9c47af93539736cf75d77beebbf1b08"
+        },
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "bubbleChart"
+          ],
+          "sha256": "2b2170b4578de3c0ac5a01206d3d98046380203564e9ddd653e83a020dd20c76"
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_git_blob_sha": "b3a1c35884274e1e81c46dc9a74de96347db6d79",
+      "source_path": "chart2/qa/extras/data/xlsx/pieOfPieChart.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/pieOfPieChart.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/pieOfPieChart.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "7d3363fef6e63574bd317aad786c39af0570e7b0957d0bffaa206f2bf1ad6407",
+      "id": "LibreOffice__core__pieOfPieChart",
+      "file": "LibreOffice__core__pieOfPieChart.xlsx",
+      "format": "xlsx",
+      "size_bytes": 7656,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chart1.xml",
+          "chart_types": [
+            "ofPieChart"
+          ],
+          "sha256": "81836a130009995f6bc38315d53b8a08556b9ce8770968c35b1b74cfa44ad651"
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_git_blob_sha": "9faced488a6ee30f3c43a53b76d0186a6b25713d",
+      "source_path": "chart2/qa/extras/data/xlsx/sunburst.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/sunburst.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/sunburst.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "8baf66751b6afa7b28f7e9fbc35ea5d9f7ce39d33c8840d9a67cf21a92dadfa4",
+      "id": "LibreOffice__core__sunburst",
+      "file": "LibreOffice__core__sunburst.xlsx",
+      "format": "xlsx",
+      "size_bytes": 11094,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": [],
+          "sha256": "04fefba7d31853fa0aa636e5c8b8e308fc3126a9b48a1f4490947fff91d5a92f"
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": [],
+          "sha256": "97a495b5049d3ea8c03006e4378d255ff4b6feba92c93dbcba40dda1992155f6"
+        },
+        {
+          "part": "xl/charts/chartEx1.xml",
+          "chart_types": [
+            "ChartEx",
+            "ChartEx:sunburst"
+          ],
+          "sha256": "dfd20adc5b799fd69441c8ec33b904232bba510d284e2766bc2ae3bbe40cd6a1"
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_git_blob_sha": "52f98fab9bd0b5dab91fc0edd8183485a77e3444",
+      "source_path": "chart2/qa/extras/data/xlsx/treemap.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/treemap.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/treemap.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "2f08a53fb19ddd8468ec5b52d8428503f0ede06dfb9afc3c4cd02d7cfe2be3eb",
+      "id": "LibreOffice__core__treemap",
+      "file": "LibreOffice__core__treemap.xlsx",
+      "format": "xlsx",
+      "size_bytes": 13631,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chartEx1.xml",
+          "chart_types": [
+            "ChartEx",
+            "ChartEx:treemap"
+          ],
+          "sha256": "bfb6088b4d2ed24063fb59960b44c7edec09f4640203ca6f5729cf7f712047af"
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": [],
+          "sha256": "97a495b5049d3ea8c03006e4378d255ff4b6feba92c93dbcba40dda1992155f6"
+        },
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": [],
+          "sha256": "04fefba7d31853fa0aa636e5c8b8e308fc3126a9b48a1f4490947fff91d5a92f"
+        }
+      ]
+    },
+    {
+      "source_repo": "LibreOffice/core",
+      "source_commit": "63a2e191551b157adad367d020835e9ec21fc964",
+      "source_git_blob_sha": "c810d94908233eed2e9643bec50d33feafc67cc5",
+      "source_path": "chart2/qa/extras/data/xlsx/waterfall.xlsx",
+      "source_url": "https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/waterfall.xlsx",
+      "raw_url": "https://raw.githubusercontent.com/LibreOffice/core/63a2e191551b157adad367d020835e9ec21fc964/chart2/qa/extras/data/xlsx/waterfall.xlsx",
+      "license": "MPL-2.0 repository license https://github.com/LibreOffice/core/blob/63a2e191551b157adad367d020835e9ec21fc964/COPYING.MPL; individual fixture asset provenance may vary",
+      "sha256": "f23626e52b75c7e57a6b3a6c69361bdacdbf2648a77c198963daacc4cba2e660",
+      "id": "LibreOffice__core__waterfall",
+      "file": "LibreOffice__core__waterfall.xlsx",
+      "format": "xlsx",
+      "size_bytes": 13218,
+      "license_files": [
+        "licenses/LibreOffice-MPL-2.0.txt"
+      ],
+      "charts": [
+        {
+          "part": "xl/charts/chartEx1.xml",
+          "chart_types": [
+            "ChartEx",
+            "ChartEx:waterfall"
+          ],
+          "sha256": "3415522b1e16bcb504a7265e59a74e3524486d40756e9761680d0dadb211637b"
+        },
+        {
+          "part": "xl/charts/style1.xml",
+          "chart_types": [],
+          "sha256": "18c20406dc1f0b2bf2b3ed683785ad0b7126269e743429d4d8747c03ef558f63"
+        },
+        {
+          "part": "xl/charts/colors1.xml",
+          "chart_types": [],
+          "sha256": "04fefba7d31853fa0aa636e5c8b8e308fc3126a9b48a1f4490947fff91d5a92f"
+        }
+      ]
+    }
+  ],
+  "acceptance_gate": {
+    "status": "unverified",
+    "structural_verification_is_rendering_acceptance": false
+  }
+}

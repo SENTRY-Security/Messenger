@@ -1,0 +1,116 @@
+Genuine PowerPoint desktop reference collection (unexecuted on this Linux host)
+
+Prerequisites and static collection
+---------------------------------
+Use an interactive Windows desktop, licensed installed Microsoft PowerPoint,
+Node.js, and a checkout of this repository with the pinned corpus cache. Close
+other PowerPoint sessions. No browser, LibreOffice, generated replacement deck,
+or converted/resaved copy may stand in for the pinned original.
+
+From the repository root, run Windows PowerShell in STA mode:
+
+  powershell.exe -STA -File web/tests/pptx/windows/Collect-PowerPointStatic.ps1 -CorpusCache C:\pptx-cache -Ids ChristopherVR__ooxml__media-bookmark-trigger -Width 960 -OutputDirectory C:\pptx-reference\run-001
+
+Omit -Ids to collect every input in the current authoritative manifest. An empty,
+unknown or duplicate explicit selection is an error. Height defaults to original
+aspect ratio at requested Width, rounded to one native pixel. An explicit Height
+must equal this value. PNGs come directly from Slide.Export: no resampling,
+normalization, generated alternative presentation, or zero-diff assertion.
+
+Preflight reuses corpus/fetch-corpus.mjs verifySpecimen: original byte count and
+SHA256 plus CRC32/length for every ZIP member before any COM rendering. Source
+slide order is presentation.xml sldIdLst via presentation relationships, never
+filename sort. COM SlideIndex/SlideID, authored count, and hidden flags must match.
+Inputs are held read-only with a write/delete-blocking file lock during export;
+source/manifest hashes are rechecked. An existing per-specimen output directory
+is rejected rather than merging old screenshots. Errors stay errors.
+
+report.json records Office application/file/product versions, executable hash,
+OS, cultures, installed font names, source identity, PNG dimensions/hash and every
+page. It is a desktop-static/v1 candidate schema, NOT the existing Office Online
+capture schema. Do not forge online provenance or feed it through an online-only
+baseline validator. A future desktop validator must verify this schema, all
+pins/pages/dimensions/SHA and manual content review separately.
+
+Exit 3 means collected-but-unverified (or unavailable platform); exit 2 is error.
+Collection never returns full acceptance. Static Export does not execute
+animations/transitions/bookmark triggers/audio/video and cannot prove playback.
+No original is saved. If Office requests repair, stop and record an error rather
+than accepting a repaired candidate. Source-unchanged SHA alone cannot rule out
+in-memory normalization; inspect content identity before approving a baseline.
+
+Practical real slideshow/time/audio collection contract
+-----------------------------------------------------
+This contract is reviewable but NOT implemented/executed by the static collector.
+Use the SAME pinned preflight/slide order and genuine PowerPoint version record.
+
+1. Start a fresh interactive slideshow with presentation.SlideShowSettings.Run.
+   Keep actual original timings/transitions; do not author a new simplified deck.
+   Record show HWND, process PID, monitor bounds, physical-pixel dimensions,
+   per-monitor DPI, display scaling/refresh rate/HDR/color profile and codecs.
+2. Use a monotonic Stopwatch/QPC clock. Log requested and actual timestamps for
+   native SlideShowView.Next/Previous or real mouse/key controls, true SlideID
+   and current media Player state/time before and after each action. Next can
+   consume one animation step; never infer page index from number of clicks.
+   Player(shapeId).Play is the actual PowerPoint player, not HTML audio/video.
+   Media bookmark behavior must be captured while that genuine player is running.
+3. Capture actual display pixels using Windows Graphics Capture/Desktop
+   Duplication, or System.Drawing.CopyFromScreen of verified unobscured slideshow
+   client bounds. Verify HWND foreground/visibility and record client screen
+   coordinates; reject occlusion, lock screen, wrong slide, stale frames and
+   capture-size changes. Save native PNG frame pixels with no resizing/cropping
+   beyond documented actual slide viewport. A COM Slide.Export at time t is NOT
+   a timed screenshot and cannot substitute for display pixels.
+4. Record a lossless screen stream plus timestamped native PNG samples before,
+   during and after each trigger/transition. Include full page background, glyph
+   visibility and bookmark target. Record actual trigger execution, not just
+   planned events. A target remaining hidden in public Office viewer does not
+   establish that desktop PowerPoint omits it.
+5. Capture the actual Windows playback endpoint using WASAPI loopback in lossless
+   PCM/WAV. Record endpoint identity, mute/volume, channel layout/sample rate,
+   QPC origin and measured capture latency/drift. Record no microphone substitute
+   and no extracted PPTX media as if it were rendered audio. Continuous loopback
+   is required across page changes to observe tails, loops, trim, fades and stop.
+   If no endpoint/tool is available, retain audioAcceptance=unverified.
+6. Hash the action log, plan, raw video/WAV, every PNG and original source. Record
+   timeline-specific assertions separately from operational completion. Manual
+   reviewer confirms correct document/page/shape/media event, version and capture.
+   Static success, elapsed wall time, media controls, nonempty frames or no
+   exception are insufficient for full animation/media acceptance.
+
+Official references independently read on 2026-10-11
+---------------------------------------------------
+Microsoft Support: How certain features behave in web-based PowerPoint
+https://support.microsoft.com/en-us/powerpoint/how-certain-features-behave-in-web-based-powerpoint
+Primary provider lines125-131 distinguish current PowerPoint for web and OLD
+SharePoint Web App. Current lines179-180 describe preserved animations but
+desktop-only playback/change for additional transitions. Do NOT attribute old
+Web App lines231-232 (fade-only/no AV) to modern public Office viewer. Article
+also contains legacy Silverlight/Flash wording, so it is not a current exact
+capability oracle for every public-viewer feature.
+
+Microsoft Learn: PowerPoint for the web service description
+https://learn.microsoft.com/en-us/office365/servicedescriptions/office-online-service-description/powerpoint-online
+Primary lines40-45/64-76: limited gallery, desktop custom animation, and general
+preserved/slideshow fidelity claims. It says additional transitions display,
+where the support article says desktop-only; do not collapse these inconsistent
+descriptions into a proven media-bookmark support/absence conclusion.
+
+Microsoft Support: Add bookmarks to points of interest in audio and video clips
+https://support.microsoft.com/en-us/powerpoint/add-bookmarks-to-points-of-interest-in-audio-and-video-clips
+Primary lines121-126 Applies To lists desktop Windows/Mac PowerPoint editions;
+does not list PowerPoint for web. Documents bookmark-triggered animations.
+Absence of web in Applies To is qualification for needing desktop evidence,
+NOT a normative proof that public Office viewer must never support bookmarks.
+
+PowerPoint COM API (collector and proposed slideshow actions)
+https://learn.microsoft.com/en-us/office/vba/api/powerpoint.slide.export
+https://learn.microsoft.com/en-us/office/vba/api/powerpoint.presentations.open
+https://learn.microsoft.com/en-us/office/vba/api/powerpoint.slideshowview.player
+https://learn.microsoft.com/en-us/office/vba/api/powerpoint.player.play
+
+Execution status for this session
+---------------------------------
+Linux host, no pwsh/powershell command, no Windows/PowerPoint COM runtime found.
+Node preflight may be exercised locally; PowerShell syntax/runtime, COM export,
+real desktop PNGs and timed/audio collection remain UNEXECUTED/UNVERIFIED.

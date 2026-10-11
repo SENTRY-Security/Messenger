@@ -1,0 +1,9 @@
+.cache/
+*.pptx
+*.xlsx
+*.png
+*.mp4
+*.wav
+*.html
+*-fetch-report.json
+*-resolved.json
