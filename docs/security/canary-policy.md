@@ -48,4 +48,4 @@ cat dist/build-manifest.json | jq '.files | map(.path + ":" + .sha256) | join("
 
 None. This policy applies to all production deployments without exception.
 
-If a deployment must be tested before full rollout, use the UAT environment (`deploy-uat.yml`) which is a completely separate Cloudflare Pages project with separate domain.
+There is currently no pre-production environment: the UAT environment (`deploy-uat.yml`) was decommissioned in 2026-10 (SEN-2685). Any testing must be completed before merging to `main`, which deploys straight to production.

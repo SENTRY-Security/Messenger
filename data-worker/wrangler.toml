@@ -7,7 +7,6 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 OPAQUE_SERVER_ID = "api.message.sentry.red"
 # Debug endpoints disabled in production (C-2 fix)
-# Only explicitly enabled in [env.uat.vars]
 ENABLE_DEBUG_ENDPOINTS = "false"
 NTAG424_KDF = "HKDF"
 NTAG424_SALT = "sentry.red"
@@ -73,57 +72,3 @@ new_sqlite_classes = ["BrowserSession"]
 class_name = "BrowserSession"
 image = "./Dockerfile.safe"
 max_instances = 10
-
-# ── UAT Environment ─────────────────────────────────────────────
-[env.uat]
-name = "message-data-uat"
-
-[env.uat.vars]
-OPAQUE_SERVER_ID = "uat-api.message.sentry.red"
-ENABLE_DEBUG_ENDPOINTS = "true"
-CORS_ORIGINS = "https://uat-message.sentry.red,sentry-app://app"
-# GENYMOTION_API_KEY → set via: wrangler secret put GENYMOTION_API_KEY --env uat
-GENYMOTION_RECIPE_UUID = "5cd0ab93-5425-4e44-a962-0ab8c3360a97"
-NTAG424_KDF = "HKDF"
-NTAG424_SALT = "sentry.red"
-NTAG424_INFO = "ntag424-slot-0"
-NTAG424_KVER = "1"
-S3_ENDPOINT = "https://436a742b2a3f99a70289f00ca8688b8e.r2.cloudflarestorage.com"
-S3_REGION = "auto"
-S3_BUCKET = "message-media-uat"
-SIGNED_PUT_TTL = "900"
-SIGNED_GET_TTL = "900"
-VAPID_PUBLIC_KEY = "BGNlllC_H-lqHnnKrxT2IhF_5_xei3is_loJHesBmzjhfgmGMwq_nwlVVaKkrOhTnCO9_DeFtlotIl3Oug3eI2k"
-VAPID_SUBJECT = "mailto:admin@sentry.red"
-# VAPID_PRIVATE_KEY → set via: wrangler secret put VAPID_PRIVATE_KEY --env uat
-# APNs — UAT uses the sandbox gateway (development device tokens).
-APNS_TEAM_ID = "HW8N8C46HG"
-APNS_TOPIC = "red.sentry.messenger"
-APNS_ENV = "sandbox"
-# APNS_KEY_P8 / APNS_KEY_ID → wrangler secret put … --env uat
-[[env.uat.d1_databases]]
-binding = "DB"
-database_name = "message_db_uat"
-database_id = "362f2681-29fc-45bf-9e2a-09b9021e6019"
-
-[[env.uat.kv_namespaces]]
-binding = "AUTH_KV"
-id = "3d14a30fff6344c7bb300d175e84b38c"
-
-[env.uat.durable_objects]
-bindings = [
-  { name = "ACCOUNT_WS", class_name = "AccountWebSocket" },
-  { name = "RATE_LIMITER", class_name = "RateLimiter" }
-  # BROWSER_SESSION 隨 [[env.uat.containers]] 一併停用；保留 DO class 以避免
-  # migration rollback。需要時連同下方的 containers 區塊一起取消註解。
-  # , { name = "BROWSER_SESSION", class_name = "BrowserSession" }
-]
-
-# UAT: SAFE Browser Container 暫時停用以加速部署。
-# 每次 wrangler deploy 都會重 build/push Dockerfile.safe，顯著拖慢部署。
-# 注意：停用後 /api/safe/* 在 UAT 會回 503 NotConfigured（worker.js:7738）。
-# 需要時取消下方註解即可恢復。
-# [[env.uat.containers]]
-# class_name = "BrowserSession"
-# image = "./Dockerfile.safe"
-# max_instances = 5

@@ -5,7 +5,6 @@
   "license": "AGPL-3.0-only",
   "private": true,
   "scripts": {
-    "deploy:uat": "cd data-worker && npx wrangler deploy --env uat",
     "deploy:prod": "cd data-worker && npx wrangler deploy"
   },
   "devDependencies": {

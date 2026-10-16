@@ -56,7 +56,7 @@
 ## Development Commands（已驗證存在）
 
 - **web build**：`cd web && npm run build`（=`node build.mjs`）；`npm run verify`（建置完整性）；`npm run preview`（wrangler pages dev）
-- **部署**：root `npm run deploy:uat` / `deploy:prod`（wrangler）；正式部署走 CI（main→prod、其他分支→UAT）
+- **部署**：root `npm run deploy:prod`（wrangler）；正式部署走 CI（**main→prod**）。**無 UAT／預備環境**（2026-10 已撤除，SEN-2685）——其他分支 push 不部署，測試須在合併 main 前完成
 - **migration**：新增 SQL 檔到 `data-worker/migrations/`，CI `wrangler d1 migrations apply --remote` 自動套用
 - **iOS**：`cd ios && xcodegen generate` → xcodebuild（同 `ios.yml`）
 - **不存在**：`npm test`／lint／typecheck script——全 repo 無自動化測試（見 project-knowledge §7），不得宣稱「測試通過」
