@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { toU8Strict } from './u8-strict.js';
 import { createJwt, verifyJwt } from './jwt.js';
-import { jwtVerify, importSPKI, errors as joseErrors } from 'jose';
+import { jwtVerify, compactVerify, importSPKI, errors as joseErrors } from 'jose';
 import { createWebPush } from './web-push.js';
 import { createAPNs } from './apns.js';
 import {
@@ -7275,9 +7275,27 @@ async function verifyJwtRS256(token, publicKeyPem) {
     return { payload, header: protectedHeader, signatureB64 };
   } catch (err) {
     if (err instanceof joseErrors.JWTExpired) {
-      const e = new Error('voucher token expired');
-      e.status = 400; e.code = 'VoucherExpired';
-      throw e;
+      // SEN-2683: vouchers (prepaid top-up cards) intentionally have no expiry.
+      // The issuer historically set `exp` = issue time + durationDays by mistake,
+      // and those tokens are already printed on physical cards, so the claim is
+      // ignored here. Signature (RS256 only) is still fully verified below;
+      // one-time use is enforced by the tokens table (token_id + status='used'),
+      // not by exp.
+      try {
+        const { payload: rawPayload, protectedHeader } = await compactVerify(token, key, {
+          algorithms: ['RS256']
+        });
+        const payload = JSON.parse(new TextDecoder().decode(rawPayload));
+        if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+          throw new Error('invalid JWT payload');
+        }
+        const signatureB64 = token.split('.')[2] || null;
+        return { payload, header: protectedHeader, signatureB64 };
+      } catch {
+        const e = new Error('invalid JWT signature');
+        e.status = 400; e.code = 'InvalidVoucher';
+        throw e;
+      }
     }
     if (err instanceof joseErrors.JWSSignatureVerificationFailed) {
       const e = new Error('invalid JWT signature');
