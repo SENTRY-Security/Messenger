@@ -2310,10 +2310,6 @@ deploy.yml (main branch):
   ├── job: changes         # dorny/paths-filter detects changed paths
   ├── job: deploy-worker   # data-worker/** changes → D1 migrations + wrangler deploy + secrets
   └── job: deploy-pages    # web/** changes → npm build + wrangler pages deploy
-
-deploy-uat.yml (non-main branches):
-  ├── job: deploy-worker   # --env uat → message-data-uat
-  └── job: deploy-pages    # --env uat → UAT Pages
 ```
 
 ### Worker Deployment
@@ -2458,7 +2454,6 @@ cd web && npm run verify:cdn     # CDN integrity verification (verbose)
 ```bash
 # Create KV namespace
 wrangler kv namespace create AUTH_KV
-wrangler kv namespace create AUTH_KV --env uat
 # Enter the generated id into wrangler.toml
 ```
 

@@ -11,7 +11,7 @@
 | `data-worker/` | Cloudflare Worker（`src/worker.js`，約 10400 行） | 唯一後端；D1＋KV＋Durable Objects＋R2（S3 相容 API）＋Containers |
 | `ios/` | Swift + XcodeGen（`ios/project.yml`），WKWebView 殼層 | 3 targets：`SentryMessenger`（完整 App）、`SentryMessengerClip`（App Clip）、`SentryMessengerNotify`（NSE） |
 
-data-worker bindings（`data-worker/wrangler.toml`）：D1 `message_db`（UAT：`message_db_uat`）、KV `AUTH_KV`、DO `AccountWebSocket`／`RateLimiter`／`BrowserSession`、Containers（`Dockerfile.safe`，UAT 停用）、R2 bucket `message-media`（經 `@aws-sdk/client-s3`）。
+data-worker bindings（`data-worker/wrangler.toml`）：D1 `message_db`、KV `AUTH_KV`、DO `AccountWebSocket`／`RateLimiter`／`BrowserSession`、Containers（`Dockerfile.safe`）、R2 bucket `message-media`（經 `@aws-sdk/client-s3`）。
 
 ## 2. 認證與加密（安全核心）
 
@@ -37,7 +37,7 @@ Migrations：`data-worker/migrations/0001`〜`0023`（共 23 檔；新表一律�
 ## 5. CI/CD（`.github/workflows/`）
 
 - `deploy.yml`：**push main 即部署 prod**（migrations apply --remote → wrangler deploy；Pages build → verify → cosign 簽章 → SLSA → deploy）。
-- `deploy-uat.yml`：非 main 分支 push → UAT。
+- ~~`deploy-uat.yml`~~：UAT 環境已於 2026-10 撤除（SEN-2685），非 main 分支 push 不部署任何環境。
 - `ios.yml`：`ios/**` 路徑觸發，XcodeGen＋xcodebuild 模擬器建置——**只編譯，無測試**。
 - `verify-build.yml`：deploy 後＋每日 cron，重建比對 hash（可重現建置）。
 - `e2e.yml.disabled`：已停用，且引用的 `scripts/test-{prekeys-devkeys,messages-secure}.mjs` 已不存在（追蹤：見 Linear 測試缺口 issue）。

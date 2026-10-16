@@ -2303,10 +2303,6 @@ deploy.yml (main branch):
   ├── job: changes         # dorny/paths-filter 偵測變更路徑
   ├── job: deploy-worker   # data-worker/** 變更 → D1 migrations + wrangler deploy + secrets
   └── job: deploy-pages    # web/** 變更 → npm build + wrangler pages deploy
-
-deploy-uat.yml (non-main branches):
-  ├── job: deploy-worker   # --env uat → message-data-uat
-  └── job: deploy-pages    # --env uat → UAT Pages
 ```
 
 ### Worker 部署
@@ -2451,7 +2447,6 @@ cd web && npm run verify:cdn     # CDN 完整性驗證（含 verbose）
 ```bash
 # 建立 KV namespace
 wrangler kv namespace create AUTH_KV
-wrangler kv namespace create AUTH_KV --env uat
 # 將產出的 id 填入 wrangler.toml
 ```
 
