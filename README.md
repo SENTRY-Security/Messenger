@@ -2499,7 +2499,8 @@ wrangler kv namespace create AUTH_KV
 | Argon2 (WASM) | Password KDF (m=64MiB, t=3, p=1) |
 | TweetNaCl | Ed25519 / X25519 cryptographic operations |
 | cropper.esm.js | Image cropping (vendor) |
-| qr-scanner.min.js | QR Code scanning (vendor) |
+| qr-scanner.min.js | Live camera QR scanning (vendor) |
+| ZXing-WASM 3.1.6 | Uploaded QR images, decoded in a local Web Worker with self-hosted reader/WASM assets |
 | qrcode-generator.js | QR Code generation (vendor) |
 
 ### Development Tools

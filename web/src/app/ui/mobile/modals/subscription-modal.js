@@ -5,6 +5,7 @@
 //   sub.openModal();
 
 import { t } from '/locales/index.js';
+import { decodeQrImage } from '../../../lib/qr-image.js';
 
 export function createSubscriptionModule({ deps }) {
   const { showToast, log, sessionStore, openModal, closeModal, resetModalVariants,
@@ -164,14 +165,18 @@ export function createSubscriptionModule({ deps }) {
       // Decode the uploaded QR image locally, then redeem through the same
       // route as the live camera scan. There is no server-side upload endpoint;
       // decoding client-side keeps a single redeem path and avoids 404s.
-      let token = '';
+      let token;
       try {
-        const res = await QrScanner.scanImage(file, { returnDetailedScanResult: true });
-        token = (typeof res === 'string' ? res : res?.data || '').trim();
-      } catch {
-        token = '';
+        token = await decodeQrImage(file);
+      } catch (err) {
+        const messageKey = {
+          QR_IMAGE_LOAD_FAILED: 'qrImageLoadFailed',
+          QR_MULTIPLE_CODES: 'qrMultipleCodes',
+          QR_NOT_FOUND: 'qrNotRecognized',
+          QR_DECODE_TIMEOUT: 'qrImageTimeout'
+        }[err?.code] || 'qrImageScannerFailed';
+        throw new Error(t(`subscription.${messageKey}`));
       }
-      if (!token) throw new Error(t('subscription.qrNotRecognized'));
       const redeemRes = await handleRedeem(token);
       if (!redeemRes?.ok) {
         throw redeemRes?.error instanceof Error
