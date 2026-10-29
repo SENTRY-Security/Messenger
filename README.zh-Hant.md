@@ -2492,7 +2492,8 @@ wrangler kv namespace create AUTH_KV
 | Argon2 (WASM) | 密碼 KDF（m=64MiB, t=3, p=1） |
 | TweetNaCl | Ed25519 / X25519 密碼學操作 |
 | cropper.esm.js | 圖片裁切 (vendor) |
-| qr-scanner.min.js | QR Code 掃描 (vendor) |
+| qr-scanner.min.js | 相機即時 QR Code 掃描 (vendor) |
+| ZXing-WASM 3.1.6 | 上傳 QR 圖片；同源 reader/WASM 資產，於本機 Web Worker 解碼 |
 | qrcode-generator.js | QR Code 產生 (vendor) |
 
 ### 開發工具
